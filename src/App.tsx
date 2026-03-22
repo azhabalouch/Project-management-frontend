@@ -4,7 +4,7 @@ function App() {
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e:any) => {
     e.preventDefault();
     console.log('Email: ' + email)
     console.log('Pass:' + pass)
