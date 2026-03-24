@@ -1,26 +1,32 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-export const usePost = (url:string, payload:any, bearerToken:string) => {
+export const usePost = (url: string, bearerToken: string) => {
   const [response, setResponse] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<any>(null);
 
-  useEffect(() => {
+  const execute = async (data: any) => {
+    setLoading(true);
+    setError(null);
+
     try {
-      fetch(url, {
+      const res = await fetch(url, {
         method: 'POST',
-        body: JSON.stringify({
-          payload
-        }),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${bearerToken}` 
-        }
-      })
-      .then((res) => res.json())
-      .then((resData) => setResponse(resData))
-    } catch(error) {
-      console.log(error);
-    }
-  }, [url]);
+          'Authorization': `Bearer ${bearerToken}`
+        },
+        body: JSON.stringify(data)
+      });
 
-  return [response];
+      const resData = await res.json();
+      setResponse(resData);
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { execute, response, loading, error };
 }

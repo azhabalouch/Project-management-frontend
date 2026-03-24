@@ -1,19 +1,27 @@
 import { useState } from 'react'
+import { usePost } from '../hooks/usePost';
+
+const URL = 'http://localhost:3000/login';
 
 function App() {
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
+  const { execute, response, loading, error} = usePost(URL, "");
 
-  const handleSubmit = (e:any) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log('Email: ' + email)
-    console.log('Pass:' + pass)
+    execute({ email, pass });
   }
 
   return (
     <main>
       <section>
         <h2>Login</h2>
+        {response && !response.ok && !loading && error ? (
+          <p>{error}</p>
+        ) : (
+          <p>Enter email and password.</p>
+        )}
         <form onSubmit={handleSubmit}>
           <label>Email:</label>
           <input
