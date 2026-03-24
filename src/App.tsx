@@ -1,23 +1,37 @@
-import { useState } from 'react'
-import { usePost } from '../hooks/usePost';
+import React, { useEffect, useState } from 'react'
+import { usePost } from '../hooks/useLoginPost';
 
-const URL = 'http://localhost:3000/login';
+const LOGIN_URL:string = 'http://localhost:3000/login';
 
-function App() {
+export default function App(){
   const [email, setEmail] = useState('');
-  const [pass, setPass] = useState('');
-  const { execute, response, loading, error} = usePost(URL, "");
+  const [password, setPassword] = useState('');
+  const { execute, responseData, loading, error} = usePost(LOGIN_URL);
 
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    execute({ email, pass });
+  interface LoginFormData {
+    email: string;
+    password: string;
   }
+
+  interface HandleSubmitEvent extends React.SyntheticEvent<HTMLFormElement> {}
+
+  const handleSubmit = (e: HandleSubmitEvent) => {
+    e.preventDefault();
+    execute({ email, password } as LoginFormData);
+  }
+
+  useEffect(() => {
+    if (responseData){
+      // Need to store in secure storage.
+      console.log(responseData);
+    }
+  }, [responseData])
 
   return (
     <main>
       <section>
         <h2>Login</h2>
-        {response && !response.ok && !loading && error ? (
+        {!loading && error ? (
           <p>{error}</p>
         ) : (
           <p>Enter email and password.</p>
@@ -25,17 +39,17 @@ function App() {
         <form onSubmit={handleSubmit}>
           <label>Email:</label>
           <input
-            type='text'
-            placeholder='Email'
+            type='email'
+            placeholder='Enter your email'
             value={email}
             onChange={(e) => {setEmail(e.target.value)}}
           />
           <label>Password:</label>
           <input
             type='password'
-            placeholder='Email'
-            value={pass}
-            onChange={(e) => {setPass(e.target.value)}}
+            placeholder='Enter your password'
+            value={password}
+            onChange={(e) => {setPassword(e.target.value)}}
           />
           <input type='submit'/>
         </form>
@@ -43,5 +57,3 @@ function App() {
     </main>
   )
 }
-
-export default App
