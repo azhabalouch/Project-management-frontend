@@ -3,7 +3,7 @@ import { usePost } from '../hooks/useLoginPost';
 
 const LOGIN_URL:string = 'http://localhost:3000/login';
 
-export default function App(){
+export default function Login(){
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { execute, responseData, loading, error} = usePost(LOGIN_URL);
