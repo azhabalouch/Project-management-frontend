@@ -19,11 +19,21 @@ export default function Login(){
     e.preventDefault();
     execute({ email, password } as LoginFormData);
   }
-
+  
   useEffect(() => {
     if (responseData){
-      // Need to store in secure storage.
-      console.log(responseData);
+      try {
+        /**
+         * Need to store in cookies and local storage for less sensitive data
+         * displayName
+         * email
+         * idToken -> auth code
+         * localId
+         * refreshToken
+         */
+      } catch (error) {
+        console.log(error);
+      }
     }
   }, [responseData])
 
