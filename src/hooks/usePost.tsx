@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export const usePost = (LOGIN_URL: string) => {
+export const usePost = (URL: string) => {
   const [responseData, setResponseData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
@@ -9,7 +9,7 @@ export const usePost = (LOGIN_URL: string) => {
     setLoading(true);
 
     try {
-      const res = await fetch(LOGIN_URL, {
+      const res = await fetch(URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

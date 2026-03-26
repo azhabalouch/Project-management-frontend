@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { usePost } from '../hooks/useLoginPost';
+import { useEffect, useState } from 'react'
+import { usePost } from '../hooks/usePost';
+import type { HandleSubmitEvent, LoginFormData } from '../components/type/submitInterface';
 
 const LOGIN_URL:string = 'http://localhost:3000/login';
 
@@ -7,13 +8,6 @@ export default function Login(){
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { execute, responseData, loading, error} = usePost(LOGIN_URL);
-
-  interface LoginFormData {
-    email: string;
-    password: string;
-  }
-
-  interface HandleSubmitEvent extends React.SyntheticEvent<HTMLFormElement> {}
 
   const handleSubmit = (e: HandleSubmitEvent) => {
     e.preventDefault();
