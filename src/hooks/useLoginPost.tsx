@@ -14,7 +14,8 @@ export const usePost = (LOGIN_URL: string) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
+        credentials: 'include'
       });
 
       setResponseData(await res.json());

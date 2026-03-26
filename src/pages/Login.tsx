@@ -23,14 +23,9 @@ export default function Login(){
   useEffect(() => {
     if (responseData){
       try {
-        /**
-         * Need to store in cookies and local storage for less sensitive data
-         * displayName
-         * email
-         * idToken -> auth code
-         * localId
-         * refreshToken
-         */
+        localStorage.setItem("email", responseData.email);
+        localStorage.setItem("displayName", responseData.displayName);
+        localStorage.setItem("localId", responseData.localId);
       } catch (error) {
         console.log(error);
       }
