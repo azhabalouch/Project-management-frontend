@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { usePost } from '../hooks/usePost';
 import type { HandleSubmitEvent, LoginFormData } from '../components/type/submitInterface';
 
-const LOGIN_URL:string = 'http://localhost:3000/login';
+const LOGIN_URL:string = 'http://localhost:3000/auth/login';
 
 export default function Login(){
   const [email, setEmail] = useState('');

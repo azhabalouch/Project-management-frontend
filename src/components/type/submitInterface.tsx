@@ -5,6 +5,13 @@ export interface LoginFormData {
   password: string;
 };
 
+export interface RegisterFormData {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+};
+
 export interface TaskData {
   taskName: string;
   detail: string;
