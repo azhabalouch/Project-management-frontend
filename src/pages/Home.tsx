@@ -1,17 +1,25 @@
-import { useState, useEffect } from "react"
-import { usePost } from "../hooks/usePost"
+import { useState, useEffect } from 'react'
+import { usePost } from '../hooks/usePost'
 import type { HandleSubmitEvent, TaskData } from '../components/type/submitInterface';
+import { DatePicker } from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
 
-const TASK_URL:string="http://localhost:3000/user/task"
+const TASK_URL:string='http://localhost:3000/user/task'
 
 export default function Home(){
-  const [taskName, setTaskName] = useState<string>("")
-  const [detail, setDetail] = useState<string>("")
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const status = 'in-progress';
+  const isCompleted = false;
+  const [dueDate, setDueDate] = useState<Date | null>(null);
+
   const { execute, responseData, loading, error} = usePost(TASK_URL);
+
+  const userId = localStorage.getItem('localId');
 
   const handleSubmit = (e: HandleSubmitEvent) => {
     e.preventDefault();
-    execute({ taskName, detail } as TaskData);
+    execute({ title, description, status, isCompleted, dueDate, userId } as TaskData);
   }
 
   useEffect(() => {
@@ -29,21 +37,26 @@ export default function Home(){
       <section>
         <h1>Create task</h1>
         <form onSubmit={handleSubmit}>
-          <label>Task name:</label>
+          <label>Task title:</label>
           <input
-            type="text"
-            value={taskName}
-            onChange={(e) => setTaskName(e.target.value)}
-            placeholder="Name your task"
+            type='text'
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder='Name your task'
           />
-          <label>Detail:</label>
+          <label>Description:</label>
           <input
-            type="text"
-            value={detail}
-            onChange={(e) => setDetail(e.target.value)}
-            placeholder="Enter task details."
+            type='text'
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder='Enter task details.'
           />
-          <input type="submit"/>
+          <label>Due Date:</label>
+          <DatePicker
+            selected = {dueDate}
+            onChange = {(date: Date | null)=> setDueDate(date)}
+          />
+          <input type='submit'/>
         </form>
       </section>
     </main>

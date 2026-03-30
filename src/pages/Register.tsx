@@ -19,9 +19,9 @@ export default function Register(){
   useEffect(() => {
     if (responseData){
       try {
-        localStorage.setItem("email", responseData.email);
-        localStorage.setItem("displayName", responseData.displayName);
-        localStorage.setItem("localId", responseData.localId);
+        localStorage.setItem('email', responseData.email);
+        localStorage.setItem('displayName', responseData.displayName);
+        localStorage.setItem('localId', responseData.localId);
       } catch (error) {
         console.log(error);
       }

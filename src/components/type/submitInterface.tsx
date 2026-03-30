@@ -13,8 +13,12 @@ export interface RegisterFormData {
 };
 
 export interface TaskData {
-  taskName: string;
-  detail: string;
+  title: string;
+  description: string;
+  status: string;
+  isCompleted: boolean;
+  dueDate: Date | null;
+  userId: string;
 };
 
 export interface HandleSubmitEvent extends React.SyntheticEvent<HTMLFormElement> {};

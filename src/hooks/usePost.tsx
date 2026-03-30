@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 export const usePost = (URL: string) => {
   const [responseData, setResponseData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string>('');
 
   const execute = async (data: any) => {
     setLoading(true);
