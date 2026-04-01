@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react'
 import { usePost } from '../hooks/usePost';
 import type { HandleSubmitEvent, LoginFormData } from '../components/type/submitInterface';
+import { useNavigate } from 'react-router';
 
 const LOGIN_URL:string = 'http://localhost:3000/auth/login';
 
 export default function Login(){
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { execute, responseData, loading, error} = usePost(LOGIN_URL);
-
+  
   const handleSubmit = (e: HandleSubmitEvent) => {
     e.preventDefault();
     execute({ email, password } as LoginFormData);
@@ -16,13 +19,9 @@ export default function Login(){
   
   useEffect(() => {
     if (responseData){
-      try {
-        localStorage.setItem("email", responseData.email);
-        localStorage.setItem("displayName", responseData.displayName);
-        localStorage.setItem("localId", responseData.localId);
-      } catch (error) {
-        console.log(error);
-      }
+      localStorage.setItem("displayName", responseData.displayName);
+
+      navigate('/');
     }
   }, [responseData])
 

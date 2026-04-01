@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import { usePost } from '../hooks/usePost'
+import { useLogout } from '../hooks/Auth/useLogoutUser';
 import type { HandleSubmitEvent, TaskData } from '../components/type/submitInterface';
 import { DatePicker } from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import { useNavigate } from 'react-router-dom';
 
 const TASK_URL:string='http://localhost:3000/user/task'
 
@@ -12,14 +14,20 @@ export default function Home(){
   const status = 'in-progress';
   const isCompleted = false;
   const [dueDate, setDueDate] = useState<Date | null>(null);
-
+  const { logout } = useLogout();
+  const navigate = useNavigate();
   const { execute, responseData, loading, error} = usePost(TASK_URL);
 
-  const userId = localStorage.getItem('localId');
+  const displayName = localStorage.getItem('displayName');
 
   const handleSubmit = (e: HandleSubmitEvent) => {
     e.preventDefault();
-    execute({ title, description, status, isCompleted, dueDate, userId } as TaskData);
+    execute({ title, description, status, isCompleted, dueDate } as TaskData);
+  }
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
   }
 
   useEffect(() => {
@@ -34,6 +42,9 @@ export default function Home(){
 
   return(
     <main>
+      <section>
+        <h1>Welcome! {displayName}</h1>
+      </section>
       <section>
         <h1>Create task</h1>
         <form onSubmit={handleSubmit}>
@@ -58,6 +69,9 @@ export default function Home(){
           />
           <input type='submit'/>
         </form>
+      </section>
+      <section>
+        <button onClick={handleLogout}>Logout</button>
       </section>
     </main>
   )

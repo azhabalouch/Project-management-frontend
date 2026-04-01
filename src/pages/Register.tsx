@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
 import { usePost } from '../hooks/usePost';
 import type { HandleSubmitEvent, RegisterFormData } from '../components/type/submitInterface';
+import { useNavigate } from 'react-router-dom';
 
 const REGISTER_URL:string = 'http://localhost:3000/auth/register';
 
 export default function Register(){
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -18,13 +21,9 @@ export default function Register(){
   
   useEffect(() => {
     if (responseData){
-      try {
-        localStorage.setItem('email', responseData.email);
-        localStorage.setItem('displayName', responseData.displayName);
-        localStorage.setItem('localId', responseData.localId);
-      } catch (error) {
-        console.log(error);
-      }
+      localStorage.setItem("displayName", responseData.displayName);
+
+      navigate('/');
     }
   }, [responseData])
 
