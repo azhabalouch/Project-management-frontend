@@ -19,37 +19,46 @@ export default function Login(){
   
   useEffect(() => {
     if (responseData){
-      localStorage.setItem("displayName", responseData.displayName);
+      localStorage.setItem("firstName", responseData.firstName);
+      localStorage.setItem("lastName", responseData.lastName);
 
-      navigate('/');
+      navigate('/', { replace: true });
     }
   }, [responseData])
 
   return (
     <main>
-      <section>
-        <h2>Login</h2>
+      <section aria-labelledby='login-heading'>
+        <h2 id='login-heading'>Login</h2>
         {!loading && error ? (
           <p>{error}</p>
         ) : (
           <p>Enter email and password.</p>
         )}
-        <form onSubmit={handleSubmit}>
-          <label>Email:</label>
-          <input
-            type='email'
-            placeholder='Enter your email'
-            value={email}
-            onChange={(e) => {setEmail(e.target.value)}}
-          />
-          <label>Password:</label>
-          <input
-            type='password'
-            placeholder='Enter your password'
-            value={password}
-            onChange={(e) => {setPassword(e.target.value)}}
-          />
-          <input type='submit'/>
+        <form onSubmit={handleSubmit} aria-label='Login form'>
+          <label htmlFor='user-email'>Email:
+            <input
+              autoComplete='email'
+              name='user-email'
+              id='user-email'
+              type='email'
+              placeholder='Enter your email'
+              value={email}
+              onChange={(e) => {setEmail(e.target.value)}}
+            />
+          </label>
+          <label htmlFor='user-pass'>Password:
+            <input
+              autoComplete='current-password'
+              name='user-pass'
+              id='user-pass'
+              type='password'
+              placeholder='Enter your password'
+              value={password}
+              onChange={(e) => {setPassword(e.target.value)}}
+            />
+          </label>
+          <input title='Submit button' type='submit' value='submit' aria-label='Submit button'/>
         </form>
       </section>
     </main>

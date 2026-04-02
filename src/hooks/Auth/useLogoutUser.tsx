@@ -8,7 +8,8 @@ export const useLogout = () => {
   const logout = async () => {
     try {
       await execute();
-      localStorage.removeItem('displayName');
+      localStorage.removeItem('firstName');
+      localStorage.removeItem('lastName');
     } catch (err) {
       console.error('Logout failed:', err);
     }

@@ -20,7 +20,7 @@ export const ProtectedRoute = () => {
   useEffect(() => {
     if (isAuthenticated === false) {
       const timerId = setTimeout(() => {
-        navigate('/login');
+        navigate('/login', { replace: true });
       }, 3000);
 
       return () => clearTimeout(timerId);

@@ -18,7 +18,8 @@ export default function Home(){
   const navigate = useNavigate();
   const { execute, responseData, loading, error} = usePost(TASK_URL);
 
-  const displayName = localStorage.getItem('displayName');
+  const firstName = localStorage.getItem('firstName');
+  const lastName = localStorage.getItem('lastName');
 
   const handleSubmit = (e: HandleSubmitEvent) => {
     e.preventDefault();
@@ -27,7 +28,7 @@ export default function Home(){
 
   const handleLogout = async () => {
     await logout();
-    navigate('/login');
+    navigate('/login', { replace: true });
   }
 
   useEffect(() => {
@@ -42,36 +43,46 @@ export default function Home(){
 
   return(
     <main>
-      <section>
-        <h1>Welcome! {displayName}</h1>
+      <section aria-labelledby='welcome-heading'>
+        <h1 id='welcome-heading'>Welcome! {firstName} {lastName}</h1>
       </section>
-      <section>
-        <h1>Create task</h1>
-        <form onSubmit={handleSubmit}>
-          <label>Task title:</label>
-          <input
-            type='text'
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder='Name your task'
-          />
-          <label>Description:</label>
-          <input
-            type='text'
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder='Enter task details.'
-          />
-          <label>Due Date:</label>
-          <DatePicker
-            selected = {dueDate}
-            onChange = {(date: Date | null)=> setDueDate(date)}
-          />
-          <input type='submit'/>
+      <section aria-labelledby='create-task-heading'>
+        <h1 id='create-task-heading'>Create task</h1>
+        <form onSubmit={handleSubmit} aria-label='Create task form'>
+          <label htmlFor='task-title'>Task title:
+            <input
+              name='task-title'
+              id='task-title'
+              type='text'
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder='Name your task'
+            />
+          </label>
+          <label htmlFor='task-description'>Description:
+            <input
+              name='task-description'
+              id='task-description'
+              type='text'
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder='Enter task details.'
+            />
+          </label>
+          <label htmlFor='task-due-date' >Due Date:
+            <DatePicker
+              selected = {dueDate}
+              onChange = {(date: Date | null)=> setDueDate(date)}
+              id='task-due-date'
+              name='task-due-date'
+              placeholderText='Select due date'
+            />
+          </label>
+          <input type='submit' value='submit' />
         </form>
       </section>
       <section>
-        <button onClick={handleLogout}>Logout</button>
+        <button title='Logout button' onClick={handleLogout}>Logout</button>
       </section>
     </main>
   )
