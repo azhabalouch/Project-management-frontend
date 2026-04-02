@@ -1,30 +1,20 @@
 import { useState, useEffect } from 'react'
-import { usePost } from '../hooks/usePost'
+import { useGet } from '../hooks/useGet'
 import { useLogout } from '../hooks/Auth/useLogoutUser';
-import type { HandleSubmitEvent, TaskData } from '../components/type/submitInterface';
-import { DatePicker } from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from 'react-router-dom';
+import type { Task } from '../components/type/typesInterface';
 
-const TASK_URL:string='http://localhost:3000/user/task'
+const TASK_URL:string='http://localhost:3000/user/get/tasks'
 
 export default function Home(){
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const status = 'in-progress';
-  const isCompleted = false;
-  const [dueDate, setDueDate] = useState<Date | null>(null);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const { logout } = useLogout();
   const navigate = useNavigate();
-  const { execute, responseData, loading, error} = usePost(TASK_URL);
+  const { execute, responseData, loading, error} = useGet(TASK_URL);
 
   const firstName = localStorage.getItem('firstName');
   const lastName = localStorage.getItem('lastName');
-
-  const handleSubmit = (e: HandleSubmitEvent) => {
-    e.preventDefault();
-    execute({ title, description, status, isCompleted, dueDate } as TaskData);
-  }
 
   const handleLogout = async () => {
     await logout();
@@ -32,54 +22,43 @@ export default function Home(){
   }
 
   useEffect(() => {
-    if (responseData){
-      try {
-        console.log(responseData, loading, error);
-      } catch (error) {
-        console.log(error);
-      }
+    const fetchData = async () => {
+      await execute();
     }
-  }, [responseData])
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (responseData) {
+      setTasks(responseData);
+    }
+  }, [responseData]);
 
   return(
     <main>
       <section aria-labelledby='welcome-heading'>
         <h1 id='welcome-heading'>Welcome! {firstName} {lastName}</h1>
       </section>
-      <section aria-labelledby='create-task-heading'>
-        <h1 id='create-task-heading'>Create task</h1>
-        <form onSubmit={handleSubmit} aria-label='Create task form'>
-          <label htmlFor='task-title'>Task title:
-            <input
-              name='task-title'
-              id='task-title'
-              type='text'
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder='Name your task'
-            />
-          </label>
-          <label htmlFor='task-description'>Description:
-            <input
-              name='task-description'
-              id='task-description'
-              type='text'
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder='Enter task details.'
-            />
-          </label>
-          <label htmlFor='task-due-date' >Due Date:
-            <DatePicker
-              selected = {dueDate}
-              onChange = {(date: Date | null)=> setDueDate(date)}
-              id='task-due-date'
-              name='task-due-date'
-              placeholderText='Select due date'
-            />
-          </label>
-          <input type='submit' value='submit' />
-        </form>
+      <section aria-labelledby='your-current-tasks-heading'>
+        <h1 id='your-current-tasks-heading'>Your Current Tasks</h1>
+        {tasks && tasks.length > 0 && !error && !loading ? (
+          <ul className="task-list">
+            {tasks.map(task => (
+              <li key={task.id} className="task-item">
+                <h3>{task.title}</h3>
+                <p>{task.description}</p>
+                <div className="task-meta">
+                  <span>Status: {task.status}</span>
+                  {/* Convert the ISO date string into a readable format */}
+                  <span>Due: {new Date(task.dueDate).toLocaleDateString()}</span> 
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>Loading tasks.</p>
+        )}
       </section>
       <section>
         <button title='Logout button' onClick={handleLogout}>Logout</button>
