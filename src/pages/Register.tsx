@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { usePost } from '../hooks/usePost';
-import type { HandleSubmitEvent, RegisterFormData } from '../components/type/typesInterface';
+import type { HandleSubmitEvent, RegisterFormData } from '../components/Type/TypesInterface';
 import { useNavigate } from 'react-router-dom';
 
 const REGISTER_URL:string = 'http://localhost:3000/auth/register';

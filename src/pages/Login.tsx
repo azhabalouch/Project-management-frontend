@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { usePost } from '../hooks/usePost';
-import type { HandleSubmitEvent, LoginFormData } from '../components/type/typesInterface';
+import type { HandleSubmitEvent, LoginFormData } from '../components/Type/TypesInterface';
 import { useNavigate } from 'react-router';
 
 const LOGIN_URL:string = 'http://localhost:3000/auth/login';

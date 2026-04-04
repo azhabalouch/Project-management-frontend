@@ -12,14 +12,6 @@ export interface RegisterFormData {
   lastName: string;
 };
 
-export interface TaskData {
-  title: string;
-  description: string;
-  status: string;
-  isCompleted: boolean;
-  dueDate: Date | null;
-};
-
 export interface Task {
   id: string;
   title: string;
@@ -27,7 +19,7 @@ export interface Task {
   status: string;
   isCompleted: boolean;
   createdAt: string; 
-  dueDate: string;   
+  dueDate: Date;   
 }
 
 export interface HandleSubmitEvent extends React.SyntheticEvent<HTMLFormElement> {};

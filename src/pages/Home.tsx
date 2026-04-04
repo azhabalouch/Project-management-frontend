@@ -3,7 +3,9 @@ import { useGet } from '../hooks/useGet'
 import { useLogout } from '../hooks/Auth/useLogoutUser';
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from 'react-router-dom';
-import type { Task } from '../components/type/typesInterface';
+import type { Task } from '../components/Type/TypesInterface';
+import { TaskContext } from '../context/TaskContext';
+import ShowTaskMode from '../components/Task/ShowTaskMode';
 
 const TASK_URL:string='http://localhost:3000/user/get/tasks'
 
@@ -46,13 +48,12 @@ export default function Home(){
           <ul className="task-list">
             {tasks.map(task => (
               <li key={task.id} className="task-item">
-                <h3>{task.title}</h3>
-                <p>{task.description}</p>
-                <div className="task-meta">
-                  <span>Status: {task.status}</span>
-                  {/* Convert the ISO date string into a readable format */}
-                  <span>Due: {new Date(task.dueDate).toLocaleDateString()}</span> 
-                </div>
+                <TaskContext.Provider value={task}>
+      
+                {/* MyButton is inside, so it can tune in! */}
+                  <ShowTaskMode />
+                  
+                </TaskContext.Provider>
               </li>
             ))}
           </ul>

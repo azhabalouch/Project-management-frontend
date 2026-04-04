@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { usePost } from '../hooks/usePost'
 import { useLogout } from '../hooks/Auth/useLogoutUser';
-import type { HandleSubmitEvent, TaskData } from '../components/type/typesInterface';
+import type { HandleSubmitEvent, Task } from '../components/Type/TypesInterface';
 import { DatePicker } from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from 'react-router-dom';
@@ -23,7 +23,7 @@ export default function TaskCreate(){
 
   const handleSubmit = (e: HandleSubmitEvent) => {
     e.preventDefault();
-    execute({ title, description, status, isCompleted, dueDate } as TaskData);
+    execute({ title, description, status, isCompleted, dueDate } as Task);
   }
 
   const handleLogout = async () => {
