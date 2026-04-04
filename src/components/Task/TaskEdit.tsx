@@ -3,13 +3,17 @@ import { DatePicker } from 'react-datepicker';
 import { usePatch } from "../../hooks/usePatch";
 import type { HandleSubmitEvent } from "../Type/TypesInterface";
 
-import { useContext } from "react";
-import { TaskContext } from "../../context/TaskContext";
+import { normalizeTask, useTaskContext } from "../../context/TaskContext";
 
 const TASK_PATCH_URL:string='http://localhost:3000/user/patch/task'
 
-export default function TaskInput(){
-  const currentTask = useContext(TaskContext);
+interface TaskInputProps {
+  taskId: string;
+}
+
+export default function TaskEdit({ taskId }: TaskInputProps){
+  const { getTaskById, updateTask } = useTaskContext();
+  const currentTask = getTaskById(taskId);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -21,7 +25,7 @@ export default function TaskInput(){
     if(currentTask){
       setTitle(currentTask.title);
       setDescription(currentTask.description);
-      setDueDate(currentTask.dueDate ? new Date(currentTask.dueDate) : null);
+      setDueDate(currentTask.dueDate ? currentTask.dueDate : null);
       setStatus(currentTask.status);
       setIsCompleted(currentTask.isCompleted);
     }
@@ -29,7 +33,7 @@ export default function TaskInput(){
   
   const { execute } = usePatch(TASK_PATCH_URL);
 
-  const handleSubmit = (e: HandleSubmitEvent) => {
+  const handleSubmit = async (e: HandleSubmitEvent) => {
     e.preventDefault();
     if (!currentTask) {
       return;
@@ -64,7 +68,21 @@ export default function TaskInput(){
       return;
     }
 
-    execute(payload);
+    const updatedTask = await execute(payload);
+
+    if (updatedTask) {
+      updateTask(currentTask.id, normalizeTask(updatedTask));
+      return;
+    }
+
+    updateTask(currentTask.id, {
+      ...currentTask,
+      title,
+      description,
+      status,
+      isCompleted,
+      dueDate,
+    });
   }
 
   return(

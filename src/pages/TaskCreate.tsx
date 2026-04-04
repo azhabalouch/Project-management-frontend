@@ -5,6 +5,7 @@ import type { HandleSubmitEvent, Task } from '../components/Type/TypesInterface'
 import { DatePicker } from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from 'react-router-dom';
+import { normalizeTask, useTaskContext } from '../context/TaskContext';
 
 const TASK_URL:string='http://localhost:3000/user/create/task'
 
@@ -17,13 +18,21 @@ export default function TaskCreate(){
   const { logout } = useLogout();
   const navigate = useNavigate();
   const { execute } = usePost(TASK_URL);
+  const { addTask, refreshTasks } = useTaskContext();
 
   const firstName = localStorage.getItem('firstName');
   const lastName = localStorage.getItem('lastName');
 
-  const handleSubmit = (e: HandleSubmitEvent) => {
+  const handleSubmit = async (e: HandleSubmitEvent) => {
     e.preventDefault();
-    execute({ title, description, status, isCompleted, dueDate } as Task);
+    const createdTask = await execute({ title, description, status, isCompleted, dueDate } as Task);
+
+    if (createdTask) {
+      addTask(normalizeTask(createdTask));
+      return;
+    }
+
+    await refreshTasks();
   }
 
   const handleLogout = async () => {

@@ -19,7 +19,7 @@ export interface Task {
   status: string;
   isCompleted: boolean;
   createdAt: string; 
-  dueDate: Date;   
+  dueDate: Date | null;   
 }
 
 export interface HandleSubmitEvent extends React.SyntheticEvent<HTMLFormElement> {};

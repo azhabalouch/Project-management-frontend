@@ -1,8 +1,12 @@
-import { useContext } from "react";
-import { TaskContext } from "../../context/TaskContext";
+import { useTaskContext } from "../../context/TaskContext";
 
-export default function TaskCard(){
-  const currentTask = useContext(TaskContext);
+interface TaskCardProps {
+  taskId: string;
+}
+
+export default function TaskCard({ taskId }: TaskCardProps){
+  const { getTaskById } = useTaskContext();
+  const currentTask = getTaskById(taskId);
 
   if (!currentTask) {
     return null;

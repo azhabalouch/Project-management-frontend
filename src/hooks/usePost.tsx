@@ -18,10 +18,13 @@ export const usePost = (URL: string) => {
         credentials: 'include'
       });
 
-      setResponseData(await res.json());
+      const json = await res.json();
+      setResponseData(json);
+      return json;
 
     } catch (err: any) {
       setError(err.message);
+      return null;
 
     } finally {
       setLoading(false);

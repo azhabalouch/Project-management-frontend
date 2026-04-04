@@ -6,6 +6,7 @@ import TaskCreate from '../pages/TaskCreate';
 import PageNotFound from '../pages/PageNotFound';
 import { ProtectedRoute } from './ProtectedRoute';
 import { PublicRoute } from './PublicRoute';
+import { TaskProvider } from '../context/TaskContext';
 
 export default function App(){
   return (
@@ -18,8 +19,10 @@ export default function App(){
 
       {/* Protected Routes Block */}
       <Route element={<ProtectedRoute />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/task-create" element={<TaskCreate />} />
+        <Route element={<TaskProvider />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/task-create" element={<TaskCreate />} />
+        </Route>
       </Route>
 
       {/* Catch-all route for 404 */}
