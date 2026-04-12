@@ -65,11 +65,6 @@ export const TaskProvider = () => {
 		);
 	}, []);
 
-	const getTaskById = useCallback(
-		(taskId: string) => tasks.find((task) => task.id === taskId),
-		[tasks]
-	);
-
 	const removeTask = useCallback((taskId: string) => {
 		setTasks((currentTasks) => currentTasks.filter((task) => task.id !== taskId));
 	}, []);
@@ -84,7 +79,6 @@ export const TaskProvider = () => {
 				addTask,
 				updateTask,
 				removeTask,
-				getTaskById,
 			}}
 		>
 			<Outlet />

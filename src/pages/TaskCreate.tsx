@@ -3,7 +3,7 @@ import { usePost } from '../hooks/usePost'
 import { useLogout } from '../hooks/Auth/useLogoutUser';
 import type { HandleSubmitEvent, Task } from '../components/type/typesInterface';
 import { DatePicker } from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css";
+import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
 import { normalizeTask, useTaskContext } from '../context/TaskContext';
 
@@ -28,11 +28,12 @@ export default function TaskCreate(){
     const createdTask = await execute({ title, description, status, isCompleted, dueDate } as Task);
 
     if (createdTask) {
-      if (typeof createdTask === 'object') {
+      if (createdTask === true) {
+      await refreshTasks();
+      } else if (typeof createdTask === 'object') {
       addTask(normalizeTask(createdTask));
       }
 
-      await refreshTasks();
       navigate('/');
     }
   }

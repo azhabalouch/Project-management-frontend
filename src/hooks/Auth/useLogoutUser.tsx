@@ -1,4 +1,4 @@
-import { useGet } from "../useGet";
+import { useGet } from '../useGet';
 
 const LOGOUT_URL = 'http://localhost:3000/auth/logout';
 

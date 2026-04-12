@@ -28,7 +28,7 @@ export const useDelete = (URL: string) => {
         throw new Error(errorMessage);
       }
 
-      return parsedData;
+      return parsedData ?? true;
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Unexpected error';
       console.error(message);

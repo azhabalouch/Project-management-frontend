@@ -20,13 +20,13 @@ export default function App(){
       {/* Protected Routes Block */}
       <Route element={<ProtectedRoute />}>
         <Route element={<TaskProvider />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/task-create" element={<TaskCreate />} />
+          <Route path='/' element={<Home />} />
+          <Route path='/task-create' element={<TaskCreate />} />
         </Route>
       </Route>
 
       {/* Catch-all route for 404 */}
-      <Route path="*" element={<PageNotFound />} /> 
+      <Route path='*' element={<PageNotFound />} /> 
     </Routes>
   )
 }

@@ -35,7 +35,6 @@ export interface TaskContextValue {
 	addTask: (task: Task) => void;
 	updateTask: (taskId: string, updatedTask: Task) => void;
   removeTask: (taskId: string) => void;
-	getTaskById: (taskId: string) => Task | undefined;
 }
 
 export interface HandleSubmitEvent extends React.SyntheticEvent<HTMLFormElement> {};

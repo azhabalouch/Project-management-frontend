@@ -21,8 +21,8 @@ export default function Register(){
   
   useEffect(() => {
     if (responseData){
-      localStorage.setItem("firstName", responseData.firstName);
-      localStorage.setItem("lastName", responseData.lastName);
+      localStorage.setItem('firstName', responseData.firstName);
+      localStorage.setItem('lastName', responseData.lastName);
 
       navigate('/', { replace: true });
     }

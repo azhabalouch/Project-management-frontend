@@ -9,7 +9,7 @@ export const useIsUserAuth = () => {
   const verifyUser = useCallback(async () => {
     try {
       const response = await execute();
-      if (response?.user === "Verified") return true;
+      if (response?.user === 'Verified') return true;
       return false;
     } catch {
       return false;

@@ -1,21 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import { DatePicker } from 'react-datepicker';
-import { usePatch } from "../../hooks/usePatch";
-import { useDelete } from "../../hooks/useDelete";
-import type { HandleSubmitEvent } from "../type/typesInterface";
+import { usePatch } from '../../hooks/usePatch';
+import { useDelete } from '../../hooks/useDelete';
+import type { HandleSubmitEvent } from '../type/typesInterface';
 
-import { normalizeTask, useTaskContext } from "../../context/TaskContext";
+import { normalizeTask, useTaskContext } from '../../context/TaskContext';
+import type { Task } from '../type/typesInterface';
 
 const TASK_PATCH_URL:string='http://localhost:3000/user/task/patch'
 const TASK_DELETE_URL:string='http://localhost:3000/user/task/delete'
 
 interface TaskInputProps {
-  taskId: string;
+  task: Task;
 }
 
-export default function TaskEdit({ taskId }: TaskInputProps){
-  const { getTaskById, updateTask, removeTask } = useTaskContext();
-  const currentTask = getTaskById(taskId);
+export default function TaskEdit({ task }: TaskInputProps){
+  const { updateTask, removeTask } = useTaskContext();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -24,43 +24,37 @@ export default function TaskEdit({ taskId }: TaskInputProps){
   const [dueDate, setDueDate] = useState<Date | null>(null);
 
   useEffect(() => {
-    if(currentTask){
-      setTitle(currentTask.title);
-      setDescription(currentTask.description);
-      setDueDate(currentTask.dueDate ? currentTask.dueDate : null);
-      setStatus(currentTask.status);
-      setIsCompleted(currentTask.isCompleted);
-    }
-  }, [currentTask])
+    setTitle(task.title);
+    setDescription(task.description);
+    setDueDate(task.dueDate ? task.dueDate : null);
+    setStatus(task.status);
+    setIsCompleted(task.isCompleted);
+  }, [task])
   
   const { execute } = usePatch(TASK_PATCH_URL);
   const { remove } = useDelete(TASK_DELETE_URL);
 
   const handleSubmit = async (e: HandleSubmitEvent) => {
     e.preventDefault();
-    if (!currentTask) {
-      return;
-    }
+    const payload: { id: string; [key: string]: unknown } = { id: task.id };
 
-    const payload: { id: string; [key: string]: unknown } = { id: currentTask.id };
-
-    if (title !== currentTask.title) {
+    if (title !== task.title) {
       payload.title = title;
     }
 
-    if (description !== currentTask.description) {
+    if (description !== task.description) {
       payload.description = description;
     }
 
-    if (status !== currentTask.status) {
+    if (status !== task.status) {
       payload.status = status;
     }
 
-    if (isCompleted !== currentTask.isCompleted) {
+    if (isCompleted !== task.isCompleted) {
       payload.isCompleted = isCompleted;
     }
 
-    const currentDueDateTime = currentTask.dueDate ? new Date(currentTask.dueDate).getTime() : null;
+    const currentDueDateTime = task.dueDate ? new Date(task.dueDate).getTime() : null;
     const nextDueDateTime = dueDate ? dueDate.getTime() : null;
 
     if (currentDueDateTime !== nextDueDateTime) {
@@ -74,25 +68,27 @@ export default function TaskEdit({ taskId }: TaskInputProps){
     const updatedTask = await execute(payload);
 
     if (updatedTask) {
-      updateTask(currentTask.id, normalizeTask(updatedTask));
-      return;
-    }
+      if (updatedTask === true) {
+        updateTask(task.id, {
+          ...task,
+          title,
+          description,
+          status,
+          isCompleted,
+          dueDate,
+        });
+        return;
+      }
 
-    updateTask(currentTask.id, {
-      ...currentTask,
-      title,
-      description,
-      status,
-      isCompleted,
-      dueDate,
-    });
+      updateTask(task.id, normalizeTask(updatedTask));
+    }
   }
 
   const handleDelete = async () => {
-    const deletedTask = await remove({ id: taskId });
+    const deletedTask = await remove({ id: task.id });
 
     if (deletedTask) {
-      removeTask(taskId);
+      removeTask(task.id);
     }
   }
 
@@ -127,6 +123,25 @@ export default function TaskEdit({ taskId }: TaskInputProps){
             id='task-due-date'
             name='task-due-date'
             placeholderText={dueDate?.toLocaleString()}
+          />
+        </label>
+        <label htmlFor='task-status'>
+          Status:
+          <input
+            id='task-status'
+            type='text'
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+          />
+        </label>
+
+        <label htmlFor='task-complete'>
+          Completed:
+          <input
+            id='task-complete'
+            type='checkbox'
+            checked={isCompleted}
+            onChange={(e) => setIsCompleted(e.target.checked)}
           />
         </label>
         <input type='submit' value='submit' />

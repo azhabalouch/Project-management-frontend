@@ -1,5 +1,5 @@
 import { useLogout } from '../hooks/Auth/useLogoutUser';
-import "react-datepicker/dist/react-datepicker.css";
+import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
 import { useTaskContext } from '../context/TaskContext';
 import ShowTaskMode from '../components/Task/ShowTaskMode';
@@ -29,10 +29,10 @@ export default function Home(){
         ) : error ? (
           <p>Unable to load tasks.</p>
         ) : tasks.length > 0 ? (
-          <ul className="task-list">
+          <ul className='task-list'>
             {tasks.map(task => (
-              <li key={task.id} className="task-item">
-                <ShowTaskMode taskId={task.id} />
+              <li key={task.id} className='task-item'>
+                <ShowTaskMode task={task} />
               </li>
             ))}
           </ul>

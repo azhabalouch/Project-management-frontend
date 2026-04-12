@@ -1,24 +1,18 @@
-import { useState } from "react";
-import TaskCard from "./TaskCard";
-import TaskEdit from "./TaskEdit";
-import { useTaskContext } from "../../context/TaskContext";
+import { useState } from 'react';
+import TaskCard from './TaskCard';
+import TaskEdit from './TaskEdit';
+import type { Task } from '../type/typesInterface';
 
 interface ShowTaskModeProps {
-  taskId: string;
+  task: Task;
 }
 
-export default function ShowTaskMode({ taskId }: ShowTaskModeProps){
+export default function ShowTaskMode({ task }: ShowTaskModeProps){
   const [editMode, setEditMode] = useState(false);
-  const { getTaskById } = useTaskContext();
-  const currentTask = getTaskById(taskId);
-
-  if (!currentTask) {
-    return null;
-  }
 
   return(
     <>
-      {editMode ? <TaskEdit taskId={taskId} /> : <TaskCard taskId={taskId} />}
+      {editMode ? <TaskEdit task={task} /> : <TaskCard task={task} />}
       
       <button onClick={() => setEditMode((current) => !current)}>Edit task</button>
     </>
