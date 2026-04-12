@@ -1,18 +1,20 @@
 import { useState, useEffect } from "react";
 import { DatePicker } from 'react-datepicker';
 import { usePatch } from "../../hooks/usePatch";
+import { useDelete } from "../../hooks/useDelete";
 import type { HandleSubmitEvent } from "../Type/TypesInterface";
 
 import { normalizeTask, useTaskContext } from "../../context/TaskContext";
 
-const TASK_PATCH_URL:string='http://localhost:3000/user/patch/task'
+const TASK_PATCH_URL:string='http://localhost:3000/user/task/patch'
+const TASK_DELETE_URL:string='http://localhost:3000/user/task/delete'
 
 interface TaskInputProps {
   taskId: string;
 }
 
 export default function TaskEdit({ taskId }: TaskInputProps){
-  const { getTaskById, updateTask } = useTaskContext();
+  const { getTaskById, updateTask, removeTask } = useTaskContext();
   const currentTask = getTaskById(taskId);
 
   const [title, setTitle] = useState('');
@@ -32,6 +34,7 @@ export default function TaskEdit({ taskId }: TaskInputProps){
   }, [currentTask])
   
   const { execute } = usePatch(TASK_PATCH_URL);
+  const { remove } = useDelete(TASK_DELETE_URL);
 
   const handleSubmit = async (e: HandleSubmitEvent) => {
     e.preventDefault();
@@ -85,6 +88,14 @@ export default function TaskEdit({ taskId }: TaskInputProps){
     });
   }
 
+  const handleDelete = async () => {
+    const deletedTask = await remove({ id: taskId });
+
+    if (deletedTask) {
+      removeTask(taskId);
+    }
+  }
+
   return(
     <>
       <h1 id='create-task-heading'>Create task</h1>
@@ -120,6 +131,7 @@ export default function TaskEdit({ taskId }: TaskInputProps){
         </label>
         <input type='submit' value='submit' />
       </form>
+      <button onClick={handleDelete}>Delete task</button>
     </>
   )
 }

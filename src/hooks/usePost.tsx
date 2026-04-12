@@ -1,12 +1,13 @@
 import { useState } from 'react';
 
 export const usePost = (URL: string) => {
-  const [responseData, setResponseData] = useState<any>(null);
+  const [responseData, setResponseData] = useState<unknown>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
-  const execute = async (data: any) => {
+  const execute = async (data: unknown) => {
     setLoading(true);
+    setError('');
 
     try {
       const res = await fetch(URL, {
@@ -18,12 +19,25 @@ export const usePost = (URL: string) => {
         credentials: 'include'
       });
 
-      const json = await res.json();
-      setResponseData(json);
-      return json;
+      const contentType = res.headers.get('content-type');
+      const json = contentType && contentType.includes('application/json')
+        ? await res.json()
+        : null;
 
-    } catch (err: any) {
-      setError(err.message);
+      if (!res.ok) {
+        const errorMessage =
+          json && typeof json === 'object' && 'message' in json && typeof json.message === 'string'
+            ? json.message
+            : `Request failed with status ${res.status}`;
+        throw new Error(errorMessage);
+      }
+
+      setResponseData(json);
+      return json ?? true;
+
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Unexpected error';
+      setError(message);
       return null;
 
     } finally {

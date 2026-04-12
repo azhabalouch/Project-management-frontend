@@ -22,4 +22,15 @@ export interface Task {
   dueDate: Date | null;   
 }
 
+export interface TaskContextValue {
+	tasks: Task[];
+	loading: boolean;
+	error: string;
+	refreshTasks: () => Promise<void>;
+	addTask: (task: Task) => void;
+	updateTask: (taskId: string, updatedTask: Task) => void;
+  removeTask: (taskId: string) => void;
+	getTaskById: (taskId: string) => Task | undefined;
+}
+
 export interface HandleSubmitEvent extends React.SyntheticEvent<HTMLFormElement> {};

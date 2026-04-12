@@ -1,12 +1,13 @@
 import { useState } from 'react';
 
 export const useGet = (URL: string) => {
-  const [responseData, setResponseData] = useState<any>(null);
+  const [responseData, setResponseData] = useState<unknown>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
   const execute = async () => {
     setLoading(true);
+    setError('');
 
     try {
       const res = await fetch(URL, {
@@ -17,11 +18,24 @@ export const useGet = (URL: string) => {
         credentials: 'include'
       });
 
-      const data = await res.json();
+      const contentType = res.headers.get('content-type');
+      const data = contentType && contentType.includes('application/json')
+        ? await res.json()
+        : null;
+
+      if (!res.ok) {
+        const errorMessage =
+          data && typeof data === 'object' && 'message' in data && typeof data.message === 'string'
+            ? data.message
+            : `Request failed with status ${res.status}`;
+        throw new Error(errorMessage);
+      }
+
       setResponseData(data);
       return data;
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Unexpected error';
+      setError(message);
       throw err;
     } finally {
       setLoading(false);

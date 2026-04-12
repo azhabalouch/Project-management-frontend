@@ -1,18 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import type { Task } from '../components/Type/TypesInterface';
+import type { Task, TaskContextValue } from '../components/Type/TypesInterface';
 
-const TASK_URL = 'http://localhost:3000/user/get/tasks';
-
-export interface TaskContextValue {
-	tasks: Task[];
-	loading: boolean;
-	error: string;
-	refreshTasks: () => Promise<void>;
-	addTask: (task: Task) => void;
-	updateTask: (taskId: string, updatedTask: Task) => void;
-	getTaskById: (taskId: string) => Task | undefined;
-}
+const TASK_URL = 'http://localhost:3000/user/task/get';
 
 export const TaskContext = createContext<TaskContextValue | undefined>(undefined);
 
@@ -80,6 +70,10 @@ export const TaskProvider = () => {
 		[tasks]
 	);
 
+	const removeTask = useCallback((taskId: string) => {
+		setTasks((currentTasks) => currentTasks.filter((task) => task.id !== taskId));
+	}, []);
+
 	return (
 		<TaskContext.Provider
 			value={{
@@ -89,6 +83,7 @@ export const TaskProvider = () => {
 				refreshTasks,
 				addTask,
 				updateTask,
+				removeTask,
 				getTaskById,
 			}}
 		>

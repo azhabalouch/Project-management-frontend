@@ -7,7 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from 'react-router-dom';
 import { normalizeTask, useTaskContext } from '../context/TaskContext';
 
-const TASK_URL:string='http://localhost:3000/user/create/task'
+const TASK_URL:string='http://localhost:3000/user/task/create'
 
 export default function TaskCreate(){
   const [title, setTitle] = useState('');
@@ -28,11 +28,13 @@ export default function TaskCreate(){
     const createdTask = await execute({ title, description, status, isCompleted, dueDate } as Task);
 
     if (createdTask) {
+      if (typeof createdTask === 'object') {
       addTask(normalizeTask(createdTask));
-      return;
-    }
+      }
 
-    await refreshTasks();
+      await refreshTasks();
+      navigate('/');
+    }
   }
 
   const handleLogout = async () => {
