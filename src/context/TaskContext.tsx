@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import type { Task, TaskContextValue } from '../components/Type/TypesInterface';
+import type { Task, TaskContextValue } from '../components/type/typesInterface';
 
 const TASK_URL = 'http://localhost:3000/user/task/get';
 

@@ -12,6 +12,11 @@ export interface RegisterFormData {
   lastName: string;
 };
 
+export interface AuthResponse {
+  firstName: string;
+  lastName: string;
+};
+
 export interface Task {
   id: string;
   title: string;

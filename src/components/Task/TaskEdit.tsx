@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { DatePicker } from 'react-datepicker';
 import { usePatch } from "../../hooks/usePatch";
 import { useDelete } from "../../hooks/useDelete";
-import type { HandleSubmitEvent } from "../Type/TypesInterface";
+import type { HandleSubmitEvent } from "../type/typesInterface";
 
 import { normalizeTask, useTaskContext } from "../../context/TaskContext";
 

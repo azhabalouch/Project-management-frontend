@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { usePost } from '../hooks/usePost'
 import { useLogout } from '../hooks/Auth/useLogoutUser';
-import type { HandleSubmitEvent, Task } from '../components/Type/TypesInterface';
+import type { HandleSubmitEvent, Task } from '../components/type/typesInterface';
 import { DatePicker } from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from 'react-router-dom';
