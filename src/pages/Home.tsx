@@ -41,6 +41,10 @@ export default function Home(){
         )}
       </section>
       <section>
+        <button onClick={() => navigate('/task-create', { replace: true })}>Create task</button>
+        <button onClick={() => navigate('/history', { replace: true })}>Check history</button>
+      </section>
+      <section>
         <button title='Logout button' onClick={handleLogout}>Logout</button>
       </section>
     </main>

@@ -3,6 +3,7 @@ import Login from '../pages/Login';
 import Register from '../pages/Register';
 import Home from '../pages/Home';
 import TaskCreate from '../pages/TaskCreate';
+import History from '../pages/History';
 import PageNotFound from '../pages/PageNotFound';
 import { ProtectedRoute } from './ProtectedRoute';
 import { PublicRoute } from './PublicRoute';
@@ -23,6 +24,7 @@ export default function App(){
           <Route path='/' element={<Home />} />
           <Route path='/task-create' element={<TaskCreate />} />
         </Route>
+        <Route path='/history' element={<History />}/>
       </Route>
 
       {/* Catch-all route for 404 */}

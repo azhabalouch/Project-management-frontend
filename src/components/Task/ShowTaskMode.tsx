@@ -12,7 +12,7 @@ export default function ShowTaskMode({ task }: ShowTaskModeProps){
 
   return(
     <>
-      {editMode ? <TaskEdit task={task} /> : <TaskCard task={task} />}
+      {editMode ? <TaskEdit task={task} onDone={() => setEditMode(false)} /> : <TaskCard task={task} />}
       
       <button onClick={() => setEditMode((current) => !current)}>Edit task</button>
     </>

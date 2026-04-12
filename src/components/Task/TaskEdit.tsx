@@ -2,21 +2,19 @@ import { useState, useEffect } from 'react';
 import { DatePicker } from 'react-datepicker';
 import { usePatch } from '../../hooks/usePatch';
 import { useDelete } from '../../hooks/useDelete';
-import type { HandleSubmitEvent } from '../type/typesInterface';
-
 import { normalizeTask, useTaskContext } from '../../context/TaskContext';
-import type { Task } from '../type/typesInterface';
+import type { Task, HandleSubmitEvent } from '../type/typesInterface';
 
 const TASK_PATCH_URL:string='http://localhost:3000/user/task/patch'
 const TASK_DELETE_URL:string='http://localhost:3000/user/task/delete'
 
 interface TaskInputProps {
   task: Task;
+  onDone: () => void;
 }
 
-export default function TaskEdit({ task }: TaskInputProps){
+export default function TaskEdit({ task, onDone }: TaskInputProps){
   const { updateTask, removeTask } = useTaskContext();
-
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState('');
@@ -38,21 +36,10 @@ export default function TaskEdit({ task }: TaskInputProps){
     e.preventDefault();
     const payload: { id: string; [key: string]: unknown } = { id: task.id };
 
-    if (title !== task.title) {
-      payload.title = title;
-    }
-
-    if (description !== task.description) {
-      payload.description = description;
-    }
-
-    if (status !== task.status) {
-      payload.status = status;
-    }
-
-    if (isCompleted !== task.isCompleted) {
-      payload.isCompleted = isCompleted;
-    }
+    if (title !== task.title) payload.title = title;
+    if (description !== task.description) payload.description = description;
+    if (status !== task.status) payload.status = status;
+    if (isCompleted !== task.isCompleted) payload.isCompleted = isCompleted;
 
     const currentDueDateTime = task.dueDate ? new Date(task.dueDate).getTime() : null;
     const nextDueDateTime = dueDate ? dueDate.getTime() : null;
@@ -62,6 +49,7 @@ export default function TaskEdit({ task }: TaskInputProps){
     }
 
     if (Object.keys(payload).length === 1) {
+      onDone();
       return;
     }
 
@@ -77,11 +65,13 @@ export default function TaskEdit({ task }: TaskInputProps){
           isCompleted,
           dueDate,
         });
-        return;
+      } else {
+        updateTask(task.id, normalizeTask(updatedTask));
       }
 
-      updateTask(task.id, normalizeTask(updatedTask));
+      onDone();
     }
+
   }
 
   const handleDelete = async () => {
@@ -89,6 +79,7 @@ export default function TaskEdit({ task }: TaskInputProps){
 
     if (deletedTask) {
       removeTask(task.id);
+      onDone();
     }
   }
 

@@ -24,6 +24,8 @@ const normalizeTasks = (tasks: unknown): Task[] => {
 	return tasks.map(normalizeTask);
 };
 
+const isIncompleteTask = (task: any) => task?.isCompleted === false;
+
 export const TaskProvider = () => {
 	const [tasks, setTasks] = useState<Task[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -43,7 +45,7 @@ export const TaskProvider = () => {
 			});
 
 			const data = await res.json();
-			setTasks(normalizeTasks(data));
+			setTasks(normalizeTasks(Array.isArray(data) ? data.filter(isIncompleteTask) : []));
 		} catch (err: any) {
 			setError(err.message);
 		} finally {
@@ -60,9 +62,15 @@ export const TaskProvider = () => {
 	}, []);
 
 	const updateTask = useCallback((taskId: string, updatedTask: Task) => {
-		setTasks((currentTasks) =>
-			currentTasks.map((task) => (task.id === taskId ? normalizeTask(updatedTask) : task))
-		);
+		const normalizedTask = normalizeTask(updatedTask);
+
+		setTasks((currentTasks) => {
+			if (normalizedTask.isCompleted) {
+				return currentTasks.filter((task) => task.id !== taskId);
+			}
+
+			return currentTasks.map((task) => (task.id === taskId ? normalizedTask : task));
+		});
 	}, []);
 
 	const removeTask = useCallback((taskId: string) => {

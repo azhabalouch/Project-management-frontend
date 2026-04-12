@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-export const useGet = (URL: string) => {
-  const [responseData, setResponseData] = useState<unknown>(null);
+export const useGet = <T,>(URL: string) => {
+  const [responseData, setResponseData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
