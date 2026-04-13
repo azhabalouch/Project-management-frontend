@@ -4,11 +4,11 @@ import { BrowserRouter } from 'react-router-dom'
 // import './index.css'
 import App from './routes/App.tsx'
 
-const BASE_ID:string='/Project-management-frontend/';
+// const BASE_ID:string='/Project-management-frontend/';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter basename={BASE_ID}>
+    <BrowserRouter>
       <App />
     </BrowserRouter>
   </StrictMode>,
