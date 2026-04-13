@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://project-management-backend-iota.vercel.app';
+const API_BASE_URL = 'https://api.azhabalouch.dev';
 
 export const AUTH_URLS = {
 	login: `${API_BASE_URL}/auth/login`,
