@@ -4,9 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import TaskCard from '../components/Task/TaskCard';
 import { useGet } from '../hooks/useGet';
 import { useEffect } from 'react';
+import { TASK_URLS } from '../apis';
 import type { Task } from '../components/type/typesInterface';
-
-const TASK_HISTORY_URL:string='http://localhost:3000/user/task/history';
 
 interface HistoryResponse {
   tasks: Task[];
@@ -15,7 +14,7 @@ interface HistoryResponse {
 export default function History(){
   const { logout } = useLogout();
   const navigate = useNavigate();
-  const { execute, responseData, loading, error } = useGet<HistoryResponse>(TASK_HISTORY_URL);
+  const { execute, responseData, loading, error } = useGet<HistoryResponse>(TASK_URLS.history);
 
   useEffect(() => {
     execute();

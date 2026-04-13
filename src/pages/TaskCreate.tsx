@@ -6,8 +6,8 @@ import { DatePicker } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
 import { normalizeTask, useTaskContext } from '../context/TaskContext';
+import { TASK_URLS } from '../apis';
 
-const TASK_URL:string='http://localhost:3000/user/task/create'
 
 export default function TaskCreate(){
   const [title, setTitle] = useState('');
@@ -17,7 +17,7 @@ export default function TaskCreate(){
   const [dueDate, setDueDate] = useState<Date | null>(null);
   const { logout } = useLogout();
   const navigate = useNavigate();
-  const { execute } = usePost(TASK_URL);
+  const { execute } = usePost(TASK_URLS.create);
   const { addTask, refreshTasks } = useTaskContext();
 
   const firstName = localStorage.getItem('firstName');

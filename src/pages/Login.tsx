@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react'
 import { usePost } from '../hooks/usePost';
 import type { AuthResponse, HandleSubmitEvent, LoginFormData } from '../components/type/typesInterface';
 import { useNavigate } from 'react-router';
+import { AUTH_URLS } from '../apis';
 
-const LOGIN_URL:string = 'http://localhost:3000/auth/login';
 
 export default function Login(){
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { execute, responseData, loading, error} = usePost<AuthResponse, LoginFormData>(LOGIN_URL);
+  const { execute, responseData, loading, error} = usePost<AuthResponse, LoginFormData>(AUTH_URLS.login);
   
   const handleSubmit = (e: HandleSubmitEvent) => {
     e.preventDefault();

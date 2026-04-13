@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { usePost } from '../hooks/usePost';
 import type { AuthResponse, HandleSubmitEvent, RegisterFormData } from '../components/type/typesInterface';
 import { useNavigate } from 'react-router-dom';
+import { AUTH_URLS } from '../apis';
 
-const REGISTER_URL:string = 'http://localhost:3000/auth/register';
 
 export default function Register(){
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ export default function Register(){
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const { execute, responseData, loading, error} = usePost<AuthResponse, RegisterFormData>(REGISTER_URL);
+  const { execute, responseData, loading, error} = usePost<AuthResponse, RegisterFormData>(AUTH_URLS.register);
 
   const handleSubmit = (e: HandleSubmitEvent) => {
     e.preventDefault();

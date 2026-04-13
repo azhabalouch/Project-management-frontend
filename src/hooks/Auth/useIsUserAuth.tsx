@@ -1,10 +1,9 @@
 import { useGet } from '../useGet';
 import { useCallback } from 'react';
-
-const VERIFY_URL:string  = 'http://localhost:3000/auth/verify';
+import { AUTH_URLS } from '../../apis';
 
 export const useIsUserAuth = () => {
-  const { execute } = useGet(VERIFY_URL);
+  const { execute } = useGet(AUTH_URLS.verify);
 
   const verifyUser = useCallback(async () => {
     try {

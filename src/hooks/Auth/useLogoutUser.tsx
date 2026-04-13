@@ -1,9 +1,9 @@
 import { useGet } from '../useGet';
+import { AUTH_URLS } from '../../apis';
 
-const LOGOUT_URL = 'http://localhost:3000/auth/logout';
 
 export const useLogout = () => {
-  const { execute, loading, error } = useGet(LOGOUT_URL);
+  const { execute, loading, error } = useGet(AUTH_URLS.logout);
 
   const logout = async () => {
     try {

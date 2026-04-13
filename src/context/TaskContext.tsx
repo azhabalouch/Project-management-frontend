@@ -1,8 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
+import { TASK_URLS } from '../apis';
 import type { Task, TaskContextValue } from '../components/type/typesInterface';
-
-const TASK_URL = 'http://localhost:3000/user/task/get';
 
 export const TaskContext = createContext<TaskContextValue | undefined>(undefined);
 
@@ -36,7 +35,7 @@ export const TaskProvider = () => {
 		setError('');
 
 		try {
-			const res = await fetch(TASK_URL, {
+			const res = await fetch(TASK_URLS.get, {
 				method: 'GET',
 				headers: {
 					Accept: 'application/json',

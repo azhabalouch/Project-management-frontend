@@ -3,10 +3,8 @@ import { DatePicker } from 'react-datepicker';
 import { usePatch } from '../../hooks/usePatch';
 import { useDelete } from '../../hooks/useDelete';
 import { normalizeTask, useTaskContext } from '../../context/TaskContext';
+import { TASK_URLS } from '../../apis';
 import type { Task, HandleSubmitEvent } from '../type/typesInterface';
-
-const TASK_PATCH_URL:string='http://localhost:3000/user/task/patch'
-const TASK_DELETE_URL:string='http://localhost:3000/user/task/delete'
 
 interface TaskInputProps {
   task: Task;
@@ -29,8 +27,8 @@ export default function TaskEdit({ task, onDone }: TaskInputProps){
     setIsCompleted(task.isCompleted);
   }, [task])
   
-  const { execute } = usePatch(TASK_PATCH_URL);
-  const { remove } = useDelete(TASK_DELETE_URL);
+  const { execute } = usePatch(TASK_URLS.patch);
+  const { remove } = useDelete(TASK_URLS.delete);
 
   const handleSubmit = async (e: HandleSubmitEvent) => {
     e.preventDefault();
