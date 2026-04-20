@@ -1,23 +1,83 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
+  /* 1. The Foundation */
+  --bg-main: #F9F8F6; /* Background */
+  --bg-main: #F4EFED; /* App Nav Background */
+  --bg-main: #FCF8F6; /* App Main Background */
+  --bg-surface: #FFFFFF; /* Surface/Card Background */
+  --text-primary: #2D2C2A; /* Primary Text */
+  --text-secondary: #75736E; /* Secondary Text */
+  --border-color: #E5E3DF; /* Borders/Dividers */
+  --bg-active: #EAECEE; /* Active background color */
+  --bg-input: #EDEAEA; /* Input background color */
+
+  /* 2. The Accents */
+  --accent-magenta: #D8226B; /* Primary Actions/Warnings */
+  --accent-green: #609914; /* Success/Done */
+  --accent-orange: #D37014; /* Warning/In Progress */
+  --accent-cyan: #1B8C9F; /* Interactive/Links */
+  --accent-yellow: #C4A000; /* Labels */
+  --accent-yellow-light: #F5EFD2;
+
+  /* 3. Priorities (background / text) */
+  --priority-high-bg: #FCE8E8;
+  --priority-high-text: #9E2A2B;
+  --priority-medium-bg: #FEF0D9;
+  --priority-medium-text: #9C6500;
+  --priority-random-bg: #E6F2F5;
+  --priority-random-text: #2B7A8B;
+  --priority-skippable-bg: #F0F0F0;
+  --priority-skippable-text: #6E6E6E;
+
+  /* 4. Status (background / text) */
+  --status-pending-bg: #EFEFF0;
+  --status-pending-text: #5C5E60;
+  --status-inprogress-bg: #EBF3FC;
+  --status-inprogress-text: #2A64AD;
+  --status-notworking-bg: #F3E8FD;
+  --status-notworking-text: #6B38B6;
+  --status-issue-bg: #FFF3CD;
+  --status-issue-text: #856404;
+  --status-bug-bg: #FADEEA;
+  --status-bug-text: #A6265B;
+  --status-error-bg: #F8D7DA;
+  --status-error-text: #842029;
+  --status-skipped-bg: #E4E3E1;
+  --status-skipped-text: #7C7E81;
+
+  /* 5. Percentage (Green scale: background / text) */
+  --pct-10-bg: #F1F8E9;
+  --pct-10-text: #558B2F;
+  --pct-35-bg: #E8F5E9;
+  --pct-35-text: #2E7D32;
+  --pct-50-bg: #E0F2F1;
+  --pct-50-text: #00695C;
+  --pct-75-bg: #D4EED1;
+  --pct-75-text: #1B5E20;
+  --pct-90-bg: #C8E6C9;
+  --pct-90-text: #18511E;
+  --pct-completed-bg: #D1E7DD;
+  --pct-completed-text: #0F5132;
+
+  /* Primary Button */
+  --btn-primary-bg: #0F766E; /* Deep Teal */
+  --btn-primary-text: #FFFFFF;
+
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --shadow-button: 0 0 8px 0 rgba(0, 0, 0, 0.05) inset, 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-filter:rgba(0, 0, 0, 0.05) 0 1px 2px 0px; 
+  --shadow-card: 0 2px 8px 0 rgba(0, 0, 0, 0.05);
+  
+  /* 6. Typography */
+  --font-heading: 'Lexend', system-ui, sans-serif;
+  --font-body: 'Fira Sans', system-ui, sans-serif;
+  --font-ui: 'Geist', system-ui, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
-  font: 18px/145% var(--sans);
+  font: 16px/145% var(--font-body);
   letter-spacing: 0.18px;
-  color-scheme: light dark;
+  color-scheme: light;
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
@@ -30,28 +90,8 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
 #root {
-  width: 1126px;
+  width: 1440px;
   max-width: 100%;
   margin: 0 auto;
   text-align: center;
@@ -66,15 +106,14 @@ body {
   margin: 0;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
   font-weight: 500;
   color: var(--text-h);
 }
 
 h1 {
-  font-size: 56px;
+  font-size: 48px;
   letter-spacing: -1.68px;
   margin: 32px 0;
   @media (max-width: 1024px) {
@@ -83,16 +122,37 @@ h1 {
   }
 }
 h2 {
-  font-size: 24px;
+  font-size: 32px;
   line-height: 118%;
   letter-spacing: -0.24px;
   margin: 0 0 8px;
   @media (max-width: 1024px) {
-    font-size: 20px;
+    font-size: 24px;
   }
 }
+h3 {
+  font-size: 24px;
+  line-height: 120%;
+  margin: 0 0 6px;
+}
+h4 {
+  font-size: 20px;
+  line-height: 125%;
+  margin: 0 0 4px;
+}
+
 p {
   margin: 0;
+}
+
+nav a, .nav-link, button, .button {
+  font-family: var(--font-ui);
+  font-size: 16px;
+}
+
+small, .subtext, .caption {
+  font-family: var(--font-ui);
+  font-size: 12px;
 }
 
 code,
