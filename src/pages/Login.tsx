@@ -1,16 +1,17 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 import { usePost } from '../hooks/usePost';
 import type { AuthResponse, HandleSubmitEvent, LoginFormData } from '../components/type/typesInterface';
 import { useNavigate } from 'react-router';
 import { AUTH_URLS } from '../apis';
+import './Login.css';
 
-
-export default function Login(){
+export default function Login() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { execute, responseData, loading, error} = usePost<AuthResponse, LoginFormData>(AUTH_URLS.login);
+  const [rememberMe, setRememberMe] = useState(false);
+  const { execute, responseData, loading, error } = usePost<AuthResponse, LoginFormData>(AUTH_URLS.login);
   
   const handleSubmit = (e: HandleSubmitEvent) => {
     e.preventDefault();
@@ -18,49 +19,86 @@ export default function Login(){
   }
   
   useEffect(() => {
-    if (responseData){
+    if (responseData) {
       localStorage.setItem('firstName', responseData.firstName);
       localStorage.setItem('lastName', responseData.lastName);
-
       navigate('/', { replace: true });
     }
-  }, [responseData])
+  }, [responseData, navigate]);
 
   return (
-    <main>
-      <section aria-labelledby='login-heading'>
-        <h2 id='login-heading'>Login</h2>
-        {!loading && error ? (
-          <p>{error}</p>
-        ) : (
-          <p>Enter email and password.</p>
-        )}
-        <form onSubmit={handleSubmit} aria-label='Login form'>
-          <label htmlFor='user-email'>Email:
-            <input
-              autoComplete='email'
-              name='user-email'
-              id='user-email'
-              type='email'
-              placeholder='Enter your email'
-              value={email}
-              onChange={(e) => {setEmail(e.target.value)}}
-            />
-          </label>
-          <label htmlFor='user-pass'>Password:
-            <input
-              autoComplete='current-password'
-              name='user-pass'
-              id='user-pass'
-              type='password'
-              placeholder='Enter your password'
-              value={password}
-              onChange={(e) => {setPassword(e.target.value)}}
-            />
-          </label>
-          <input title='Submit button' type='submit' value='submit' aria-label='Submit button'/>
-        </form>
+    <main className="login-layout">
+      <section className="login-image-section">
+        <img alt="Woman" src="/women.png" className="login-image" />
+      </section>
+
+      <section className="login-content-section">
+        <h1 className="login-personal-text">... it’s Personal</h1>
+        
+        <div className="login-form-card">
+          <h1 id="login-heading">Login</h1>
+          
+          {!loading && error && (
+            <p className="login-error-message">{error}</p>
+          )}
+
+          <form onSubmit={handleSubmit} aria-label="Login form" className="login-form">
+            <div className="form-group">
+              <label htmlFor="user-email">Email:</label>
+              <input
+                autoComplete="email"
+                name="user-email"
+                id="user-email"
+                type="email"
+                placeholder="Enter your email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="user-pass">Password:</label>
+              <input
+                autoComplete="current-password"
+                name="user-pass"
+                id="user-pass"
+                type="password"
+                placeholder="Enter your password."
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-actions">
+              <div className="checkbox-group">
+                <input 
+                  type="checkbox" 
+                  id="remember-me" 
+                  name="remember-me" 
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                />
+                <label htmlFor="remember-me">Remember me</label>
+              </div>
+
+              <button 
+                type="submit" 
+                className="btn-secondary" 
+                aria-label="Submit button"
+                disabled={loading}
+              >
+                {loading ? '...' : 'Login'}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <p className="login-restricted-text">
+          Access is restricted to accounts provisioned by the administrator. Please log in using your assigned credentials, or contact the administrator to request a password reset.
+        </p>
       </section>
     </main>
-  )
+  );
 }
