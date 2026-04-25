@@ -3,7 +3,7 @@ import { usePost } from '../hooks/usePost';
 import type { AuthResponse, HandleSubmitEvent, LoginFormData } from '../components/type/typesInterface';
 import { useNavigate } from 'react-router';
 import { AUTH_URLS } from '../apis';
-import './Login.css';
+import './style/Login.css';
 
 export default function Login() {
   const navigate = useNavigate();

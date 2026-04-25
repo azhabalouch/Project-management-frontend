@@ -1,7 +1,7 @@
 import { useLogout } from '../hooks/Auth/useLogoutUser';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
-import TaskCard from '../components/Task/TaskCard';
+import TaskCard from '../components/Task_depricated/TaskCard';
 import { useGet } from '../hooks/useGet';
 import { useEffect } from 'react';
 import { TASK_URLS } from '../apis';
