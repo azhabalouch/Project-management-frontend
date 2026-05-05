@@ -176,6 +176,10 @@ export default function Projects() {
             </div>
           )}
 
+          {deleteError && !editingProject && (
+            <div className='project-create-error'>{deleteError}</div>
+          )}
+
           {loading ? (
             <div className='home-loading-state'>
               <div className='loading-spinner'></div>
@@ -227,20 +231,28 @@ export default function Projects() {
                     <span className='project-card-date'>{formatDate(project.createdAt)}</span>
                   </div>
                   {confirmDeleteId === project.id && (
-                    <div className='project-confirm-delete'>
+                    <div className='project-confirm-delete' onClick={(e) => e.stopPropagation()}>
                       <span className='project-confirm-delete-text'>
                         Confirm deletion?
                       </span>
                       <button
                         className='btn-danger'
-                        onClick={() => handleDelete(project.id)}
+                        type='button'
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(project.id);
+                        }}
                         disabled={deleting}
                       >
                         {deleting ? 'Deleting...' : 'Yes, Delete'}
                       </button>
                       <button
                         className='btn-secondary'
-                        onClick={() => setConfirmDeleteId(null)}
+                        type='button'
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setConfirmDeleteId(null);
+                        }}
                       >
                         Cancel
                       </button>
