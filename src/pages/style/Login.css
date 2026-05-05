@@ -2,6 +2,8 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 .login-image-section {
@@ -136,4 +138,44 @@
   color: var(--text-primary);
   text-align: justify;
   line-height: 1.5;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .login-layout {
+    flex-direction: column-reverse;
+    padding: 16px;
+  }
+
+  .login-image-section {
+    display: none;
+  }
+
+  .login-content-section {
+    max-width: 100%;
+    padding: 8px 0;
+  }
+
+  .login-personal-text {
+    font-size: 2rem;
+    text-align: left;
+  }
+
+  .login-form-card {
+    padding: 2rem 1rem;
+  }
+
+  .login-form-card h1 {
+    font-size: 1.5rem;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .form-actions .btn-secondary {
+    width: 100%;
+  }
 }

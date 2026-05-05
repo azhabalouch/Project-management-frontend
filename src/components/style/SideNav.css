@@ -146,8 +146,11 @@
     align-items: center;
   }
 
+  /* Ensure logout (last group) remains accessible on small screens */
   .nav-links-group:last-child {
-    display: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .nav-link {

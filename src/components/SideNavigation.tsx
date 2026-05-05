@@ -23,8 +23,15 @@ export default function SideNavigation(){
   const { mobileNavOpen, closeMobileNav } = useUIContext();
 
   const handleLogout = async () => {
-    await logout();
-    addToast('Logged out successfully', 'success');
+    const ok = await logout();
+    if (ok) {
+      addToast('Logged out successfully', 'success');
+    } else {
+      addToast('Logged out locally; server logout failed.', 'error');
+      console.warn('Logout request failed — proceeding with local logout');
+    }
+    // Ensure mobile nav is closed and navigate to login regardless
+    closeMobileNav();
     navigate('/login', { replace: true });
   }
 

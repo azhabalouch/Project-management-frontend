@@ -195,6 +195,30 @@
   cursor: pointer;
 }
 
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .task-detail-layout {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .task-detail-card {
+    padding: 16px;
+  }
+
+  .task-detail-title {
+    font-size: 20px;
+  }
+
+  .task-detail-progress-slider {
+    width: 100%;
+  }
+
+  .breadcrumb-current {
+    max-width: 180px;
+  }
+}
+
 .task-detail-progress-bar-track {
   width: 100%;
   height: 10px;

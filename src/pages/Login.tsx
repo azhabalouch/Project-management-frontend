@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { usePost } from '../hooks/usePost';
 import type { AuthResponse, HandleSubmitEvent, LoginFormData } from '../components/type/typesInterface';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AUTH_URLS } from '../apis';
 import { useToast } from '../context/ToastContext';
 import './style/Login.css';

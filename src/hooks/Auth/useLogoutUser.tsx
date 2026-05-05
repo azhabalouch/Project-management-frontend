@@ -11,10 +11,7 @@ export const useLogout = () => {
 
     try {
       const res = await fetch(AUTH_URLS.logout, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        method: 'GET',
         credentials: 'include',
       });
 

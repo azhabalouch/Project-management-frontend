@@ -384,8 +384,8 @@ h4 {
   box-shadow: var(--shadow-card-hover);
   animation: toastSlideIn 0.3s ease;
   pointer-events: auto;
-  min-width: 280px;
-  max-width: 420px;
+  min-width: 0;
+  max-width: calc(100% - 32px);
 }
 
 .toast-success {
