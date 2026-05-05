@@ -132,6 +132,64 @@
   flex-shrink: 0;
 }
 
+.detail-action-menu {
+  position: relative;
+}
+
+.detail-action-menu-trigger {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--bg-surface);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.detail-action-menu-trigger:hover {
+  background-color: var(--bg-active);
+  color: var(--text-primary);
+}
+
+.detail-action-menu-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 168px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: var(--shadow-card-hover);
+  padding: 6px;
+  z-index: 20;
+}
+
+.detail-action-menu-item {
+  width: 100%;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-align: left;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.detail-action-menu-item:hover {
+  background-color: var(--bg-active);
+}
+
+.detail-action-menu-item-danger {
+  color: var(--status-error-text);
+}
+
 .task-detail-title {
   font-size: 32px;
   font-weight: 600;

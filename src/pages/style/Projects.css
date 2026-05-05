@@ -232,18 +232,24 @@
   min-height: 80px;
 }
 
-/* Confirm Delete */
-.project-confirm-delete {
-  margin-top: 12px;
-  display: flex;
-  gap: 8px;
-  align-items: center;
+/* Delete modal */
+.project-delete-modal {
+  max-width: 520px;
 }
 
-.project-confirm-delete-text {
-  font-size: 13px;
-  color: var(--status-error-text);
+.project-delete-copy {
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.project-delete-subcopy {
   font-family: var(--font-ui);
+  color: var(--status-error-text);
+  font-size: 13px;
+  margin: 8px 0 0 0;
 }
 
 /* Dark mode */

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DatePicker } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -77,9 +77,11 @@ export default function TaskDetail() {
   const [progress, setProgress] = useState(0);
   const [project, setProject] = useState('');
   const [tags, setTags] = useState<string[]>([]);
-  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [showActionMenu, setShowActionMenu] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [newSubtaskText, setNewSubtaskText] = useState('');
   const [subtasks, setSubtasks] = useState<Subtask[]>([]);
+  const actionMenuRef = useRef<HTMLDivElement | null>(null);
 
   const { execute: patchTask, loading: patching, error: patchError } = usePatch(TASK_URLS.patch);
   const { remove: deleteTask, loading: deleting, error: deleteError } = useDelete(TASK_URLS.delete);
@@ -101,6 +103,18 @@ export default function TaskDetail() {
       setSubtasks(task.subtasks ?? []);
     }
   }, [task]);
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (!actionMenuRef.current) return;
+      if (event.target instanceof Node && !actionMenuRef.current.contains(event.target)) {
+        setShowActionMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
 
   if (!task) {
     return (
@@ -190,10 +204,6 @@ export default function TaskDetail() {
   };
 
   const handleDelete = async () => {
-    if (!confirmDelete) {
-      setConfirmDelete(true);
-      return;
-    }
     const deleted = await deleteTask({ id: task.id });
     if (deleted) {
       removeTask(task.id);
@@ -316,13 +326,40 @@ export default function TaskDetail() {
                             Complete
                           </button>
                         )}
+                        <div className='detail-action-menu' ref={actionMenuRef}>
+                          <button
+                            className='detail-action-menu-trigger'
+                            type='button'
+                            aria-label='More actions'
+                            aria-haspopup='menu'
+                            aria-expanded={showActionMenu}
+                            onClick={() => setShowActionMenu((prev) => !prev)}
+                          >
+                            <img src="/dots.svg" alt="" width={16} height={16} />
+                          </button>
+                          {showActionMenu && (
+                            <div className='detail-action-menu-popover' role='menu'>
+                              <button
+                                type='button'
+                                role='menuitem'
+                                className='detail-action-menu-item detail-action-menu-item-danger'
+                                onClick={() => {
+                                  setShowActionMenu(false);
+                                  setShowDeleteModal(true);
+                                }}
+                              >
+                                Delete Task
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </>
                     ) : (
                       <>
                         <button className='btn-primary' onClick={handleSave} disabled={patching}>
                           {patching ? 'Saving...' : 'Save Changes'}
                         </button>
-                        <button className='btn-secondary' onClick={() => { setIsEditing(false); setConfirmDelete(false); }}>
+                        <button className='btn-secondary' onClick={() => setIsEditing(false)}>
                           Cancel
                         </button>
                       </>
@@ -575,24 +612,50 @@ export default function TaskDetail() {
                 </div>
               </div>
 
-              {/* Danger Zone */}
-              <div className='task-detail-sidebar-card task-detail-danger-zone'>
-                <h4>Danger Zone</h4>
-                <button
-                  className={confirmDelete ? 'btn-danger' : 'task-detail-delete-btn'}
-                  onClick={handleDelete}
-                  disabled={deleting}
-                >
-                  {confirmDelete ? 'Confirm Delete' : deleting ? 'Deleting...' : 'Delete Task'}
-                </button>
-                {confirmDelete && (
-                  <p className='task-detail-delete-warning'>This action cannot be undone.</p>
-                )}
-              </div>
             </div>
           </div>
         </section>
       </main>
+
+      {showDeleteModal && (
+        <div
+          className='modal-backdrop'
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !deleting) {
+              setShowDeleteModal(false);
+            }
+          }}
+        >
+          <div className='modal-content project-delete-modal' role='dialog' aria-modal='true' aria-labelledby='delete-task-heading'>
+            <div className='modal-header'>
+              <h2 id='delete-task-heading'>Delete Task</h2>
+              <button
+                className='modal-close-btn'
+                onClick={() => setShowDeleteModal(false)}
+                aria-label='Close modal'
+                disabled={deleting}
+              >
+                &times;
+              </button>
+            </div>
+            {deleteError && <div className='modal-error'>{deleteError}</div>}
+            <p className='project-delete-copy'>
+              This will permanently delete <strong>{task.title}</strong>.
+            </p>
+            <p className='project-delete-subcopy'>
+              This action cannot be undone.
+            </p>
+            <div className='modal-actions'>
+              <button className='btn-danger' type='button' onClick={handleDelete} disabled={deleting}>
+                {deleting ? 'Deleting...' : 'Delete Task'}
+              </button>
+              <button className='btn-secondary' type='button' onClick={() => setShowDeleteModal(false)} disabled={deleting}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -24,7 +24,7 @@ export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
-  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [deletingProject, setDeletingProject] = useState<Project | null>(null);
 
   const [newName, setNewName] = useState('');
   const [newDescription, setNewDescription] = useState('');
@@ -100,16 +100,13 @@ export default function Projects() {
     }
   };
 
-  const handleDelete = async (projectId: string) => {
-    if (confirmDeleteId !== projectId) {
-      setConfirmDeleteId(projectId);
-      return;
-    }
+  const handleDelete = async () => {
+    if (!deletingProject) return;
 
-    const result = await deleteProject({ id: projectId });
+    const result = await deleteProject({ projectId: deletingProject.id });
     if (result) {
-      setProjects((prev) => prev.filter((p) => p.id !== projectId));
-      setConfirmDeleteId(null);
+      setProjects((prev) => prev.filter((p) => p.id !== deletingProject.id));
+      setDeletingProject(null);
     }
   };
 
@@ -208,8 +205,11 @@ export default function Projects() {
                       </button>
                       <button
                         className='project-card-action-btn'
-                        onClick={(e) => { e.stopPropagation(); handleDelete(project.id); }}
-                        title={confirmDeleteId === project.id ? 'Click again to confirm' : 'Delete project'}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeletingProject(project);
+                        }}
+                        title='Delete project'
                         aria-label='Delete project'
                       >
                         <img src="/dots.svg" alt="Delete" width={iconS} height={iconS} />
@@ -230,34 +230,6 @@ export default function Projects() {
                     </div>
                     <span className='project-card-date'>{formatDate(project.createdAt)}</span>
                   </div>
-                  {confirmDeleteId === project.id && (
-                    <div className='project-confirm-delete' onClick={(e) => e.stopPropagation()}>
-                      <span className='project-confirm-delete-text'>
-                        Confirm deletion?
-                      </span>
-                      <button
-                        className='btn-danger'
-                        type='button'
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(project.id);
-                        }}
-                        disabled={deleting}
-                      >
-                        {deleting ? 'Deleting...' : 'Yes, Delete'}
-                      </button>
-                      <button
-                        className='btn-secondary'
-                        type='button'
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setConfirmDeleteId(null);
-                        }}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  )}
                 </div>
               ))}
             </div>
@@ -310,6 +282,46 @@ export default function Projects() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {deletingProject && (
+        <div
+          className='modal-backdrop'
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !deleting) {
+              setDeletingProject(null);
+            }
+          }}
+        >
+          <div className='modal-content project-delete-modal' role='dialog' aria-modal='true' aria-labelledby='delete-project-heading'>
+            <div className='modal-header'>
+              <h2 id='delete-project-heading'>Delete Project</h2>
+              <button
+                className='modal-close-btn'
+                onClick={() => setDeletingProject(null)}
+                aria-label='Close modal'
+                disabled={deleting}
+              >
+                &times;
+              </button>
+            </div>
+            {deleteError && <div className='modal-error'>{deleteError}</div>}
+            <p className='project-delete-copy'>
+              This will permanently delete <strong>{deletingProject.name}</strong>.
+            </p>
+            <p className='project-delete-subcopy'>
+              This action cannot be undone.
+            </p>
+            <div className='modal-actions'>
+              <button className='btn-danger' type='button' onClick={handleDelete} disabled={deleting}>
+                {deleting ? 'Deleting...' : 'Delete Project'}
+              </button>
+              <button className='btn-secondary' type='button' onClick={() => setDeletingProject(null)} disabled={deleting}>
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
