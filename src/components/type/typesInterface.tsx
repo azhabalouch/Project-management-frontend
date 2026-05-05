@@ -83,7 +83,7 @@ export interface CalendarEvent {
 
 export interface Todo {
   id: string;
-  title: string;
+  text: string;
   isCompleted: boolean;
   createdAt: string;
 }

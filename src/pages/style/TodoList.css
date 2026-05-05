@@ -150,11 +150,15 @@
   justify-content: center;
   transition: all 0.2s ease;
   flex-shrink: 0;
-  opacity: 0;
+  opacity: 0.75;
   padding: 0;
 }
 
 .todo-item:hover .todo-delete-btn {
+  opacity: 1;
+}
+
+.todo-item:focus-within .todo-delete-btn {
   opacity: 1;
 }
 
@@ -165,11 +169,18 @@
 
 .todo-delete-btn img {
   opacity: 0.6;
+  display: block;
 }
 
 .todo-delete-btn:hover img {
   opacity: 1;
   filter: none;
+}
+
+@media (hover: none) {
+  .todo-delete-btn {
+    opacity: 1;
+  }
 }
 
 /* Dark mode */

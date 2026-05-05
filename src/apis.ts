@@ -19,19 +19,19 @@ export const TASK_URLS = {
 } as const;
 
 export const PROJECT_URLS = {
-	get: `${API_BASE_URL}/project/project/get`,
-	create: `${API_BASE_URL}/project/project/create`,
-	patch: `${API_BASE_URL}/project/project/patch`,
-	delete: `${API_BASE_URL}/project/project/delete`,
+	get: `${API_BASE_URL}/user/project/get`,
+	create: `${API_BASE_URL}/user/project/create`,
+	patch: `${API_BASE_URL}/user/project/patch`,
+	delete: `${API_BASE_URL}/user/project/delete`,
 } as const;
 
 export const CALENDAR_URLS = {
-	get: `${API_BASE_URL}/calendar`,
+	get: `${API_BASE_URL}/user/event/get`,
 } as const;
 
 export const TODO_URLS = {
-	get: `${API_BASE_URL}/todo/todo/get`,
-	create: `${API_BASE_URL}/todo/todo/create`,
-	patch: `${API_BASE_URL}/todo/todo/patch`,
-	delete: `${API_BASE_URL}/todo/todo/delete`,
+	get: `${API_BASE_URL}/user/todo/get`,
+	create: `${API_BASE_URL}/user/todo/create`,
+	patch: `${API_BASE_URL}/user/todo/patch`,
+	delete: `${API_BASE_URL}/user/todo/delete`,
 } as const;

@@ -18,7 +18,7 @@ export default function TodoList() {
   const { remove: deleteTodo, loading: deleting } = useDelete(TODO_URLS.delete);
 
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [newTitle, setNewTitle] = useState('');
+  const [newText, setNewText] = useState('');
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
 
   const { addToast } = useToast();
@@ -37,32 +37,61 @@ export default function TodoList() {
     load();
   }, [fetchTodos]);
 
-  const normalizeTodo = (todo: any): Todo => ({
-    id: String(todo.id),
-    title: String(todo.title ?? ''),
-    isCompleted: Boolean(todo.isCompleted),
-    createdAt: String(todo.createdAt ?? ''),
-  });
+  const normalizeTodo = (todo: any): Todo => {
+    const rawId = todo?.id ?? todo?._id ?? todo?.todoId;
+    const rawText = todo?.text ?? todo?.title ?? todo?.todo ?? todo?.name ?? todo?.task;
+    const rawCompleted = todo?.isCompleted ?? todo?.completed ?? todo?.done;
+    const rawCreatedAt = todo?.createdAt ?? todo?.created_at ?? todo?.updatedAt;
+
+    return {
+      id: String(rawId ?? ''),
+      text: String(rawText ?? ''),
+      isCompleted: Boolean(rawCompleted),
+      createdAt: String(rawCreatedAt ?? ''),
+    };
+  };
 
   const handleCreate = async (e: HandleSubmitEvent) => {
     e.preventDefault();
-    if (!newTitle.trim()) return;
+    if (!newText.trim()) return;
 
-    const result = await createTodo({ title: newTitle.trim() });
+    const trimmedText = newText.trim();
+    const nowIso = new Date().toISOString();
+    const today = nowIso.split('T')[0];
+    const result = await createTodo({
+      text: trimmedText,
+      completed: false,
+      date: today,
+      createdAt: nowIso,
+      updatedAt: nowIso,
+    });
     if (result) {
       if (result === true) {
         const data = await fetchTodos();
         if (Array.isArray(data)) setTodos(data.map(normalizeTodo));
       } else if (typeof result === 'object') {
-        setTodos((prev) => [...prev, normalizeTodo(result)]);
+        const normalized = normalizeTodo(result);
+        setTodos((prev) => [
+          ...prev,
+          {
+            ...normalized,
+            text: normalized.text || trimmedText,
+          },
+        ]);
       }
-      setNewTitle('');
+      setNewText('');
       addToast('Todo added', 'success');
     }
   };
 
   const handleToggle = async (todo: Todo) => {
-    const result = await patchTodo({ id: todo.id, isCompleted: !todo.isCompleted });
+    const nextCompleted = !todo.isCompleted;
+    const result = await patchTodo({
+      id: todo.id,
+      todoId: todo.id,
+      isCompleted: nextCompleted,
+      completed: nextCompleted,
+    });
     if (result) {
       setTodos((prev) =>
         prev.map((t) => (t.id === todo.id ? { ...t, isCompleted: !t.isCompleted } : t))
@@ -71,7 +100,7 @@ export default function TodoList() {
   };
 
   const handleDelete = async (todoId: string) => {
-    const result = await deleteTodo({ id: todoId });
+    const result = await deleteTodo({ id: todoId, todoId });
     if (result) {
       setTodos((prev) => prev.filter((t) => t.id !== todoId));
       addToast('Todo removed', 'info');
@@ -107,13 +136,13 @@ export default function TodoList() {
           <form onSubmit={handleCreate} className='todo-input-bar'>
             <input
               type='text'
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
+              value={newText}
+              onChange={(e) => setNewText(e.target.value)}
               placeholder='Add a new to-do...'
               className='todo-input'
               disabled={creating}
             />
-            <button type='submit' className='btn-primary' disabled={creating || !newTitle.trim()}>
+            <button type='submit' className='btn-primary' disabled={creating || !newText.trim()}>
               {creating ? 'Adding...' : 'Add'}
             </button>
           </form>
@@ -157,6 +186,7 @@ export default function TodoList() {
                   <button
                     className={`todo-checkbox ${todo.isCompleted ? 'todo-checkbox--checked' : ''}`}
                     onClick={() => handleToggle(todo)}
+                    type='button'
                     disabled={patching}
                     aria-label={todo.isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
                   >
@@ -166,10 +196,11 @@ export default function TodoList() {
                       </svg>
                     )}
                   </button>
-                  <span className='todo-title'>{todo.title}</span>
+                  <span className='todo-title'>{todo.text}</span>
                   <button
                     className='todo-delete-btn'
                     onClick={() => handleDelete(todo.id)}
+                    type='button'
                     disabled={deleting}
                     aria-label='Delete todo'
                     title='Delete'
