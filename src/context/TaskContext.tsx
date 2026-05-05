@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { TASK_URLS } from '../apis';
-import type { Task, TaskContextValue } from '../components/type/typesInterface';
+import type { Task, Subtask, TaskContextValue } from '../components/type/typesInterface';
 
 export const TaskContext = createContext<TaskContextValue | undefined>(undefined);
 
@@ -13,6 +13,22 @@ export const normalizeTask = (task: any): Task => ({
 	isCompleted: Boolean(task.isCompleted),
 	createdAt: String(task.createdAt ?? ''),
 	dueDate: task.dueDate ? new Date(task.dueDate) : null,
+	priority: task.priority ?? undefined,
+	project: task.project ?? undefined,
+	tags: Array.isArray(task.tags) ? task.tags.map(String) : undefined,
+	assignee: task.assignee
+		? { name: String(task.assignee.name ?? ''), avatar: task.assignee.avatar ? String(task.assignee.avatar) : undefined }
+		: undefined,
+	progress: task.progress != null ? Number(task.progress) : undefined,
+	subtasks: Array.isArray(task.subtasks)
+		? task.subtasks.map((st: any): Subtask => ({
+			id: String(st.id),
+			text: String(st.text ?? ''),
+			completed: Boolean(st.completed),
+			createdAt: st.createdAt ? String(st.createdAt) : undefined,
+			updatedAt: st.updatedAt ? String(st.updatedAt) : undefined,
+		}))
+		: undefined,
 });
 
 const normalizeTasks = (tasks: unknown): Task[] => {
@@ -43,10 +59,21 @@ export const TaskProvider = () => {
 				credentials: 'include',
 			});
 
+			if (!res.ok) {
+				const contentType = res.headers.get('content-type');
+				const data = contentType?.includes('application/json') ? await res.json() : null;
+				const message =
+					data && typeof data === 'object' && 'message' in data && typeof data.message === 'string'
+						? data.message
+						: `Request failed with status ${res.status}`;
+				throw new Error(message);
+			}
+
 			const data = await res.json();
 			setTasks(normalizeTasks(Array.isArray(data) ? data.filter(isIncompleteTask) : []));
-		} catch (err: any) {
-			setError(err.message);
+		} catch (err: unknown) {
+			const message = err instanceof Error ? err.message : 'Failed to load tasks';
+			setError(message);
 		} finally {
 			setLoading(false);
 		}

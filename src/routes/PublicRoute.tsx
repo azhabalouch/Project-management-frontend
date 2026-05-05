@@ -7,7 +7,7 @@ export const PublicRoute = () => {
       redirectTo='/'
       loadingLabel='Loading...'
       blockedTitle='Already logged In'
-      blockedMessage='Redirecting in 3 seconds...'
+      blockedMessage='Redirecting to dashboard...'
     />
   );
 };

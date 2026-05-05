@@ -1,5 +1,13 @@
-export const usePatch = (URL: string) => {
-  const execute = async (data: unknown) => {
+import { useState } from 'react';
+
+export const usePatch = <TResponse = unknown, TPayload = unknown>(URL: string) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+
+  const execute = async (data: TPayload): Promise<TResponse | true | null> => {
+    setLoading(true);
+    setError('');
+
     try {
       const res = await fetch(URL, {
         method: 'PATCH',
@@ -23,13 +31,15 @@ export const usePatch = (URL: string) => {
         throw new Error(errorMessage);
       }
 
-      return parsedData ?? true;
+      return (parsedData as TResponse) ?? true;
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Unexpected error';
-      console.error(message);
+      setError(message);
       return null;
+    } finally {
+      setLoading(false);
     }
   };
 
-  return { execute };
+  return { execute, loading, error };
 }

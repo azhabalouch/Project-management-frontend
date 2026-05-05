@@ -41,18 +41,49 @@ export const AuthGate = ({
 
     const timerId = setTimeout(() => {
       navigate(redirectTo, { replace: true });
-    }, 3000);
+    }, 1500);
 
     return () => clearTimeout(timerId);
   }, [allowWhenAuthenticated, isAuthenticated, navigate, redirectTo]);
 
-  if (isAuthenticated === null) return <div>{loadingLabel}</div>;
+  if (isAuthenticated === null) {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        width: '100vw',
+        backgroundColor: 'var(--bg-main)',
+        gap: '12px',
+      }}>
+        <div className='loading-spinner' style={{ width: '32px', height: '32px', border: '3px solid var(--bg-input)', borderTopColor: 'var(--btn-primary-bg)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+        <span style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-ui)' }}>{loadingLabel}</span>
+      </div>
+    );
+  }
 
   const isBlocked =
     (allowWhenAuthenticated && isAuthenticated === false) ||
     (!allowWhenAuthenticated && isAuthenticated === true);
 
-  if (isBlocked) return <><h1>{blockedTitle}</h1><p>{blockedMessage}</p></>;
+  if (isBlocked) {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        width: '100vw',
+        backgroundColor: 'var(--bg-main)',
+        gap: '8px',
+      }}>
+        <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', color: 'var(--text-primary)' }}>{blockedTitle}</h1>
+        <p style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-body)' }}>{blockedMessage}</p>
+      </div>
+    );
+  }
 
   return <Outlet />;
 };

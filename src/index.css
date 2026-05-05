@@ -1,23 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Geist:wght@300;400;500;600;700&family=Lexend:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* 1. The Foundation */
-  --bg-main: #F9F8F6; /* Background */
-  --bg-main-nav: #F4EFED; /* App Nav Background */
-  --bg-main-content: #FCF8F6; /* App Main Background */
-  --bg-surface: #FFFFFF; /* Surface/Card Background */
-  --text-primary: #2D2C2A; /* Primary Text */
-  --text-secondary: #75736E; /* Secondary Text */
-  --border-color: #E5E3DF; /* Borders/Dividers */
-  --bg-active: #EAECEE; /* Active background color */
-  --bg-input: #EDEAEA; /* Input background color */
+  /* 1. The Foundation - Light Mode */
+  --bg-main: #F9F8F6;
+  --bg-main-nav: #F4EFED;
+  --bg-main-content: #FCF8F6;
+  --bg-surface: #FFFFFF;
+  --text-primary: #2D2C2A;
+  --text-secondary: #75736E;
+  --border-color: #E5E3DF;
+  --bg-active: #EAECEE;
+  --bg-input: #EDEAEA;
 
   /* 2. The Accents */
-  --accent-magenta: #D8226B; /* Primary Actions/Warnings */
-  --accent-green: #609914; /* Success/Done */
-  --accent-orange: #D37014; /* Warning/In Progress */
-  --accent-cyan: #1B8C9F; /* Interactive/Links */
-  --accent-yellow: #C4A000; /* Labels */
+  --accent-magenta: #D8226B;
+  --accent-green: #609914;
+  --accent-orange: #D37014;
+  --accent-cyan: #1B8C9F;
+  --accent-yellow: #C4A000;
   --accent-yellow-light: #F5EFD2;
 
   /* 3. Priorities (background / text) */
@@ -25,8 +25,8 @@
   --priority-high-text: #9E2A2B;
   --priority-medium-bg: #FEF0D9;
   --priority-medium-text: #9C6500;
-  --priority-random-bg: #E6F2F5;
-  --priority-random-text: #2B7A8B;
+  --priority-low-bg: #E6F2F5;
+  --priority-low-text: #2B7A8B;
   --priority-skippable-bg: #F0F0F0;
   --priority-skippable-text: #6E6E6E;
 
@@ -60,18 +60,36 @@
   --pct-completed-bg: #D1E7DD;
   --pct-completed-text: #0F5132;
 
-  /* Primary Button */
-  --btn-primary-bg: #0F766E; /* Deep Teal */
-  --btn-secondary-bg: #CD7E41; /* Rich Apricot mapped for login form button */
+  /* Buttons */
+  --btn-primary-bg: #CD7E41;
   --btn-primary-text: #FFFFFF;
+  --btn-secondary-bg: transparent;
+  --btn-secondary-text: #CD7E41;
+  --btn-secondary-border: #CD7E41;
+  --btn-danger-bg: #FCE8E8;
+  --btn-danger-text: #9E2A2B;
+  --btn-danger-border: #9E2A2B;
+  --btn-ghost-bg: transparent;
+  --btn-ghost-text: var(--text-secondary);
+  --btn-ghost-border: transparent;
 
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  /* Premium Glow Effects - Light Mode */
+  --glow-primary: rgba(205, 126, 65, 0.15);
+  --glow-secondary: rgba(205, 126, 65, 0.15);
+  --glow-accent: rgba(216, 34, 107, 0.15);
+  --glow-success: rgba(96, 153, 20, 0.15);
+  --shadow-glow: 0 0 20px var(--glow-primary);
+  --shadow-glow-hover: 0 0 30px var(--glow-primary);
+
+  /* Enterprise Shadows */
+  --shadow: rgba(0, 0, 0, 0.08) 0 10px 15px -3px, rgba(0, 0, 0, 0.04) 0 4px 6px -2px;
   --shadow-button: 0 0 8px 0 rgba(0, 0, 0, 0.05) inset, 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-filter:rgba(0, 0, 0, 0.05) 0 1px 2px 0px; 
-  --shadow-card: 0 2px 8px 0 rgba(0, 0, 0, 0.05);
+  --shadow-filter: rgba(0, 0, 0, 0.05) 0 1px 2px 0px;
+  --shadow-card: 0 2px 8px 0 rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 8px 24px 0 rgba(0, 0, 0, 0.12);
   --box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.05);
-  
+  --shadow-premium: 0 4px 20px rgba(0, 0, 0, 0.08), 0 0 40px rgba(205, 126, 65, 0.05);
+
   /* 6. Typography */
   --font-heading: 'Lexend', system-ui, sans-serif;
   --font-body: 'Fira Sans', system-ui, sans-serif;
@@ -84,13 +102,105 @@
   background: var(--bg-main);
 }
 
+/* Dark Mode */
+[data-theme="dark"] {
+  /* 1. The Foundation - Dark Mode */
+  --bg-main: #0A0A0B;
+  --bg-main-nav: #121214;
+  --bg-main-content: #0D0D0E;
+  --bg-surface: #1A1A1C;
+  --text-primary: #E5E5E5;
+  --text-secondary: #A1A1AA;
+  --border-color: #27272A;
+  --bg-active: #1F1F23;
+  --bg-input: #1F1F23;
+
+  /* 2. The Accents - Dark Mode */
+  --accent-magenta: #FF4D8C;
+  --accent-green: #4ADE80;
+  --accent-orange: #FB923C;
+  --accent-cyan: #22D3EE;
+  --accent-yellow: #FACC15;
+  --accent-yellow-light: #422006;
+
+  /* 3. Priorities - Dark Mode */
+  --priority-high-bg: rgba(255, 77, 140, 0.15);
+  --priority-high-text: #FF4D8C;
+  --priority-medium-bg: rgba(251, 146, 60, 0.15);
+  --priority-medium-text: #FB923C;
+  --priority-low-bg: rgba(34, 211, 238, 0.15);
+  --priority-low-text: #22D3EE;
+  --priority-skippable-bg: rgba(161, 161, 170, 0.1);
+  --priority-skippable-text: #A1A1AA;
+
+  /* 4. Status - Dark Mode */
+  --status-pending-bg: rgba(161, 161, 170, 0.1);
+  --status-pending-text: #A1A1AA;
+  --status-inprogress-bg: rgba(59, 130, 246, 0.15);
+  --status-inprogress-text: #60A5FA;
+  --status-notworking-bg: rgba(139, 92, 246, 0.15);
+  --status-notworking-text: #A78BFA;
+  --status-issue-bg: rgba(250, 204, 21, 0.15);
+  --status-issue-text: #FACC15;
+  --status-bug-bg: rgba(255, 77, 140, 0.15);
+  --status-bug-text: #FF4D8C;
+  --status-error-bg: rgba(239, 68, 68, 0.15);
+  --status-error-text: #F87171;
+  --status-skipped-bg: rgba(113, 113, 122, 0.1);
+  --status-skipped-text: #A1A1AA;
+
+  /* 5. Percentage - Dark Mode */
+  --pct-10-bg: rgba(74, 222, 128, 0.1);
+  --pct-10-text: #4ADE80;
+  --pct-35-bg: rgba(74, 222, 128, 0.2);
+  --pct-35-text: #4ADE80;
+  --pct-50-bg: rgba(74, 222, 128, 0.3);
+  --pct-50-text: #4ADE80;
+  --pct-75-bg: rgba(74, 222, 128, 0.4);
+  --pct-75-text: #4ADE80;
+  --pct-90-bg: rgba(74, 222, 128, 0.5);
+  --pct-90-text: #4ADE80;
+  --pct-completed-bg: rgba(74, 222, 128, 0.6);
+  --pct-completed-text: #4ADE80;
+
+  /* Buttons - Dark Mode */
+  --btn-primary-bg: #14B8A6;
+  --btn-primary-text: #FFFFFF;
+  --btn-secondary-bg: transparent;
+  --btn-secondary-text: #14B8A6;
+  --btn-secondary-border: #14B8A6;
+  --btn-danger-bg: rgba(239, 68, 68, 0.15);
+  --btn-danger-text: #F87171;
+  --btn-danger-border: #F87171;
+  --btn-ghost-bg: transparent;
+  --btn-ghost-text: var(--text-secondary);
+  --btn-ghost-border: transparent;
+
+  /* Premium Glow Effects - Dark Mode */
+  --glow-primary: rgba(20, 184, 166, 0.3);
+  --glow-secondary: rgba(249, 115, 22, 0.3);
+  --glow-accent: rgba(255, 77, 140, 0.3);
+  --glow-success: rgba(74, 222, 128, 0.3);
+  --shadow-glow: 0 0 30px var(--glow-primary);
+  --shadow-glow-hover: 0 0 50px var(--glow-primary);
+
+  /* Enterprise Shadows - Dark Mode */
+  --shadow: rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.3) 0 4px 6px -2px;
+  --shadow-button: 0 0 8px 0 rgba(0, 0, 0, 0.2) inset, 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-filter: rgba(0, 0, 0, 0.2) 0 1px 2px 0px;
+  --shadow-card: 0 4px 12px 0 rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 8px 24px 0 rgba(0, 0, 0, 0.4);
+  --box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.3);
+  --shadow-premium: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 60px rgba(20, 184, 166, 0.1);
+
+  color-scheme: dark;
+}
+
 #root {
-  width: 1440px;
+  width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: row;
-  justify-content: center;
-  align-items: center;
   background-color: var(--bg-main);
 }
 
@@ -106,16 +216,20 @@ h1, h2, h3, h4 {
 }
 
 h1 {
-  font-size: 48px;
+  font-size: 36px;
+  letter-spacing: -0.5px;
 }
 h2 {
-  font-size: 32px;
+  font-size: 28px;
+  letter-spacing: -0.3px;
 }
 h3 {
-  font-size: 24px;
+  font-size: 22px;
+  letter-spacing: -0.2px;
 }
 h4 {
-  font-size: 20px;
+  font-size: 18px;
+  letter-spacing: -0.1px;
 }
 
 .btn-primary {
@@ -123,50 +237,451 @@ h4 {
   color: var(--btn-primary-text);
   font-family: var(--font-ui);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.875rem;
   line-height: normal;
   box-shadow: var(--shadow-button);
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 8px;
   padding: 8px 16px 8px 16px;
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .btn-primary:hover {
   opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-glow);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-button);
 }
 
 .btn-primary:disabled {
-  opacity: 0.7;
+  opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .btn-secondary {
   background-color: var(--btn-secondary-bg);
-  color: var(--btn-primary-text);
+  color: var(--btn-secondary-text);
   font-family: var(--font-ui);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.875rem;
   line-height: normal;
-  box-shadow: var(--shadow-button);
-  border: none;
-  border-radius: 0.5rem;
-  padding: 8px 16px 8px 16px;
+  box-shadow: none;
+  border: 1.5px solid var(--btn-secondary-border);
+  border-radius: 8px;
+  padding: 7px 15px 7px 15px;
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .btn-secondary:hover {
-  opacity: 0.9;
+  background-color: var(--btn-secondary-text);
+  color: var(--btn-primary-text);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-glow);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 .btn-secondary:disabled {
-  opacity: 0.7;
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-secondary img {
+  filter: none;
+}
+
+.btn-secondary:hover img {
+  filter: brightness(0) invert(1);
+}
+
+.btn-danger {
+  background-color: var(--btn-danger-bg);
+  color: var(--btn-danger-text);
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 0.875rem;
+  line-height: normal;
+  border: 1.5px solid var(--btn-danger-border);
+  border-radius: 8px;
+  padding: 7px 15px 7px 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  background-color: var(--btn-danger-text);
+  color: white;
+  border-color: var(--btn-danger-text);
+}
+
+.btn-danger:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
-.btn-secondary img,
+.btn-ghost {
+  background-color: var(--btn-ghost-bg);
+  color: var(--btn-ghost-text);
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: normal;
+  border: 1.5px solid var(--btn-ghost-border);
+  border-radius: 8px;
+  padding: 7px 15px 7px 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-ghost:hover {
+  background-color: var(--bg-active);
+  color: var(--text-primary);
+}
+
+.btn-ghost:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .btn-primary img {
   filter: brightness(0) invert(1);
+}
+
+/* Toast Notifications */
+.toast-container {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: var(--shadow-card-hover);
+  animation: toastSlideIn 0.3s ease;
+  pointer-events: auto;
+  min-width: 280px;
+  max-width: 420px;
+}
+
+.toast-success {
+  background-color: var(--pct-completed-bg);
+  color: var(--pct-completed-text);
+  border: 1px solid var(--pct-completed-text);
+}
+
+.toast-error {
+  background-color: var(--status-error-bg);
+  color: var(--status-error-text);
+  border: 1px solid var(--status-error-text);
+}
+
+.toast-info {
+  background-color: var(--status-inprogress-bg);
+  color: var(--status-inprogress-text);
+  border: 1px solid var(--status-inprogress-text);
+}
+
+.toast-message {
+  flex: 1;
+}
+
+.toast-close {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 4px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.toast-close:hover {
+  opacity: 1;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Shared breadcrumb styles */
+.breadcrumb-link {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.breadcrumb-link:hover {
+  color: var(--btn-primary-bg);
+  text-decoration: underline;
+}
+
+.breadcrumb-separator {
+  color: var(--text-secondary);
+  opacity: 0.5;
+}
+
+.breadcrumb-current {
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Modal shared styles */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeInBackdrop 0.2s ease;
+}
+
+@keyframes fadeInBackdrop {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 32px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-premium);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.modal-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.modal-close-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background-color: var(--bg-active);
+}
+
+.modal-error {
+  background-color: var(--status-error-bg);
+  color: var(--status-error-text);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-form .form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.modal-form .form-group label {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.modal-form .form-group input[type='text'],
+.modal-form .form-group textarea,
+.modal-form .form-group select {
+  background-color: var(--bg-input);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.modal-form .form-group input[type='text']:focus,
+.modal-form .form-group textarea:focus,
+.modal-form .form-group select:focus {
+  outline: none;
+  border-color: var(--btn-primary-bg);
+  box-shadow: 0 0 0 3px var(--glow-primary);
+  background-color: var(--bg-active);
+}
+
+.modal-form .form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.modal-form .form-group select {
+  cursor: pointer;
+  appearance: auto;
+}
+
+.modal-form .form-group input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--btn-primary-bg);
+  cursor: pointer;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+/* Shared form styles */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.form-group label {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.form-group input[type='text'],
+.form-group textarea,
+.form-group select {
+  background-color: var(--bg-input);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.form-group input[type='text']:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--btn-primary-bg);
+  box-shadow: 0 0 0 3px var(--glow-primary);
+  background-color: var(--bg-active);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-group select {
+  cursor: pointer;
+  appearance: auto;
+}
+
+.form-required {
+  color: var(--status-error-text);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  :root {
+    font-size: 15px;
+  }
+
+  #root {
+    flex-direction: column;
+  }
 }

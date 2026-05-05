@@ -1,5 +1,13 @@
+import { useState } from 'react';
+
 export const useDelete = (URL: string) => {
-  const remove = async (data?: unknown) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+
+  const remove = async (data?: unknown): Promise<unknown | true | null> => {
+    setLoading(true);
+    setError('');
+
     const requestInit: RequestInit = {
       method: 'DELETE',
       headers: {
@@ -31,10 +39,12 @@ export const useDelete = (URL: string) => {
       return parsedData ?? true;
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Unexpected error';
-      console.error(message);
+      setError(message);
       return null;
+    } finally {
+      setLoading(false);
     }
   };
 
-  return { remove };
+  return { remove, loading, error };
 }

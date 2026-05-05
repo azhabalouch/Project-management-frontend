@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { usePost } from '../hooks/usePost';
 import type { AuthResponse, HandleSubmitEvent, LoginFormData } from '../components/type/typesInterface';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router-dom';
 import { AUTH_URLS } from '../apis';
+import { useToast } from '../context/ToastContext';
 import './style/Login.css';
 
 export default function Login() {
   const navigate = useNavigate();
+  const { addToast } = useToast();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,9 +24,10 @@ export default function Login() {
     if (responseData) {
       localStorage.setItem('firstName', responseData.firstName);
       localStorage.setItem('lastName', responseData.lastName);
+      addToast(`Welcome back, ${responseData.firstName}!`, 'success');
       navigate('/', { replace: true });
     }
-  }, [responseData, navigate]);
+  }, [responseData, navigate, addToast]);
 
   return (
     <main className="login-layout">

@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 export const useGet = <T,>(URL: string) => {
   const [responseData, setResponseData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
-  const execute = async () => {
+  const execute = useCallback(async () => {
     setLoading(true);
     setError('');
 
@@ -40,7 +40,7 @@ export const useGet = <T,>(URL: string) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [URL]);
 
   return { execute, responseData, loading, error };
 }

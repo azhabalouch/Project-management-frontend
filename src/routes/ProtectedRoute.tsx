@@ -7,7 +7,7 @@ export const ProtectedRoute = () => {
       redirectTo='/login'
       loadingLabel='Loading...'
       blockedTitle='Not logged In'
-      blockedMessage='Redirecting in 3 seconds...'
+      blockedMessage='Redirecting to login...'
     />
   );
 };
