@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import './style/Dropdown.css';
 
 export interface DropdownOption {
   value: string;

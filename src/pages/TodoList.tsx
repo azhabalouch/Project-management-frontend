@@ -8,8 +8,7 @@ import { useDelete } from '../hooks/useDelete';
 import { TODO_URLS } from '../apis';
 import { useToast } from '../context/ToastContext';
 import type { Todo, HandleSubmitEvent } from '../components/type/typesInterface';
-import './style/Home.css';
-import './style/TodoList.css';
+
 
 export default function TodoList() {
   const { execute: fetchTodos, loading, error } = useGet<Todo[]>(TODO_URLS.get);

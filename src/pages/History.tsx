@@ -7,7 +7,6 @@ import type { Task } from '../components/type/typesInterface';
 import { normalizeTask } from '../context/TaskContext';
 import SideNavigation from '../components/SideNavigation';
 import TopNavigation from '../components/TopNavigation';
-import './style/Home.css';
 
 export default function History(){
   const { execute, loading, error } = useGet<Task[]>(TASK_URLS.history);

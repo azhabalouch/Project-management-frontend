@@ -35,51 +35,23 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       }
 
       return (
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '100vh',
-          padding: '32px',
-          backgroundColor: 'var(--bg-main)',
-          color: 'var(--text-primary)',
-          fontFamily: 'var(--font-body)',
-          gap: '16px',
-          textAlign: 'center',
-        }}>
-          <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 600 }}>
+        <div className='flex min-h-screen flex-col items-center justify-center gap-4 bg-[var(--bg-main)] px-8 text-center text-[var(--text-primary)]'>
+          <h1 className='text-2xl font-semibold tracking-[-0.3px] text-[var(--text-primary)]'>
             Something went wrong
           </h1>
-          <p style={{ color: 'var(--text-secondary)', maxWidth: '400px' }}>
+          <p className='max-w-md text-[var(--text-secondary)]'>
             An unexpected error occurred. Please try refreshing the page.
           </p>
           {this.state.error && (
-            <pre style={{
-              background: 'var(--bg-surface)',
-              border: '1px solid var(--border-color)',
-              borderRadius: '8px',
-              padding: '12px 16px',
-              fontSize: '13px',
-              maxWidth: '600px',
-              overflow: 'auto',
-              textAlign: 'left',
-              color: 'var(--status-error-text)',
-            }}>
+            <pre className='max-w-3xl overflow-auto rounded-md border border-[var(--border-color)] bg-[var(--bg-surface)] px-4 py-3 text-left text-sm text-[var(--status-error-text)]'>
               {this.state.error.message}
             </pre>
           )}
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <button
-              className='btn-primary'
-              onClick={this.handleReset}
-            >
+          <div className='flex flex-wrap gap-3'>
+            <button className='btn-primary' onClick={this.handleReset}>
               Try Again
             </button>
-            <button
-              className='btn-secondary'
-              onClick={() => window.location.reload()}
-            >
+            <button className='btn-secondary' onClick={() => window.location.reload()}>
               Refresh Page
             </button>
           </div>

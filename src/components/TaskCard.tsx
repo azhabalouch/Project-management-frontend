@@ -1,5 +1,5 @@
+import type { MouseEvent } from 'react';
 import type { Task } from './type/typesInterface';
-import './style/TaskCard.css';
 
 interface TaskCardProps {
   task: Task;
@@ -23,57 +23,60 @@ const getTimeRemaining = (dueDate: Date | null): string => {
   return `${Math.ceil(days / 7)}w left`;
 };
 
-const getPriorityColor = (priority?: string): { bg: string; text: string } => {
+const getPriorityClasses = (priority?: string): { bg: string; text: string } => {
   switch (priority) {
-    case 'high': return { bg: 'var(--priority-high-bg)', text: 'var(--priority-high-text)' };
-    case 'medium': return { bg: 'var(--priority-medium-bg)', text: 'var(--priority-medium-text)' };
-    case 'low': return { bg: 'var(--priority-low-bg)', text: 'var(--priority-low-text)' };
-    case 'skippable': return { bg: 'var(--priority-skippable-bg)', text: 'var(--priority-skippable-text)' };
-    default: return { bg: 'var(--priority-low-bg)', text: 'var(--priority-low-text)' };
+    case 'high':
+      return { bg: 'bg-[var(--priority-high-bg)]', text: 'text-[var(--priority-high-text)]' };
+    case 'medium':
+      return { bg: 'bg-[var(--priority-medium-bg)]', text: 'text-[var(--priority-medium-text)]' };
+    case 'low':
+      return { bg: 'bg-[var(--priority-low-bg)]', text: 'text-[var(--priority-low-text)]' };
+    case 'skippable':
+      return { bg: 'bg-[var(--priority-skippable-bg)]', text: 'text-[var(--priority-skippable-text)]' };
+    default:
+      return { bg: 'bg-[var(--priority-low-bg)]', text: 'text-[var(--priority-low-text)]' };
   }
 };
 
-const getStatusColor = (status: string): { bg: string; text: string } => {
+const getStatusClasses = (status: string): { bg: string; text: string } => {
   const statusLower = status.toLowerCase();
   switch (statusLower) {
-    case 'pending': return { bg: 'var(--status-pending-bg)', text: 'var(--status-pending-text)' };
+    case 'pending':
+      return { bg: 'bg-[var(--status-pending-bg)]', text: 'text-[var(--status-pending-text)]' };
     case 'inprogress':
-    case 'in-progress': return { bg: 'var(--status-inprogress-bg)', text: 'var(--status-inprogress-text)' };
+    case 'in-progress':
+      return { bg: 'bg-[var(--status-inprogress-bg)]', text: 'text-[var(--status-inprogress-text)]' };
     case 'notworking':
-    case 'not-working': return { bg: 'var(--status-notworking-bg)', text: 'var(--status-notworking-text)' };
-    case 'issue': return { bg: 'var(--status-issue-bg)', text: 'var(--status-issue-text)' };
-    case 'bug': return { bg: 'var(--status-bug-bg)', text: 'var(--status-bug-text)' };
-    case 'error': return { bg: 'var(--status-error-bg)', text: 'var(--status-error-text)' };
-    case 'skipped': return { bg: 'var(--status-skipped-bg)', text: 'var(--status-skipped-text)' };
-    default: return { bg: 'var(--status-pending-bg)', text: 'var(--status-pending-text)' };
+    case 'not-working':
+      return { bg: 'bg-[var(--status-notworking-bg)]', text: 'text-[var(--status-notworking-text)]' };
+    case 'issue':
+      return { bg: 'bg-[var(--status-issue-bg)]', text: 'text-[var(--status-issue-text)]' };
+    case 'bug':
+      return { bg: 'bg-[var(--status-bug-bg)]', text: 'text-[var(--status-bug-text)]' };
+    case 'error':
+      return { bg: 'bg-[var(--status-error-bg)]', text: 'text-[var(--status-error-text)]' };
+    case 'skipped':
+      return { bg: 'bg-[var(--status-skipped-bg)]', text: 'text-[var(--status-skipped-text)]' };
+    default:
+      return { bg: 'bg-[var(--status-pending-bg)]', text: 'text-[var(--status-pending-text)]' };
   }
 };
 
-const getProgressColor = (progress: number): string => {
-  if (progress >= 90) return 'var(--pct-90-text)';
-  if (progress >= 75) return 'var(--pct-75-text)';
-  if (progress >= 50) return 'var(--pct-50-text)';
-  if (progress >= 35) return 'var(--pct-35-text)';
-  if (progress >= 10) return 'var(--pct-10-text)';
-  return 'var(--pct-10-text)';
-};
-
-const getProgressBg = (progress: number): string => {
-  if (progress >= 90) return 'var(--pct-90-bg)';
-  if (progress >= 75) return 'var(--pct-75-bg)';
-  if (progress >= 50) return 'var(--pct-50-bg)';
-  if (progress >= 35) return 'var(--pct-35-bg)';
-  if (progress >= 10) return 'var(--pct-10-bg)';
-  return 'var(--pct-10-bg)';
+const getProgressClasses = (progress: number): { bg: string; text: string } => {
+  if (progress >= 90) return { bg: 'bg-[var(--pct-90-bg)]', text: 'text-[var(--pct-90-text)]' };
+  if (progress >= 75) return { bg: 'bg-[var(--pct-75-bg)]', text: 'text-[var(--pct-75-text)]' };
+  if (progress >= 50) return { bg: 'bg-[var(--pct-50-bg)]', text: 'text-[var(--pct-50-text)]' };
+  if (progress >= 35) return { bg: 'bg-[var(--pct-35-bg)]', text: 'text-[var(--pct-35-text)]' };
+  if (progress >= 10) return { bg: 'bg-[var(--pct-10-bg)]', text: 'text-[var(--pct-10-text)]' };
+  return { bg: 'bg-[var(--pct-10-bg)]', text: 'text-[var(--pct-10-text)]' };
 };
 
 export default function TaskCard({ task, onEdit, editMode, selected, onToggleSelect }: TaskCardProps) {
-  const priorityColors = getPriorityColor(task.priority);
-  const statusColors = getStatusColor(task.status);
+  const priorityColors = getPriorityClasses(task.priority);
+  const statusColors = getStatusClasses(task.status);
   const timeRemaining = getTimeRemaining(task.dueDate);
   const progress = task.progress ?? 0;
-  const progressColor = getProgressColor(progress);
-  const progressBg = getProgressBg(progress);
+  const progressColors = getProgressClasses(progress);
 
   const handleCardClick = () => {
     if (editMode) {
@@ -83,102 +86,102 @@ export default function TaskCard({ task, onEdit, editMode, selected, onToggleSel
     }
   };
 
-  const handleCheckboxClick = (e: React.MouseEvent) => {
+  const handleCheckboxClick = (e: MouseEvent) => {
     e.stopPropagation();
     onToggleSelect?.();
   };
 
   return (
     <div
-      className={`task-card ${editMode ? 'task-card--edit-mode' : ''} ${selected ? 'task-card--selected' : ''}`}
+      className={`relative flex cursor-pointer overflow-hidden rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-soft transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover ${editMode ? 'ring-2 ring-[var(--btn-primary-bg)]/20' : ''} ${selected ? 'ring-2 ring-[var(--btn-primary-bg)]/30' : ''}`}
       onClick={handleCardClick}
       role={onEdit || editMode ? 'button' : undefined}
       tabIndex={0}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleCardClick(); }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') handleCardClick();
+      }}
     >
-      {/* Selection indicator for edit mode */}
       {editMode && (
-        <div className='task-card-checkbox' onClick={handleCheckboxClick}>
-          <div className={`task-card-checkbox-box ${selected ? 'task-card-checkbox-box--checked' : ''}`}>
+        <button className='absolute left-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-md border border-[var(--border-color)] bg-[var(--bg-surface)]' onClick={handleCheckboxClick} type='button' aria-label='Select task'>
+          <div className={`flex h-4 w-4 items-center justify-center rounded-sm border ${selected ? 'border-[var(--btn-primary-bg)] bg-[var(--btn-primary-bg)]' : 'border-[var(--border-color)] bg-[var(--bg-surface)]'}`}>
             {selected && (
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M11.6666 3.5L5.24992 9.91667L2.33325 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <svg width='14' height='14' viewBox='0 0 14 14' fill='none'>
+                <path d='M11.6666 3.5L5.24992 9.91667L2.33325 7' stroke='white' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' />
               </svg>
             )}
           </div>
-        </div>
+        </button>
       )}
 
-      {/* Priority accent bar */}
-      <div className='task-card-accent' style={{ backgroundColor: priorityColors.text }} />
+      <div className={`w-1.5 flex-shrink-0 ${priorityColors.text.replace('text-', 'bg-')}`} />
 
-      <div className='task-card-body'>
-        {/* Header with project and tags */}
-        <div className='task-card-header'>
-          <div className='task-card-header-left'>
-            {task.project && <span className='task-project'>{task.project}</span>}
+      <div className='flex min-w-0 flex-1 flex-col gap-4 p-4 md:p-5'>
+        <div className='flex items-start justify-between gap-3'>
+          <div className='flex min-w-0 flex-1 flex-wrap items-center gap-2'>
+            {task.project && (
+              <span className='rounded-full bg-[var(--bg-active)] px-3 py-1 text-xs font-semibold text-[var(--text-primary)]'>{task.project}</span>
+            )}
             {task.tags && task.tags.length > 0 && (
-              <div className='task-tags'>
+              <div className='flex flex-wrap gap-2'>
                 {task.tags.slice(0, 3).map((tag, index) => (
-                  <span key={index} className='task-tag'>{tag}</span>
+                  <span key={index} className='rounded-full border border-[var(--border-color)] bg-[var(--bg-surface)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text-secondary)]'>
+                    {tag}
+                  </span>
                 ))}
-                {task.tags.length > 3 && <span className='task-tag'>+{task.tags.length - 3}</span>}
+                {task.tags.length > 3 && (
+                  <span className='rounded-full border border-[var(--border-color)] bg-[var(--bg-surface)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text-secondary)]'>
+                    +{task.tags.length - 3}
+                  </span>
+                )}
               </div>
             )}
           </div>
-          <div className='task-card-header-right'>
-            <span className='task-badge task-badge--status' style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
-              {task.status}
-            </span>
+          <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${statusColors.bg} ${statusColors.text}`}>
+            {task.status}
+          </span>
+        </div>
+
+        <div className='space-y-2'>
+          <h3 className='text-[22px] font-medium tracking-[-0.2px] text-[var(--text-primary)]'>{task.title}</h3>
+          {task.description && <p className='max-w-3xl text-[14px] leading-6 text-[var(--text-secondary)]'>{task.description}</p>}
+        </div>
+
+        <div className='space-y-2'>
+          <div className='flex items-center justify-between text-[13px] font-medium'>
+            <span className='text-[var(--text-secondary)]'>Progress</span>
+            <span className={progressColors.text}>{progress}%</span>
+          </div>
+          <div className={`h-2 overflow-hidden rounded-full ${progressColors.bg}`}>
+            <div className='h-full rounded-full' style={{ width: `${progress}%`, backgroundColor: `var(--pct-${progress >= 90 ? '90' : progress >= 75 ? '75' : progress >= 50 ? '50' : progress >= 35 ? '35' : '10'}-text)` }} />
           </div>
         </div>
 
-        {/* Task title */}
-        <h3 className='task-title'>{task.title}</h3>
-
-        {/* Description */}
-        {task.description && (
-          <p className='task-description'>{task.description}</p>
-        )}
-
-        {/* Progress bar - always visible */}
-        <div className='task-progress'>
-          <div className='task-progress-info'>
-            <span className='task-progress-label'>Progress</span>
-            <span className='task-progress-percent' style={{ color: progressColor }}>{progress}%</span>
-          </div>
-          <div className='task-progress-track' style={{ backgroundColor: progressBg }}>
-            <div className='task-progress-bar' style={{ width: `${progress}%`, backgroundColor: progressColor }} />
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className='task-footer'>
-          <div className='task-badges'>
-            <span className='task-badge task-badge--priority' style={{ backgroundColor: priorityColors.bg, color: priorityColors.text }}>
+        <div className='flex items-end justify-between gap-3'>
+          <div className='flex flex-wrap items-center gap-2'>
+            <span className={`rounded-full px-3 py-1 text-xs font-semibold ${priorityColors.bg} ${priorityColors.text}`}>
               {task.priority || 'Low'}
             </span>
-            <span className='task-time'>
-              <img src="/clock.svg" alt="Time" width={14} height={14} />
+            <span className='inline-flex items-center gap-1.5 rounded-full bg-[var(--bg-active)] px-3 py-1 text-xs font-medium text-[var(--text-secondary)]'>
+              <img src='/clock.svg' alt='Time' width={14} height={14} />
               {timeRemaining}
             </span>
             {task.subtasks && task.subtasks.length > 0 && (
-              <span className='task-subtask-count'>
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <rect x="1" y="3" width="12" height="9" rx="2" stroke="currentColor" strokeWidth="1.5"/>
-                  <path d="M4 6H10M4 9H8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-                  <path d="M4 3V2C4 1.44772 4.44772 1 5 1H9C9.55228 1 10 1.44772 10 2V3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              <span className='inline-flex items-center gap-1.5 rounded-full bg-[var(--bg-active)] px-3 py-1 text-xs font-medium text-[var(--text-secondary)]'>
+                <svg width='14' height='14' viewBox='0 0 14 14' fill='none'>
+                  <rect x='1' y='3' width='12' height='9' rx='2' stroke='currentColor' strokeWidth='1.5' />
+                  <path d='M4 6H10M4 9H8' stroke='currentColor' strokeWidth='1.2' strokeLinecap='round' />
+                  <path d='M4 3V2C4 1.44772 4.44772 1 5 1H9C9.55228 1 10 1.44772 10 2V3' stroke='currentColor' strokeWidth='1.5' strokeLinecap='round' />
                 </svg>
-                {task.subtasks.filter(st => st.completed).length}/{task.subtasks.length}
+                {task.subtasks.filter((subtask) => subtask.completed).length}/{task.subtasks.length}
               </span>
             )}
           </div>
           {task.assignee && (
-            <div className='task-assignee'>
+            <div className='flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-[var(--border-color)]'>
               {task.assignee.avatar ? (
-                <img src={task.assignee.avatar} alt={task.assignee.name} className='assignee-avatar' />
+                <img src={task.assignee.avatar} alt={task.assignee.name} className='h-full w-full object-cover' />
               ) : (
-                <div className='assignee-avatar-placeholder'>
+                <div className='flex h-full w-full items-center justify-center bg-[var(--btn-primary-bg)] text-sm font-bold text-white'>
                   {task.assignee.name.charAt(0).toUpperCase()}
                 </div>
               )}

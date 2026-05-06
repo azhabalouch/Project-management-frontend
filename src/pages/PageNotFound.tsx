@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function PageNotFound(){
+export default function PageNotFound() {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -13,19 +13,11 @@ export default function PageNotFound(){
   }, [navigate]);
 
   return (
-    <main style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '100vh',
-      backgroundColor: 'var(--bg-main)',
-      gap: '8px',
-    }}>
-      <section aria-labelledby='page-heading' style={{ textAlign: 'center' }}>
-        <h1 id='page-heading' style={{ fontFamily: 'var(--font-heading)', fontSize: '48px', color: 'var(--text-primary)' }}>404</h1>
-        <p style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-body)' }}>Page not found. Redirecting...</p>
+    <main className='flex min-h-screen items-center justify-center bg-[var(--bg-main)] px-6'>
+      <section aria-labelledby='page-heading' className='text-center'>
+        <h1 id='page-heading' className='font-heading text-5xl font-medium text-[var(--text-primary)]'>404</h1>
+        <p className='mt-2 text-[var(--text-secondary)]'>Page not found. Redirecting...</p>
       </section>
     </main>
-  )
+  );
 }
