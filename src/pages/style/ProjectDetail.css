@@ -248,3 +248,23 @@
     flex-wrap: wrap;
   }
 }
+
+@media (max-width: 768px) {
+  .project-detail-card {
+    padding: 20px;
+  }
+
+  .project-detail-title {
+    font-size: 22px;
+  }
+
+  .project-detail-progress-stats {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .project-detail-tasks-header {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}

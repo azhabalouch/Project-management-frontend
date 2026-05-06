@@ -275,6 +275,27 @@
   .breadcrumb-current {
     max-width: 180px;
   }
+
+  .task-detail-header {
+    flex-direction: column;
+  }
+
+  .task-detail-header-actions {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .task-detail-field-row {
+    flex-direction: column;
+  }
+
+  .task-detail-subtask-delete {
+    opacity: 1;
+  }
+
+  .task-detail-not-found {
+    padding: 32px 16px;
+  }
 }
 
 .task-detail-progress-bar-track {

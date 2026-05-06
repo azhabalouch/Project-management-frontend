@@ -683,5 +683,6 @@ h4 {
 
   #root {
     flex-direction: column;
+    overflow-x: hidden;
   }
 }
