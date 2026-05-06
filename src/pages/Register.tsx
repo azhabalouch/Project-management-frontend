@@ -44,7 +44,7 @@ export default function Register(){
   }, [responseData, navigate, addToast])
 
   return (
-    <main className='flex min-h-screen items-center justify-center bg-[var(--bg-main)] px-6 py-10 sm:px-10'>
+    <main className='flex min-h-screen items-center justify-center px-6 py-10 sm:px-10'>
       <section className='w-full max-w-2xl'>
         <h1 className='font-heading text-[clamp(2.25rem,5vw,4rem)] font-medium tracking-[-0.5px] text-[var(--text-primary)]'>
           ... it's Personal

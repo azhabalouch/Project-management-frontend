@@ -46,7 +46,7 @@
   --pct-90-text: #18511E;
   --pct-completed-bg: #D1E7DD;
   --pct-completed-text: #0F5132;
-  --btn-primary-bg: #CD7E41;
+  --btn-primary-bg: #D27D2D;
   --btn-primary-text: #FFFFFF;
   --btn-secondary-bg: transparent;
   --btn-secondary-text: #CD7E41;
@@ -73,7 +73,16 @@
   font: 16px var(--font-body);
   color-scheme: light;
   color: var(--text-primary);
-  background: var(--bg-main);
+  background-color: var(--bg-main);
+  background-image:
+    radial-gradient(ellipse at 10% 20%, rgba(160, 130, 100, 0.08) 0%, transparent 40%),
+    radial-gradient(ellipse at 90% 80%, rgba(150, 120, 90, 0.06) 0%, transparent 45%),
+    radial-gradient(ellipse at 30% 70%, rgba(170, 140, 110, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 40%, rgba(140, 115, 85, 0.06) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 50%, rgba(160, 135, 105, 0.04) 0%, transparent 60%),
+    repeating-linear-gradient(0deg, rgba(139, 115, 85, 0.03) 0px, transparent 1px, transparent 2px, rgba(139, 115, 85, 0.03) 3px),
+    repeating-linear-gradient(90deg, rgba(139, 115, 85, 0.03) 0px, transparent 1px, transparent 2px, rgba(139, 115, 85, 0.03) 3px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 60px 60px, 60px 60px;
 }
 
 [data-theme='dark'] {
@@ -120,7 +129,7 @@
   --pct-90-text: #4ADE80;
   --pct-completed-bg: rgba(74, 222, 128, 0.6);
   --pct-completed-text: #4ADE80;
-  --btn-primary-bg: #14B8A6;
+  --btn-primary-bg: #40B5AD;
   --btn-primary-text: #FFFFFF;
   --btn-secondary-bg: transparent;
   --btn-secondary-text: #14B8A6;
@@ -138,11 +147,20 @@
   --shadow-glow-primary: 0 0 30px rgba(20, 184, 166, 0.3);
 
   color-scheme: dark;
+  background-image:
+    radial-gradient(ellipse at 10% 20%, rgba(120, 120, 130, 0.1) 0%, transparent 40%),
+    radial-gradient(ellipse at 90% 80%, rgba(110, 110, 120, 0.08) 0%, transparent 45%),
+    radial-gradient(ellipse at 30% 70%, rgba(130, 130, 140, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 40%, rgba(100, 100, 110, 0.08) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 50%, rgba(120, 120, 130, 0.05) 0%, transparent 60%),
+    repeating-linear-gradient(0deg, rgba(100, 100, 110, 0.04) 0px, transparent 1px, transparent 2px, rgba(100, 100, 110, 0.04) 3px),
+    repeating-linear-gradient(90deg, rgba(100, 100, 110, 0.04) 0px, transparent 1px, transparent 2px, rgba(100, 100, 110, 0.04) 3px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 60px 60px, 60px 60px;
 }
 
 body {
   margin: 0;
-  background: var(--bg-main);
+  background: transparent;
   color: var(--text-primary);
 }
 
@@ -151,7 +169,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: row;
-  background-color: var(--bg-main);
+  background: transparent;
 }
 
 h1,
@@ -557,7 +575,7 @@ h4 {
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  background-color: var(--bg-main);
+  background: transparent;
 }
 
 .home-main {

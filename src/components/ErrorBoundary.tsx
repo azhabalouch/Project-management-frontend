@@ -35,7 +35,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       }
 
       return (
-        <div className='flex min-h-screen flex-col items-center justify-center gap-4 bg-[var(--bg-main)] px-8 text-center text-[var(--text-primary)]'>
+        <div className='flex min-h-screen flex-col items-center justify-center gap-4 px-8 text-center text-[var(--text-primary)]'>
           <h1 className='text-2xl font-semibold tracking-[-0.3px] text-[var(--text-primary)]'>
             Something went wrong
           </h1>
