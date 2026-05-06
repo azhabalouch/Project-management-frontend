@@ -13,6 +13,7 @@ import type { Task, Subtask } from '../components/type/typesInterface';
 import SideNavigation from '../components/SideNavigation';
 import TopNavigation from '../components/TopNavigation';
 import Dropdown from '../components/Dropdown';
+import { ClockIcon, EditIcon, MoreHorizontalIcon, CloseIcon } from '../components/Icons';
 
 const getPriorityColor = (priority?: string): { bg: string; text: string } => {
   switch (priority) {
@@ -308,7 +309,7 @@ export default function TaskDetail() {
                         {task.priority || 'Low'}
                       </span>
                       <span className='flex items-center gap-1 font-ui text-xs font-medium text-text-secondary'>
-                        <img src="/clock.svg" alt="" width={14} height={14} />
+                        <ClockIcon size={14} />
                         {getTimeRemaining(task.dueDate)}
                       </span>
                     </div>
@@ -317,7 +318,7 @@ export default function TaskDetail() {
                     {!isEditing ? (
                       <>
                         <button className='btn-primary flex items-center gap-2' onClick={() => setIsEditing(true)}>
-                          <img src="/edit.svg" alt="" width={16} height={16} style={{ filter: 'brightness(0) invert(1)' }} />
+                          <EditIcon size={16} />
                           Edit
                         </button>
                         {!task.isCompleted && (
@@ -334,7 +335,7 @@ export default function TaskDetail() {
                             aria-expanded={showActionMenu}
                             onClick={() => setShowActionMenu((prev) => !prev)}
                           >
-                            <img src="/dots.svg" alt="" width={16} height={16} />
+                            <MoreHorizontalIcon size={16} />
                           </button>
                           {showActionMenu && (
                             <div className='absolute top-10 right-0 bg-surface-nav border border-border rounded-lg shadow-card-hover z-50 py-2 min-w-max' role='menu'>
@@ -455,7 +456,7 @@ export default function TaskDetail() {
                         </button>
                         <span className={`flex-1 font-body text-sm ${st.completed ? 'line-through text-text-secondary' : 'text-text-primary'}`}>{st.text}</span>
                         <button className='w-6 h-6 border-none rounded flex items-center justify-center bg-transparent text-text-secondary cursor-pointer transition-all flex-shrink-0 p-0 opacity-0 hover:bg-status-error-bg hover:text-status-error-text group-hover:opacity-100' onClick={() => handleDeleteSubtask(st.id)} aria-label='Delete subtask'>
-                          <img src="/close.svg" alt="" width={14} height={14} />
+                          <CloseIcon size={14} />
                         </button>
                       </li>
                     ))}

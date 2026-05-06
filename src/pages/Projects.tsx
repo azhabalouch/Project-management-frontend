@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SideNavigation from '../components/SideNavigation';
 import TopNavigation from '../components/TopNavigation';
+import { PlusIcon, ErrorIcon, EditIcon, MoreHorizontalIcon, TaskIcon, EmptyStateIcon } from '../components/Icons';
 import { useGet } from '../hooks/useGet';
 import { usePost } from '../hooks/usePost';
 import { usePatch } from '../hooks/usePatch';
@@ -128,7 +129,7 @@ export default function Projects() {
               className='btn-primary flex items-center gap-2'
               onClick={() => setShowCreateForm(!showCreateForm)}
             >
-              <img src="/add.svg" alt="Add" width={iconS} height={iconS} />
+              <PlusIcon size={iconS} />
               {showCreateForm ? 'Cancel' : 'New Project'}
             </button>
           </div>
@@ -183,7 +184,7 @@ export default function Projects() {
             </div>
           ) : error ? (
             <div className='flex flex-col items-center justify-center py-16 gap-4'>
-              <img src="/error.svg" alt="Error" width={48} height={48} />
+              <ErrorIcon size={48} className="text-text-secondary" />
               <p className='font-body text-base text-text-secondary'>Unable to load projects. Please try again.</p>
               <button className='btn-primary' onClick={fetchProjects}>Retry</button>
             </div>
@@ -201,7 +202,7 @@ export default function Projects() {
                         title='Edit project'
                         aria-label='Edit project'
                       >
-                        <img src="/edit.svg" alt="Edit" width={iconS} height={iconS} />
+                        <EditIcon size={iconS} />
                       </button>
                       <button
                         className='w-8 h-8 border-none rounded flex items-center justify-center bg-transparent text-text-secondary hover:bg-bg-active hover:text-text-primary cursor-pointer transition-all'
@@ -212,7 +213,7 @@ export default function Projects() {
                         title='Delete project'
                         aria-label='Delete project'
                       >
-                        <img src="/dots.svg" alt="Delete" width={iconS} height={iconS} />
+                        <MoreHorizontalIcon size={iconS} />
                       </button>
                     </div>
                   </div>
@@ -223,7 +224,7 @@ export default function Projects() {
                     <div className='flex gap-3 items-center'>
                       {project.taskCount != null && (
                         <span className='flex items-center gap-1 font-ui text-xs text-text-secondary'>
-                          <img src="/task.svg" alt="Tasks" width={12} height={12} />
+                          <TaskIcon size={12} />
                           {project.taskCount} task{project.taskCount !== 1 ? 's' : ''}
                         </span>
                       )}
@@ -235,7 +236,7 @@ export default function Projects() {
             </div>
           ) : (
             <div className='flex flex-col items-center justify-center py-16 gap-4 text-center'>
-              <img src="/empty.svg" alt="No projects" width={64} height={64} className='opacity-30' />
+              <EmptyStateIcon size={64} className="opacity-30 text-text-secondary" />
               <h3 className='font-heading text-2xl font-semibold text-text-primary m-0'>No projects yet</h3>
               <p className='font-body text-base text-text-secondary m-0'>Create a project to organize your tasks</p>
             </div>

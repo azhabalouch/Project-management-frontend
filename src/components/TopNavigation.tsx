@@ -35,10 +35,10 @@ export default function TopNavigation({ onSearch }: TopNavigationProps) {
 
     syncName();
     window.addEventListener('storage', syncName);
-    const interval = setInterval(syncName, 2000);
+    window.addEventListener('user-name-changed', syncName);
     return () => {
       window.removeEventListener('storage', syncName);
-      clearInterval(interval);
+      window.removeEventListener('user-name-changed', syncName);
     };
   }, []);
 
@@ -71,43 +71,43 @@ export default function TopNavigation({ onSearch }: TopNavigationProps) {
   const initials = (userName.firstName.charAt(0) + userName.lastName.charAt(0)).toUpperCase() || 'U';
 
   return (
-    <header className='flex h-14 shrink-0 items-center gap-2 border-b border-[var(--border-color)] bg-[var(--bg-main-nav)] px-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] md:h-16 md:gap-4 md:px-8'>
+    <header className='flex h-[72px] shrink-0 items-center gap-2 border-b border-border bg-surface-nav px-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] md:gap-4 md:px-8'>
       <button
-        className='flex h-10 w-10 items-center justify-center rounded-md border border-transparent bg-transparent text-[var(--text-secondary)] md:hidden'
+        className='flex h-10 w-10 items-center justify-center rounded-md border border-transparent bg-transparent text-text-secondary md:hidden'
         aria-label='Toggle navigation'
         onClick={() => toggleMobileNav()}
       >
         <MenuIcon size={20} />
       </button>
-      <div className='flex min-w-0 flex-1 items-center rounded-md border border-[var(--border-color)] bg-[var(--bg-surface)] px-3 py-2 transition-[border-color,box-shadow] focus-within:border-[var(--btn-primary-bg)] focus-within:shadow-[0_0_0_3px_var(--glow-primary)] md:max-w-[400px] md:px-4'>
-        <SearchIcon size={iconS} className='shrink-0 text-[var(--text-secondary)]' />
+      <div className='flex min-w-0 flex-1 items-center rounded-md border border-border bg-surface-default px-3 py-2 transition-[border-color,box-shadow] focus-within:border-brand-primary focus-within:shadow-[0_0_0_3px_var(--glow-primary)] md:max-w-[400px] md:px-4'>
+        <SearchIcon size={iconS} className='shrink-0 text-text-secondary' />
         <input
           type='text'
           placeholder='Search tasks ...'
           value={searchValue}
           onChange={handleSearchChange}
           aria-label='Search tasks'
-          className='ml-2 w-full border-0 bg-transparent text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-secondary)]'
+          className='ml-2 w-full border-0 bg-transparent text-sm text-text-primary outline-none placeholder:text-text-secondary'
         />
       </div>
       <div className='ml-auto flex items-center gap-2 md:gap-4'>
         <button
-          className='flex h-9 w-9 items-center justify-center rounded-md border border-[var(--border-color)] bg-[var(--bg-surface)] transition-all hover:border-[var(--text-secondary)] hover:bg-[var(--bg-active)]'
+          className='flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface-default transition-all hover:border-text-secondary hover:bg-bg-active'
           onClick={toggleTheme}
           title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
           aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
         >
-          {isDarkMode ? <SunIcon size={iconS} className='text-[var(--text-secondary)]' /> : <MoonIcon size={iconS} className='text-[var(--text-secondary)]' />}
+          {isDarkMode ? <SunIcon size={iconS} className='text-text-secondary' /> : <MoonIcon size={iconS} className='text-text-secondary' />}
         </button>
         <button className='btn-primary flex items-center gap-2' onClick={() => navigate('/task-create')}>
           <PlusIcon size={iconS} />
           <span className='hidden sm:inline'>New Task</span>
         </button>
         <div
-          className='flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-[var(--border-color)]'
+          className='flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-border'
           title={`${userName.firstName} ${userName.lastName}`.trim() || 'Profile'}
         >
-          <div className='flex h-full w-full items-center justify-center bg-[var(--btn-primary-bg)] text-[13px] font-bold text-white'>
+          <div className='flex h-full w-full items-center justify-center bg-brand-primary text-[13px] font-bold text-white'>
             {initials}
           </div>
         </div>

@@ -7,6 +7,7 @@ import { PROJECT_URLS } from '../apis';
 import SideNavigation from '../components/SideNavigation';
 import TopNavigation from '../components/TopNavigation';
 import TaskCard from '../components/TaskCard';
+import { EmptyStateIcon, MoreHorizontalIcon, PlusIcon } from '../components/Icons';
 
 export default function ProjectDetail() {
   const { id } = useParams<{ id: string }>();
@@ -65,7 +66,7 @@ export default function ProjectDetail() {
           <TopNavigation />
           <section className='flex-1 px-4 py-6 md:px-16 md:py-8 overflow-y-auto flex flex-col gap-6'>
             <div className='flex flex-col items-center justify-center py-16 gap-4 text-center'>
-              <img src="/empty.svg" alt="Not found" width={64} height={64} className='opacity-30' />
+              <EmptyStateIcon size={64} className="opacity-30 text-text-secondary" />
               <h3 className='font-heading text-2xl font-semibold text-text-primary m-0'>Project not found</h3>
               <p className='font-body text-base text-text-secondary m-0'>The project you're looking for doesn't exist or has been deleted.</p>
               <button className='btn-primary' onClick={() => navigate('/projects')}>Back to Projects</button>
@@ -109,7 +110,7 @@ export default function ProjectDetail() {
                         aria-expanded={showActionMenu}
                         onClick={() => setShowActionMenu((prev) => !prev)}
                       >
-                        <img src="/dots.svg" alt="" width={16} height={16} />
+                        <MoreHorizontalIcon size={16} />
                       </button>
                       {showActionMenu && (
                         <div className='absolute top-10 right-0 bg-surface-nav border border-border rounded-lg shadow-card-hover z-50 py-2 min-w-max' role='menu'>
@@ -168,7 +169,7 @@ export default function ProjectDetail() {
                     className='btn-primary flex items-center gap-2'
                     onClick={() => navigate('/task-create')}
                   >
-                    <img src="/add.svg" alt="Add" width={16} height={16} />
+                    <PlusIcon size={16} />
                     Add Task
                   </button>
                 </div>
@@ -186,7 +187,7 @@ export default function ProjectDetail() {
                   </ul>
                 ) : (
                   <div className='flex flex-col items-center justify-center py-16 gap-4 text-center'>
-                    <img src="/empty.svg" alt="No tasks" width={64} height={64} className='opacity-30' />
+                    <EmptyStateIcon size={64} className="opacity-30 text-text-secondary" />
                     <h3 className='font-heading text-2xl font-semibold text-text-primary m-0'>No tasks in this project</h3>
                     <p className='font-body text-base text-text-secondary m-0'>Create a task and assign it to this project</p>
                   </div>

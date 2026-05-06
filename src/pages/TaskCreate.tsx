@@ -11,6 +11,7 @@ import { TASK_URLS } from '../apis';
 import SideNavigation from '../components/SideNavigation';
 import TopNavigation from '../components/TopNavigation';
 import Dropdown from '../components/Dropdown';
+import { CloseIcon } from '../components/Icons';
 
 export default function TaskCreate(){
   const [title, setTitle] = useState('');
@@ -260,7 +261,7 @@ export default function TaskCreate(){
                             </button>
                             <span className={`flex-1 font-body text-sm ${st.completed ? 'line-through text-text-secondary opacity-70' : 'text-text-primary'}`}>{st.text}</span>
                             <button type='button' className='w-6 h-6 border-none rounded flex items-center justify-center bg-transparent text-text-secondary cursor-pointer transition-all flex-shrink-0 p-0 opacity-0 hover:bg-status-error-bg hover:text-status-error-text group-hover:opacity-100' onClick={() => setSubtasks(prev => prev.filter(s => s.id !== st.id))}>
-                              <img src="/close.svg" alt="" width={14} height={14} />
+                              <CloseIcon size={14} />
                             </button>
                           </li>
                         ))}

@@ -29,28 +29,32 @@ export default function Login() {
   }, [responseData, navigate, addToast]);
 
   return (
-    <main className='grid min-h-screen lg:grid-cols-[1.05fr_0.95fr]'>
-      <section className='hidden overflow-hidden bg-[var(--bg-main-nav)] lg:block'>
-        <img alt='Woman' src='/women.png' className='h-full w-full object-cover' />
+    <main className='flex min-h-screen w-full items-center justify-center flex-col-reverse md:flex-row'>
+      <section className='hidden md:flex h-auto flex-row justify-end overflow-hidden'>
+        <img alt='Woman' src='/women.png' className='h-auto w-auto max-h-[80vh] translate-x-4 object-contain' />
       </section>
 
-      <section className='flex flex-col justify-center gap-8 px-6 py-10 sm:px-10 lg:px-16'>
-        <h1 className='font-heading text-[clamp(2.25rem,5vw,4rem)] font-medium tracking-[-0.5px] text-[var(--text-primary)]'>
-          ... it’s Personal
+      <section className='flex flex-col justify-center max-w-[560px] z-10 px-4 py-4 md:px-0 md:py-0'>
+        <h1 className='font-serif text-[2rem] md:text-[4rem] text-right mb-4 text-[var(--text-primary)]'>
+          ... it's Personal
         </h1>
 
-        <div className='w-full max-w-xl rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 shadow-premium sm:p-8'>
-          <h1 id='login-heading' className='text-[28px] font-semibold tracking-[-0.3px]'>Login</h1>
+        <div className='flex flex-col bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-lg p-8 md:p-16 gap-4 max-w-[560px] shadow-premium'>
+          <h1 id='login-heading' className='font-heading text-left font-normal text-[1.5rem] md:text-[2rem] text-[var(--text-primary)]'>
+            Login
+          </h1>
 
           {!loading && error && (
-            <p className='mt-4 rounded-md border border-[var(--status-error-text)] bg-[var(--status-error-bg)] px-4 py-3 text-sm text-[var(--status-error-text)]'>
+            <p className='text-[var(--status-error-text)] mb-4 font-ui text-sm'>
               {error}
             </p>
           )}
 
-          <form onSubmit={handleSubmit} aria-label='Login form' className='mt-6 space-y-5'>
-            <div className='form-group'>
-              <label htmlFor='user-email'>Email:</label>
+          <form onSubmit={handleSubmit} aria-label='Login form' className='flex flex-col gap-4'>
+            <div className='flex flex-col text-left'>
+              <label htmlFor='user-email' className='font-ui text-base text-[var(--text-secondary)] mb-2'>
+                Email
+              </label>
               <input
                 autoComplete='email'
                 name='user-email'
@@ -60,24 +64,28 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className='bg-[var(--bg-input)] border border-transparent rounded-lg h-12 px-4 font-body text-base text-[var(--text-secondary)] placeholder:text-[var(--text-secondary)] placeholder:opacity-50 focus:outline-none focus:bg-[var(--bg-active)] focus:text-[var(--text-primary)] focus:border-[var(--btn-primary-bg)]'
               />
             </div>
 
-            <div className='form-group'>
-              <label htmlFor='user-pass'>Password:</label>
+            <div className='flex flex-col text-left'>
+              <label htmlFor='user-pass' className='font-ui text-base text-[var(--text-secondary)] mb-2'>
+                Password
+              </label>
               <input
                 autoComplete='current-password'
                 name='user-pass'
                 id='user-pass'
                 type='password'
-                placeholder='Enter your password.'
+                placeholder='Enter your password'
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className='bg-[var(--bg-input)] border border-transparent rounded-lg h-12 px-4 font-body text-base text-[var(--text-secondary)] placeholder:text-[var(--text-secondary)] placeholder:opacity-50 focus:outline-none focus:bg-[var(--bg-active)] focus:text-[var(--text-primary)] focus:border-[var(--btn-primary-bg)]'
               />
             </div>
 
-            <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+            <div className='flex flex-col-reverse md:flex-row items-stretch md:items-center justify-between gap-3 md:gap-0 mt-4'>
               <div className='flex items-center gap-2'>
                 <input
                   type='checkbox'
@@ -85,14 +93,16 @@ export default function Login() {
                   name='remember-me'
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className='h-5 w-5 cursor-pointer accent-[var(--btn-primary-bg)]'
+                  className='w-4 h-4 accent-[var(--text-primary)] cursor-pointer'
                 />
-                <label htmlFor='remember-me' className='text-sm text-[var(--text-primary)]'>Remember me</label>
+                <label htmlFor='remember-me' className='font-ui text-sm text-[var(--text-primary)] cursor-pointer'>
+                  Remember me
+                </label>
               </div>
 
               <button
                 type='submit'
-                className='btn-secondary min-w-[120px]'
+                className='btn-secondary min-w-[120px] w-full md:w-auto'
                 aria-label='Submit button'
                 disabled={loading}
               >
@@ -102,7 +112,7 @@ export default function Login() {
           </form>
         </div>
 
-        <p className='max-w-2xl text-sm leading-6 text-[var(--text-secondary)]'>
+        <p className='font-body font-normal italic text-sm text-[var(--text-primary)] text-justify leading-6 mt-4'>
           Access is restricted to accounts provisioned by the administrator. Please log in using your assigned credentials, or contact the administrator to request a password reset.
         </p>
       </section>

@@ -8,6 +8,7 @@ import { TASK_URLS } from '../apis';
 import TaskCard from '../components/TaskCard';
 import SideNavigation from '../components/SideNavigation';
 import TopNavigation from '../components/TopNavigation';
+import { EditIcon, ErrorIcon, EmptyStateIcon } from '../components/Icons';
 
 type FilterType = 'all' | 'high' | 'medium' | 'low' | 'in-progress' | 'pending' | 'skipped' | 'bug';
 type SortType = 'newest' | 'oldest' | 'due-date' | 'priority';
@@ -222,7 +223,7 @@ export default function Home() {
                 </div>
               ) : (
                 <button className='flex items-center gap-2 rounded-sm border border-border bg-surface-nav px-4 py-2 font-ui text-sm font-medium text-text-primary cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-primary hover:shadow-button' onClick={() => setEditMode(true)}>
-                  <img src="/edit.svg" alt="Edit" width={18} height={18} className='opacity-70 hover:opacity-100' />
+                  <EditIcon size={18} className="opacity-70 hover:opacity-100" />
                   Edit
                 </button>
               )}
@@ -230,13 +231,13 @@ export default function Home() {
           </div>
 
           <div className='flex flex-col gap-3 rounded-lg border border-border bg-surface-nav px-4 py-3 shadow-filter transition-all duration-300 hover:shadow-card md:flex-row md:items-center md:justify-between md:py-2'>
-            <div className='-mx-1 flex items-center gap-2 overflow-x-auto pb-1 pr-1 md:mx-0 md:gap-4 md:overflow-visible md:pb-0 md:pr-0'>
+            <div className='-mx-1 flex flex-wrap items-center gap-2 pb-1 pr-1 md:mx-0 md:gap-2 md:pb-0 md:pr-0'>
               {filters.map((filter, index) => (
-                <span key={filter.key} className='flex items-center gap-2 md:gap-4 shrink-0'>
+                <span key={filter.key} className='flex items-center gap-2 md:gap-2'>
                   {index > 0 && <div className='w-px h-6 bg-border hidden md:block'></div>}
                   <button
                     type='button'
-                    className={`whitespace-nowrap rounded border px-3 py-1 font-ui text-xs font-medium cursor-pointer user-select-none transition-all duration-200 ${activeFilter === filter.key ? activeFilterChipClassNames[filter.key] : filterChipClassNames[filter.key]}`}
+                    className={`whitespace-nowrap rounded border px-2.5 py-1 font-ui text-xs font-medium cursor-pointer user-select-none transition-all duration-200 ${activeFilter === filter.key ? activeFilterChipClassNames[filter.key] : filterChipClassNames[filter.key]}`}
                     onClick={() => setActiveFilter(filter.key)}
                   >
                     {filter.label}
@@ -272,7 +273,7 @@ export default function Home() {
             </div>
           ) : error ? (
             <div className='flex flex-col items-center justify-center py-16 gap-4'>
-              <img src="/error.svg" alt="Error" width={48} height={48} />
+              <ErrorIcon size={48} className="text-text-secondary" />
               <p className='font-body text-base text-text-secondary'>Unable to load tasks. Please try again.</p>
               <button className='btn-primary' onClick={() => window.location.reload()}>Retry</button>
             </div>
@@ -292,7 +293,7 @@ export default function Home() {
             </ul>
           ) : (
             <div className='flex flex-col items-center justify-center py-16 gap-4 text-center'>
-              <img src="/empty.svg" alt="No tasks" width={64} height={64} className='opacity-30' />
+              <EmptyStateIcon size={64} className="opacity-30 text-text-secondary" />
               <h3 className='font-heading text-2xl font-semibold text-text-primary m-0'>No tasks found</h3>
               <p className='font-body text-base text-text-secondary m-0'>{searchQuery || activeFilter !== 'all' ? 'Try adjusting your filters or search' : 'Click "New Task" to create your first task'}</p>
             </div>

@@ -1,5 +1,6 @@
 import type { MouseEvent } from 'react';
 import type { Task } from './type/typesInterface';
+import { ClockIcon } from './Icons';
 
 interface TaskCardProps {
   task: Task;
@@ -26,15 +27,15 @@ const getTimeRemaining = (dueDate: Date | null): string => {
 const getPriorityClasses = (priority?: string): { bg: string; text: string } => {
   switch (priority) {
     case 'high':
-      return { bg: 'bg-[var(--priority-high-bg)]', text: 'text-[var(--priority-high-text)]' };
+      return { bg: 'bg-priority-high-bg', text: 'text-priority-high-text' };
     case 'medium':
-      return { bg: 'bg-[var(--priority-medium-bg)]', text: 'text-[var(--priority-medium-text)]' };
+      return { bg: 'bg-priority-medium-bg', text: 'text-priority-medium-text' };
     case 'low':
-      return { bg: 'bg-[var(--priority-low-bg)]', text: 'text-[var(--priority-low-text)]' };
+      return { bg: 'bg-priority-low-bg', text: 'text-priority-low-text' };
     case 'skippable':
-      return { bg: 'bg-[var(--priority-skippable-bg)]', text: 'text-[var(--priority-skippable-text)]' };
+      return { bg: 'bg-priority-skippable-bg', text: 'text-priority-skippable-text' };
     default:
-      return { bg: 'bg-[var(--priority-low-bg)]', text: 'text-[var(--priority-low-text)]' };
+      return { bg: 'bg-priority-low-bg', text: 'text-priority-low-text' };
   }
 };
 
@@ -42,33 +43,33 @@ const getStatusClasses = (status: string): { bg: string; text: string } => {
   const statusLower = status.toLowerCase();
   switch (statusLower) {
     case 'pending':
-      return { bg: 'bg-[var(--status-pending-bg)]', text: 'text-[var(--status-pending-text)]' };
+      return { bg: 'bg-status-pending-bg', text: 'text-status-pending-text' };
     case 'inprogress':
     case 'in-progress':
-      return { bg: 'bg-[var(--status-inprogress-bg)]', text: 'text-[var(--status-inprogress-text)]' };
+      return { bg: 'bg-status-inprogress-bg', text: 'text-status-inprogress-text' };
     case 'notworking':
     case 'not-working':
-      return { bg: 'bg-[var(--status-notworking-bg)]', text: 'text-[var(--status-notworking-text)]' };
+      return { bg: 'bg-status-notworking-bg', text: 'text-status-notworking-text' };
     case 'issue':
-      return { bg: 'bg-[var(--status-issue-bg)]', text: 'text-[var(--status-issue-text)]' };
+      return { bg: 'bg-status-issue-bg', text: 'text-status-issue-text' };
     case 'bug':
-      return { bg: 'bg-[var(--status-bug-bg)]', text: 'text-[var(--status-bug-text)]' };
+      return { bg: 'bg-status-bug-bg', text: 'text-status-bug-text' };
     case 'error':
-      return { bg: 'bg-[var(--status-error-bg)]', text: 'text-[var(--status-error-text)]' };
+      return { bg: 'bg-status-error-bg', text: 'text-status-error-text' };
     case 'skipped':
-      return { bg: 'bg-[var(--status-skipped-bg)]', text: 'text-[var(--status-skipped-text)]' };
+      return { bg: 'bg-status-skipped-bg', text: 'text-status-skipped-text' };
     default:
-      return { bg: 'bg-[var(--status-pending-bg)]', text: 'text-[var(--status-pending-text)]' };
+      return { bg: 'bg-status-pending-bg', text: 'text-status-pending-text' };
   }
 };
 
 const getProgressClasses = (progress: number): { bg: string; text: string } => {
-  if (progress >= 90) return { bg: 'bg-[var(--pct-90-bg)]', text: 'text-[var(--pct-90-text)]' };
-  if (progress >= 75) return { bg: 'bg-[var(--pct-75-bg)]', text: 'text-[var(--pct-75-text)]' };
-  if (progress >= 50) return { bg: 'bg-[var(--pct-50-bg)]', text: 'text-[var(--pct-50-text)]' };
-  if (progress >= 35) return { bg: 'bg-[var(--pct-35-bg)]', text: 'text-[var(--pct-35-text)]' };
-  if (progress >= 10) return { bg: 'bg-[var(--pct-10-bg)]', text: 'text-[var(--pct-10-text)]' };
-  return { bg: 'bg-[var(--pct-10-bg)]', text: 'text-[var(--pct-10-text)]' };
+  if (progress >= 90) return { bg: 'bg-pct-90-bg', text: 'text-pct-90-text' };
+  if (progress >= 75) return { bg: 'bg-pct-75-bg', text: 'text-pct-75-text' };
+  if (progress >= 50) return { bg: 'bg-pct-50-bg', text: 'text-pct-50-text' };
+  if (progress >= 35) return { bg: 'bg-pct-35-bg', text: 'text-pct-35-text' };
+  if (progress >= 10) return { bg: 'bg-pct-10-bg', text: 'text-pct-10-text' };
+  return { bg: 'bg-pct-10-bg', text: 'text-pct-10-text' };
 };
 
 export default function TaskCard({ task, onEdit, editMode, selected, onToggleSelect }: TaskCardProps) {
@@ -93,7 +94,7 @@ export default function TaskCard({ task, onEdit, editMode, selected, onToggleSel
 
   return (
     <div
-      className={`relative flex cursor-pointer overflow-hidden rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-soft transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover ${editMode ? 'ring-2 ring-[var(--btn-primary-bg)]/20' : ''} ${selected ? 'ring-2 ring-[var(--btn-primary-bg)]/30' : ''}`}
+      className={`relative flex cursor-pointer overflow-hidden rounded-lg border border-border bg-surface-default shadow-soft transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover ${editMode ? 'ring-2 ring-brand-primary/20' : ''} ${selected ? 'ring-2 ring-brand-primary/30' : ''}`}
       onClick={handleCardClick}
       role={onEdit || editMode ? 'button' : undefined}
       tabIndex={0}
@@ -102,8 +103,8 @@ export default function TaskCard({ task, onEdit, editMode, selected, onToggleSel
       }}
     >
       {editMode && (
-        <button className='absolute left-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-md border border-[var(--border-color)] bg-[var(--bg-surface)]' onClick={handleCheckboxClick} type='button' aria-label='Select task'>
-          <div className={`flex h-4 w-4 items-center justify-center rounded-sm border ${selected ? 'border-[var(--btn-primary-bg)] bg-[var(--btn-primary-bg)]' : 'border-[var(--border-color)] bg-[var(--bg-surface)]'}`}>
+        <button className='absolute left-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-md border border-border bg-surface-default' onClick={handleCheckboxClick} type='button' aria-label='Select task'>
+          <div className={`flex h-4 w-4 items-center justify-center rounded-sm border ${selected ? 'border-brand-primary bg-brand-primary' : 'border-border bg-surface-default'}`}>
             {selected && (
               <svg width='14' height='14' viewBox='0 0 14 14' fill='none'>
                 <path d='M11.6666 3.5L5.24992 9.91667L2.33325 7' stroke='white' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' />
@@ -119,17 +120,17 @@ export default function TaskCard({ task, onEdit, editMode, selected, onToggleSel
         <div className='flex items-start justify-between gap-3'>
           <div className='flex min-w-0 flex-1 flex-wrap items-center gap-2'>
             {task.project && (
-              <span className='rounded-full bg-[var(--bg-active)] px-3 py-1 text-xs font-semibold text-[var(--text-primary)]'>{task.project}</span>
+              <span className='rounded-full bg-bg-active px-3 py-1 text-xs font-semibold text-text-primary'>{task.project}</span>
             )}
             {task.tags && task.tags.length > 0 && (
               <div className='flex flex-wrap gap-2'>
                 {task.tags.slice(0, 3).map((tag, index) => (
-                  <span key={index} className='rounded-full border border-[var(--border-color)] bg-[var(--bg-surface)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text-secondary)]'>
+                  <span key={index} className='rounded-full border border-border bg-surface-default px-2.5 py-1 text-[11px] font-semibold text-text-secondary'>
                     {tag}
                   </span>
                 ))}
                 {task.tags.length > 3 && (
-                  <span className='rounded-full border border-[var(--border-color)] bg-[var(--bg-surface)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text-secondary)]'>
+                  <span className='rounded-full border border-border bg-surface-default px-2.5 py-1 text-[11px] font-semibold text-text-secondary'>
                     +{task.tags.length - 3}
                   </span>
                 )}
@@ -142,13 +143,13 @@ export default function TaskCard({ task, onEdit, editMode, selected, onToggleSel
         </div>
 
         <div className='space-y-2'>
-          <h3 className='text-[22px] font-medium tracking-[-0.2px] text-[var(--text-primary)]'>{task.title}</h3>
-          {task.description && <p className='max-w-3xl text-[14px] leading-6 text-[var(--text-secondary)]'>{task.description}</p>}
+          <h3 className='text-[22px] font-medium tracking-[-0.2px] text-text-primary'>{task.title}</h3>
+          {task.description && <p className='max-w-3xl text-[14px] leading-6 text-text-secondary'>{task.description}</p>}
         </div>
 
         <div className='space-y-2'>
           <div className='flex items-center justify-between text-[13px] font-medium'>
-            <span className='text-[var(--text-secondary)]'>Progress</span>
+            <span className='text-text-secondary'>Progress</span>
             <span className={progressColors.text}>{progress}%</span>
           </div>
           <div className={`h-2 overflow-hidden rounded-full ${progressColors.bg}`}>
@@ -161,12 +162,12 @@ export default function TaskCard({ task, onEdit, editMode, selected, onToggleSel
             <span className={`rounded-full px-3 py-1 text-xs font-semibold ${priorityColors.bg} ${priorityColors.text}`}>
               {task.priority || 'Low'}
             </span>
-            <span className='inline-flex items-center gap-1.5 rounded-full bg-[var(--bg-active)] px-3 py-1 text-xs font-medium text-[var(--text-secondary)]'>
-              <img src='/clock.svg' alt='Time' width={14} height={14} />
+            <span className='inline-flex items-center gap-1.5 rounded-full bg-bg-active px-3 py-1 text-xs font-medium text-text-secondary'>
+              <ClockIcon size={14} />
               {timeRemaining}
             </span>
             {task.subtasks && task.subtasks.length > 0 && (
-              <span className='inline-flex items-center gap-1.5 rounded-full bg-[var(--bg-active)] px-3 py-1 text-xs font-medium text-[var(--text-secondary)]'>
+              <span className='inline-flex items-center gap-1.5 rounded-full bg-bg-active px-3 py-1 text-xs font-medium text-text-secondary'>
                 <svg width='14' height='14' viewBox='0 0 14 14' fill='none'>
                   <rect x='1' y='3' width='12' height='9' rx='2' stroke='currentColor' strokeWidth='1.5' />
                   <path d='M4 6H10M4 9H8' stroke='currentColor' strokeWidth='1.2' strokeLinecap='round' />
@@ -177,11 +178,11 @@ export default function TaskCard({ task, onEdit, editMode, selected, onToggleSel
             )}
           </div>
           {task.assignee && (
-            <div className='flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-[var(--border-color)]'>
+            <div className='flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-border'>
               {task.assignee.avatar ? (
                 <img src={task.assignee.avatar} alt={task.assignee.name} className='h-full w-full object-cover' />
               ) : (
-                <div className='flex h-full w-full items-center justify-center bg-[var(--btn-primary-bg)] text-sm font-bold text-white'>
+                <div className='flex h-full w-full items-center justify-center bg-brand-primary text-sm font-bold text-white'>
                   {task.assignee.name.charAt(0).toUpperCase()}
                 </div>
               )}
