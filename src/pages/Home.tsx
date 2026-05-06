@@ -8,10 +8,32 @@ import { TASK_URLS } from '../apis';
 import TaskCard from '../components/TaskCard';
 import SideNavigation from '../components/SideNavigation';
 import TopNavigation from '../components/TopNavigation';
-import './style/Home.css';
+import { EditIcon, ErrorIcon, EmptyStateIcon } from '../components/Icons';
 
 type FilterType = 'all' | 'high' | 'medium' | 'low' | 'in-progress' | 'pending' | 'skipped' | 'bug';
 type SortType = 'newest' | 'oldest' | 'due-date' | 'priority';
+
+const filterChipClassNames: Record<FilterType, string> = {
+  all: 'border-border bg-surface-nav text-text-secondary hover:bg-bg-active',
+  high: 'border-priority-high-text/20 bg-priority-high-bg text-priority-high-text hover:bg-priority-high-bg/80',
+  medium: 'border-priority-medium-text/20 bg-priority-medium-bg text-priority-medium-text hover:bg-priority-medium-bg/80',
+  low: 'border-priority-low-text/20 bg-priority-low-bg text-priority-low-text hover:bg-priority-low-bg/80',
+  'in-progress': 'border-status-inprogress-text/20 bg-status-inprogress-bg text-status-inprogress-text hover:bg-status-inprogress-bg/80',
+  pending: 'border-status-pending-text/20 bg-status-pending-bg text-status-pending-text hover:bg-status-pending-bg/80',
+  skipped: 'border-status-skipped-text/20 bg-status-skipped-bg text-status-skipped-text hover:bg-status-skipped-bg/80',
+  bug: 'border-status-bug-text/20 bg-status-bug-bg text-status-bug-text hover:bg-status-bug-bg/80',
+};
+
+const activeFilterChipClassNames: Record<FilterType, string> = {
+  all: 'border-border bg-surface-nav text-text-primary shadow-sm shadow-black/5',
+  high: 'border-priority-high-text bg-priority-high-bg text-priority-high-text shadow-sm shadow-priority-high-text/10',
+  medium: 'border-priority-medium-text bg-priority-medium-bg text-priority-medium-text shadow-sm shadow-priority-medium-text/10',
+  low: 'border-priority-low-text bg-priority-low-bg text-priority-low-text shadow-sm shadow-priority-low-text/10',
+  'in-progress': 'border-status-inprogress-text bg-status-inprogress-bg text-status-inprogress-text shadow-sm shadow-status-inprogress-text/10',
+  pending: 'border-status-pending-text bg-status-pending-bg text-status-pending-text shadow-sm shadow-status-pending-text/10',
+  skipped: 'border-status-skipped-text bg-status-skipped-bg text-status-skipped-text shadow-sm shadow-status-skipped-text/10',
+  bug: 'border-status-bug-text bg-status-bug-bg text-status-bug-text shadow-sm shadow-status-bug-text/10',
+};
 
 export default function Home() {
   const { tasks, loading, error, removeTask, updateTask } = useTaskContext();
@@ -88,15 +110,15 @@ export default function Home() {
     return result;
   }, [tasks, activeFilter, sortBy, searchQuery]);
 
-  const filters: { key: FilterType; label: string; tabClass: string }[] = [
-    { key: 'all', label: 'All', tabClass: 'tab-all' },
-    { key: 'high', label: 'High', tabClass: 'tab-high' },
-    { key: 'medium', label: 'Medium', tabClass: 'tab-medium' },
-    { key: 'low', label: 'Low', tabClass: 'tab-low' },
-    { key: 'in-progress', label: 'In-progress', tabClass: 'tab-inprogress' },
-    { key: 'pending', label: 'Pending', tabClass: 'tab-pending' },
-    { key: 'skipped', label: 'Skipped', tabClass: 'tab-skipped' },
-    { key: 'bug', label: 'Bug', tabClass: 'tab-bug' },
+  const filters: { key: FilterType; label: string }[] = [
+    { key: 'all', label: 'All' },
+    { key: 'high', label: 'High' },
+    { key: 'medium', label: 'Medium' },
+    { key: 'low', label: 'Low' },
+    { key: 'in-progress', label: 'In-progress' },
+    { key: 'pending', label: 'Pending' },
+    { key: 'skipped', label: 'Skipped' },
+    { key: 'bug', label: 'Bug' },
   ];
 
   const toggleSelect = useCallback((taskId: string) => {
@@ -162,22 +184,27 @@ export default function Home() {
   };
 
   return (
-    <div className='home-layout'>
+    <div className='flex bg-surface-main w-full h-screen overflow-hidden'>
       <SideNavigation />
 
-      <main className='home-main'>
+      <main className='flex-1 flex flex-col relative min-w-0'>
         <TopNavigation onSearch={setSearchQuery} />
 
-        <section className='home-content'>
-          <div className='home-header'>
-            <div className='home-header-title-container'>
-              <h1 className='home-header-title'>Today {date}</h1>
-              <span className='home-task-count'>{filteredTasks.length} task{filteredTasks.length !== 1 ? 's' : ''}</span>
+        <section className='flex-1 overflow-y-auto flex flex-col gap-6 px-4 py-5 pb-24 md:px-16 md:py-8 md:pb-8 min-w-0'>
+          <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
+            <div className='flex flex-wrap items-center gap-3 min-w-0'>
+              <h1 className='flex min-w-0 items-center gap-2 text-[1.6rem] font-semibold tracking-tighter text-text-primary sm:text-3xl md:text-4xl'>
+                <span className='whitespace-nowrap'>Today</span>
+                <span className='whitespace-nowrap text-[0.95em]'>{date}</span>
+              </h1>
+              <span className='whitespace-nowrap rounded-full border border-border bg-surface-nav px-3 py-1 font-ui text-sm font-medium text-text-secondary'>
+                {filteredTasks.length} task{filteredTasks.length !== 1 ? 's' : ''}
+              </span>
             </div>
-            <div className='home-header-actions'>
+            <div className='flex items-center justify-start gap-2 sm:justify-end'>
               {editMode ? (
-                <div className='home-edit-mode-bar'>
-                  <span className='home-edit-mode-count'>{selectedIds.size} selected</span>
+                <div className='flex flex-wrap items-center gap-2 rounded-lg border border-brand-primary bg-surface-nav px-3 py-2 shadow-sm shadow-glow-primary animate-editModeSlideIn sm:px-4'>
+                  <span className='font-ui text-sm font-semibold text-brand-primary pr-2 border-r border-border mr-1 whitespace-nowrap'>{selectedIds.size} selected</span>
                   <button className='btn-ghost' onClick={selectAll} disabled={bulkActionLoading}>
                     Select All
                   </button>
@@ -195,38 +222,41 @@ export default function Home() {
                   </button>
                 </div>
               ) : (
-                <button className='home-header-edit-btn' onClick={() => setEditMode(true)}>
-                  <img src="/edit.svg" alt="Edit" width={18} height={18} />
+                <button className='flex items-center gap-2 rounded-sm border border-border bg-surface-nav px-4 py-2 font-ui text-sm font-medium text-text-primary cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-primary hover:shadow-button' onClick={() => setEditMode(true)}>
+                  <EditIcon size={18} className="opacity-70 hover:opacity-100" />
                   Edit
                 </button>
               )}
             </div>
           </div>
 
-          <div className='home-filters'>
-            <div className='home-filter-tabs-container'>
+          <div className='flex flex-col gap-3 rounded-lg border border-border bg-surface-nav px-4 py-3 shadow-filter transition-all duration-300 hover:shadow-card md:flex-row md:items-center md:justify-between md:py-2'>
+            <div className='-mx-1 flex flex-wrap items-center gap-2 pb-1 pr-1 md:mx-0 md:gap-2 md:pb-0 md:pr-0'>
               {filters.map((filter, index) => (
-                <span key={filter.key} className='home-filter-tabs-wrapper'>
-                  {index > 0 && <div className='home-filter-divider'></div>}
-                  <span
-                    className={`home-filter-tab ${filter.tabClass} ${activeFilter === filter.key ? 'active' : ''}`}
+                <span key={filter.key} className='flex items-center gap-2 md:gap-2'>
+                  {index > 0 && <div className='w-px h-6 bg-border hidden md:block'></div>}
+                  <button
+                    type='button'
+                    className={`whitespace-nowrap rounded border px-2.5 py-1 font-ui text-xs font-medium cursor-pointer user-select-none transition-all duration-200 ${activeFilter === filter.key ? activeFilterChipClassNames[filter.key] : filterChipClassNames[filter.key]}`}
                     onClick={() => setActiveFilter(filter.key)}
-                    role='button'
-                    tabIndex={0}
-                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setActiveFilter(filter.key); }}
                   >
                     {filter.label}
-                  </span>
+                  </button>
                 </span>
               ))}
             </div>
 
-            <div className='home-filter-actions'>
+            <div className='flex w-full items-center gap-2 rounded-full border border-border bg-priority-low-bg px-2 py-1 transition-all duration-300 hover:shadow-glow-primary md:w-auto md:shrink-0'>
               <select
-                className='home-filter-sort-btn'
+                className='flex w-full cursor-pointer items-center gap-2 border-none bg-transparent px-4 py-1.5 font-ui text-xs font-semibold text-priority-low-text appearance-none transition-all duration-200 focus:outline-none focus:shadow-brand-primary/50 md:w-auto md:px-7'
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortType)}
                 aria-label='Sort tasks'
+                style={{
+                  backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%232B7A8B' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")",
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 8px center'
+                }}
               >
                 <option value='newest'>Newest first</option>
                 <option value='oldest'>Oldest first</option>
@@ -237,20 +267,20 @@ export default function Home() {
           </div>
 
           {loading ? (
-            <div className='home-loading-state'>
-              <div className='loading-spinner'></div>
-              <p>Loading tasks...</p>
+            <div className='flex flex-col items-center justify-center py-16 gap-4'>
+              <div className='w-10 h-10 border-[3px] border-bg-input border-t-brand-primary rounded-full animate-spin'></div>
+              <p className='font-body text-base text-text-secondary'>Loading tasks...</p>
             </div>
           ) : error ? (
-            <div className='home-error-state'>
-              <img src="/error.svg" alt="Error" width={48} height={48} />
-              <p>Unable to load tasks. Please try again.</p>
+            <div className='flex flex-col items-center justify-center py-16 gap-4'>
+              <ErrorIcon size={48} className="text-text-secondary" />
+              <p className='font-body text-base text-text-secondary'>Unable to load tasks. Please try again.</p>
               <button className='btn-primary' onClick={() => window.location.reload()}>Retry</button>
             </div>
           ) : filteredTasks.length > 0 ? (
-            <ul className='task-list'>
+            <ul className='flex flex-col gap-4 list-none p-0 m-0'>
               {filteredTasks.map(task => (
-                <li key={task.id} className='task-item'>
+                <li key={task.id} className='w-full animate-fadeIn'>
                   <TaskCard
                     task={task}
                     editMode={editMode}
@@ -262,10 +292,10 @@ export default function Home() {
               ))}
             </ul>
           ) : (
-            <div className='home-empty-state'>
-              <img src="/empty.svg" alt="No tasks" width={64} height={64} />
-              <h3>No tasks found</h3>
-              <p>{searchQuery || activeFilter !== 'all' ? 'Try adjusting your filters or search' : 'Click "New Task" to create your first task'}</p>
+            <div className='flex flex-col items-center justify-center py-16 gap-4 text-center'>
+              <EmptyStateIcon size={64} className="opacity-30 text-text-secondary" />
+              <h3 className='font-heading text-2xl font-semibold text-text-primary m-0'>No tasks found</h3>
+              <p className='font-body text-base text-text-secondary m-0'>{searchQuery || activeFilter !== 'all' ? 'Try adjusting your filters or search' : 'Click "New Task" to create your first task'}</p>
             </div>
           )}
         </section>

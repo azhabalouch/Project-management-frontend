@@ -5,8 +5,7 @@ import { useTaskContext } from '../context/TaskContext';
 import { useGet } from '../hooks/useGet';
 import { CALENDAR_URLS } from '../apis';
 import type { CalendarEvent } from '../components/type/typesInterface';
-import './style/Home.css';
-import './style/Calendar.css';
+
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = [

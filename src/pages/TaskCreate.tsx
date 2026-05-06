@@ -11,7 +11,7 @@ import { TASK_URLS } from '../apis';
 import SideNavigation from '../components/SideNavigation';
 import TopNavigation from '../components/TopNavigation';
 import Dropdown from '../components/Dropdown';
-import './style/TaskCreate.css';
+import { CloseIcon } from '../components/Icons';
 
 export default function TaskCreate(){
   const [title, setTitle] = useState('');
@@ -97,33 +97,33 @@ export default function TaskCreate(){
   const progressBg = getProgressBg(progress);
 
   return(
-    <div className='home-layout'>
+    <div className='flex bg-surface-main w-full h-screen overflow-hidden'>
       <SideNavigation />
-      <main className='home-main'>
+      <main className='flex-1 flex flex-col relative'>
         <TopNavigation />
-        <section className='home-content'>
-          <div className='task-create-breadcrumb'>
-            <button className='breadcrumb-link' onClick={() => navigate('/')}>Tasks</button>
-            <span className='breadcrumb-separator'>/</span>
-            <span className='breadcrumb-current'>New Task</span>
+        <section className='flex-1 px-4 py-6 md:px-16 md:py-8 overflow-y-auto flex flex-col gap-6'>
+          <div className='flex items-center gap-2 mb-2 font-ui text-sm'>
+            <button className='bg-none border-none text-brand-primary cursor-pointer hover:underline' onClick={() => navigate('/')}>Tasks</button>
+            <span className='text-text-secondary'>/</span>
+            <span className='text-text-secondary'>New Task</span>
           </div>
 
-          <div className='task-create-layout'>
-            <div className='task-create-main'>
-              <div className='task-create-card'>
-                <div className='task-create-card-header'>
-                  <h2>Create New Task</h2>
-                  <p className='task-create-card-subtitle'>Fill in the details to create a new task</p>
+          <div className='grid grid-cols-1 md:grid-cols-[1fr_280px] gap-6 items-start'>
+            <div className='min-w-0'>
+              <div className='bg-surface-nav border border-border rounded-lg p-4 md:p-8 shadow-card transition-shadow'>
+                <div className='mb-7 pb-5 border-b border-border'>
+                  <h2 className='text-2xl font-semibold mb-1 text-text-primary'>Create New Task</h2>
+                  <p className='font-body text-sm text-text-secondary m-0'>Fill in the details to create a new task</p>
                 </div>
 
-                {error && <div className='task-create-error'>{error}</div>}
+                {error && <div className='bg-status-error-bg text-status-error-text px-4 py-3 rounded mb-4 font-ui text-sm'>{error}</div>}
 
-                <form onSubmit={handleSubmit} aria-label='Create task form' className='task-create-form'>
-                  <div className='task-create-section'>
-                    <h4 className='task-create-section-title'>General</h4>
+                <form onSubmit={handleSubmit} aria-label='Create task form' className='flex flex-col gap-0'>
+                  <div className='mb-7 pb-6 border-b border-border'>
+                    <h4 className='font-ui text-xs font-bold uppercase tracking-wider text-text-secondary mb-4 opacity-80'>General</h4>
 
-                    <div className='form-group'>
-                      <label htmlFor='task-title'>Title <span className='form-required'>*</span></label>
+                    <div className='flex flex-col text-left mb-4'>
+                      <label htmlFor='task-title' className='font-ui text-sm font-semibold text-text-primary mb-1.5 opacity-85'>Title <span className='text-accent-magenta'>*</span></label>
                       <input
                         name='task-title'
                         id='task-title'
@@ -132,12 +132,12 @@ export default function TaskCreate(){
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder='Name your task'
                         required
-                        className='task-create-input'
+                        className='bg-bg-input border border-border rounded px-3.5 py-2.5 font-body text-sm text-text-primary transition-all focus:outline-none focus:border-brand-primary focus:shadow-lg focus:shadow-brand-primary/20 focus:bg-bg-active'
                       />
                     </div>
 
-                    <div className='form-group'>
-                      <label htmlFor='task-description'>Description</label>
+                    <div className='flex flex-col text-left mb-0'>
+                      <label htmlFor='task-description' className='font-ui text-sm font-semibold text-text-primary mb-1.5 opacity-85'>Description</label>
                       <textarea
                         name='task-description'
                         id='task-description'
@@ -145,18 +145,18 @@ export default function TaskCreate(){
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder='Describe the task in detail'
                         rows={5}
-                        className='task-create-textarea'
+                        className='bg-bg-input border border-border rounded px-3.5 py-2.5 font-body text-sm text-text-primary transition-all resize-vertical focus:outline-none focus:border-brand-primary focus:shadow-lg focus:shadow-brand-primary/20 focus:bg-bg-active'
                       />
                     </div>
                   </div>
 
-                  <div className='task-create-section'>
-                    <h4 className='task-create-section-title'>Classification</h4>
+                  <div className='mb-7 pb-6 border-b border-border'>
+                    <h4 className='font-ui text-xs font-bold uppercase tracking-wider text-text-secondary mb-4 opacity-80'>Classification</h4>
 
-                    <div className='form-row'>
-                      <div className='form-group'>
-                        <label htmlFor='task-status'>Status</label>
-                        <select id='task-status' value={status} onChange={(e) => setStatus(e.target.value)} className='task-create-select'>
+                    <div className='flex gap-4'>
+                      <div className='flex-1 flex flex-col text-left mb-4'>
+                        <label htmlFor='task-status' className='font-ui text-sm font-semibold text-text-primary mb-1.5 opacity-85'>Status</label>
+                        <select id='task-status' value={status} onChange={(e) => setStatus(e.target.value)} className='bg-bg-input border border-border rounded px-3.5 py-2.5 font-body text-sm text-text-primary transition-all cursor-pointer appearance-none focus:outline-none focus:border-brand-primary focus:shadow-lg focus:shadow-brand-primary/20 focus:bg-bg-active' style={{backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%2375736E' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', paddingRight: '36px'}}>
                           <option value='pending'>Pending</option>
                           <option value='in-progress'>In Progress</option>
                           <option value='bug'>Bug</option>
@@ -164,9 +164,9 @@ export default function TaskCreate(){
                         </select>
                       </div>
 
-                      <div className='form-group'>
-                        <label htmlFor='task-priority'>Priority</label>
-                        <select id='task-priority' value={priority} onChange={(e) => setPriority(e.target.value)} className='task-create-select'>
+                      <div className='flex-1 flex flex-col text-left mb-4'>
+                        <label htmlFor='task-priority' className='font-ui text-sm font-semibold text-text-primary mb-1.5 opacity-85'>Priority</label>
+                        <select id='task-priority' value={priority} onChange={(e) => setPriority(e.target.value)} className='bg-bg-input border border-border rounded px-3.5 py-2.5 font-body text-sm text-text-primary transition-all cursor-pointer appearance-none focus:outline-none focus:border-brand-primary focus:shadow-lg focus:shadow-brand-primary/20 focus:bg-bg-active' style={{backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%2375736E' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', paddingRight: '36px'}}>
                           <option value=''>None</option>
                           <option value='high'>High</option>
                           <option value='medium'>Medium</option>
@@ -176,8 +176,8 @@ export default function TaskCreate(){
                       </div>
                     </div>
 
-                    <div className='form-group'>
-                      <label>Project</label>
+                    <div className='flex flex-col text-left mb-4'>
+                      <label className='font-ui text-sm font-semibold text-text-primary mb-1.5 opacity-85'>Project</label>
                       <Dropdown
                         options={projectOptions}
                         value={project}
@@ -188,8 +188,8 @@ export default function TaskCreate(){
                       />
                     </div>
 
-                    <div className='form-group'>
-                      <label>Tags</label>
+                    <div className='flex flex-col text-left mb-0'>
+                      <label className='font-ui text-sm font-semibold text-text-primary mb-1.5 opacity-85'>Tags</label>
                       <Dropdown
                         options={existingTags}
                         value={tags}
@@ -202,11 +202,11 @@ export default function TaskCreate(){
                     </div>
                   </div>
 
-                  <div className='task-create-section'>
-                    <h4 className='task-create-section-title'>Timeline</h4>
+                  <div className='mb-7 pb-6 border-b border-border'>
+                    <h4 className='font-ui text-xs font-bold uppercase tracking-wider text-text-secondary mb-4 opacity-80'>Timeline</h4>
 
-                    <div className='form-group'>
-                      <label htmlFor='task-due-date'>Due Date</label>
+                    <div className='flex flex-col text-left mb-0'>
+                      <label htmlFor='task-due-date' className='font-ui text-sm font-semibold text-text-primary mb-1.5 opacity-85'>Due Date</label>
                       <DatePicker
                         selected={dueDate}
                         onChange={(date: Date | null) => setDueDate(date)}
@@ -214,18 +214,18 @@ export default function TaskCreate(){
                         name='task-due-date'
                         placeholderText='Select due date'
                         isClearable
-                        className='task-create-datepicker'
+                        className='w-full bg-bg-input border border-border rounded px-3.5 py-2.5 font-body text-sm text-text-primary box-border transition-all focus:outline-none focus:border-brand-primary focus:shadow-lg focus:shadow-brand-primary/20 focus:bg-bg-active'
                       />
                     </div>
                   </div>
 
-                  <div className='task-create-section'>
-                    <h4 className='task-create-section-title'>Progress</h4>
+                  <div className='mb-7 pb-6 border-b border-border'>
+                    <h4 className='font-ui text-xs font-bold uppercase tracking-wider text-text-secondary mb-4 opacity-80'>Progress</h4>
 
-                    <div className='task-create-progress-section'>
-                      <div className='task-create-progress-header'>
-                        <span className='task-create-progress-label'>Completion</span>
-                        <span className='task-create-progress-value' style={{ color: progressColor }}>{progress}%</span>
+                    <div className='p-4 bg-bg-main-content border border-border rounded-lg'>
+                      <div className='flex justify-between items-center mb-3'>
+                        <span className='font-ui text-sm font-semibold text-text-secondary'>Completion</span>
+                        <span className='font-heading text-xl font-bold' style={{ color: progressColor }}>{progress}%</span>
                       </div>
                       <input
                         type='range'
@@ -233,23 +233,24 @@ export default function TaskCreate(){
                         max='100'
                         value={progress}
                         onChange={(e) => setProgress(Number(e.target.value))}
-                        className='task-create-progress-slider'
+                        className='w-full cursor-pointer mb-3'
+                        style={{accentColor: 'var(--btn-primary-bg)'}}
                       />
-                      <div className='task-create-progress-bar-track' style={{ backgroundColor: progressBg }}>
-                        <div className='task-create-progress-bar-fill' style={{ width: `${progress}%`, backgroundColor: progressColor }} />
+                      <div className='w-full h-2 rounded overflow-hidden' style={{ backgroundColor: progressBg }}>
+                        <div className='h-full rounded transition-all duration-300' style={{ width: `${progress}%`, backgroundColor: progressColor }} />
                       </div>
                     </div>
                   </div>
 
-                  <div className='task-create-section'>
-                    <h4 className='task-create-section-title'>Checklist</h4>
+                  <div className='mb-7 pb-6 border-b border-border'>
+                    <h4 className='font-ui text-xs font-bold uppercase tracking-wider text-text-secondary mb-4 opacity-80'>Checklist</h4>
                     {subtasks.length > 0 && (
-                      <ul className='task-create-subtasks-list'>
+                      <ul className='list-none p-0 m-0 mb-3 flex flex-col gap-1.5'>
                         {subtasks.map(st => (
-                          <li key={st.id} className={`task-create-subtask-item ${st.completed ? 'task-create-subtask-item--completed' : ''}`}>
+                          <li key={st.id} className={`flex items-center gap-2.5 px-3 py-2 rounded transition-colors ${st.completed ? 'bg-bg-active' : 'hover:bg-bg-active'}`}>
                             <button
                               type='button'
-                              className={`task-create-subtask-checkbox ${st.completed ? 'task-create-subtask-checkbox--checked' : ''}`}
+                              className={`w-5 h-5 border-2 rounded flex items-center justify-center cursor-pointer transition-all flex-shrink-0 p-0 ${st.completed ? 'bg-brand-primary border-brand-primary' : 'border-border bg-surface-nav hover:border-brand-primary'}`}
                               onClick={() => setSubtasks(prev => prev.map(s => s.id === st.id ? { ...s, completed: !s.completed } : s))}
                             >
                               {st.completed && (
@@ -258,21 +259,21 @@ export default function TaskCreate(){
                                 </svg>
                               )}
                             </button>
-                            <span className='task-create-subtask-text'>{st.text}</span>
-                            <button type='button' className='task-create-subtask-delete' onClick={() => setSubtasks(prev => prev.filter(s => s.id !== st.id))}>
-                              <img src="/close.svg" alt="" width={14} height={14} />
+                            <span className={`flex-1 font-body text-sm ${st.completed ? 'line-through text-text-secondary opacity-70' : 'text-text-primary'}`}>{st.text}</span>
+                            <button type='button' className='w-6 h-6 border-none rounded flex items-center justify-center bg-transparent text-text-secondary cursor-pointer transition-all flex-shrink-0 p-0 opacity-0 hover:bg-status-error-bg hover:text-status-error-text group-hover:opacity-100' onClick={() => setSubtasks(prev => prev.filter(s => s.id !== st.id))}>
+                              <CloseIcon size={14} />
                             </button>
                           </li>
                         ))}
                       </ul>
                     )}
-                    <div className='task-create-subtask-add'>
+                    <div className='flex gap-2'>
                       <input
                         type='text'
                         value={newSubtaskText}
                         onChange={e => setNewSubtaskText(e.target.value)}
                         placeholder='Add a subtask...'
-                        className='task-create-subtask-input'
+                        className='flex-1 bg-bg-input border border-border rounded px-3 py-2 font-body text-sm text-text-primary transition-all focus:outline-none focus:border-brand-primary focus:shadow-lg focus:shadow-brand-primary/20'
                         onKeyDown={e => {
                           if (e.key === 'Enter') {
                             e.preventDefault();
@@ -285,7 +286,7 @@ export default function TaskCreate(){
                       />
                       <button
                         type='button'
-                        className='btn-primary task-create-subtask-add-btn'
+                        className='btn-primary px-4 py-2 text-sm whitespace-nowrap'
                         disabled={!newSubtaskText.trim()}
                         onClick={() => {
                           if (newSubtaskText.trim()) {
@@ -299,11 +300,11 @@ export default function TaskCreate(){
                     </div>
                   </div>
 
-                  <div className='task-create-actions'>
-                    <button type='submit' className='btn-primary' disabled={loading || !title.trim()}>
+                  <div className='flex gap-3 mt-6 pt-6 border-t border-border'>
+                    <button type='submit' className='btn-primary min-w-[140px]' disabled={loading || !title.trim()}>
                       {loading ? 'Creating...' : 'Create Task'}
                     </button>
-                    <button type='button' className='btn-secondary' onClick={() => navigate('/')}>
+                    <button type='button' className='btn-secondary min-w-[100px]' onClick={() => navigate('/')}>
                       Cancel
                     </button>
                   </div>
@@ -311,15 +312,15 @@ export default function TaskCreate(){
               </div>
             </div>
 
-            <div className='task-create-sidebar'>
-              <div className='task-create-sidebar-card'>
-                <h4>Quick Tips</h4>
-                <ul className='task-create-tips'>
-                  <li>Use a clear, descriptive title</li>
-                  <li>Set a realistic due date</li>
-                  <li>Assign priority based on urgency</li>
-                  <li>Use tags for easy filtering</li>
-                  <li>Track progress with the slider</li>
+            <div className='flex flex-col gap-4'>
+              <div className='bg-surface-nav border border-border rounded-lg p-5 shadow-card'>
+                <h4 className='text-xs font-semibold uppercase tracking-wider text-text-secondary mb-4 pb-3 border-b border-border'>Quick Tips</h4>
+                <ul className='list-none p-0 m-0 flex flex-col gap-2.5'>
+                  <li className='font-body text-xs text-text-secondary pl-4 relative leading-relaxed before:content-[""] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-brand-primary before:opacity-60'>Use a clear, descriptive title</li>
+                  <li className='font-body text-xs text-text-secondary pl-4 relative leading-relaxed before:content-[""] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-brand-primary before:opacity-60'>Set a realistic due date</li>
+                  <li className='font-body text-xs text-text-secondary pl-4 relative leading-relaxed before:content-[""] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-brand-primary before:opacity-60'>Assign priority based on urgency</li>
+                  <li className='font-body text-xs text-text-secondary pl-4 relative leading-relaxed before:content-[""] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-brand-primary before:opacity-60'>Use tags for easy filtering</li>
+                  <li className='font-body text-xs text-text-secondary pl-4 relative leading-relaxed before:content-[""] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-brand-primary before:opacity-60'>Track progress with the slider</li>
                 </ul>
               </div>
             </div>

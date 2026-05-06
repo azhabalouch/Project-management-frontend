@@ -4,7 +4,6 @@ import type { AuthResponse, HandleSubmitEvent, LoginFormData } from '../componen
 import { useNavigate } from 'react-router-dom';
 import { AUTH_URLS } from '../apis';
 import { useToast } from '../context/ToastContext';
-import './style/Login.css';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -30,66 +29,81 @@ export default function Login() {
   }, [responseData, navigate, addToast]);
 
   return (
-    <main className="login-layout">
-      <section className="login-image-section">
-        <img alt="Woman" src="/women.png" className="login-image" />
+    <main className='flex min-h-screen w-full items-center justify-center flex-col-reverse md:flex-row'>
+      <section className='hidden md:flex h-auto flex-row justify-end overflow-hidden'>
+        <img alt='Woman' src='/women.png' className='h-auto w-auto max-h-[80vh] translate-x-4 object-contain' />
       </section>
 
-      <section className="login-content-section">
-        <h1 className="login-personal-text">... it’s Personal</h1>
-        
-        <div className="login-form-card">
-          <h1 id="login-heading">Login</h1>
-          
+      <section className='flex flex-col justify-center max-w-[560px] z-10 px-4 py-4 md:px-0 md:py-0'>
+        <h1 className='font-serif text-[2rem] md:text-[4rem] text-right mb-4 text-[var(--text-primary)]'>
+          ... it's Personal
+        </h1>
+
+        <div className='flex flex-col bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-lg p-8 md:p-16 gap-4 max-w-[560px] shadow-premium'>
+          <h1 id='login-heading' className='font-heading text-left font-normal text-[1.5rem] md:text-[2rem] text-[var(--text-primary)]'>
+            Login
+          </h1>
+
           {!loading && error && (
-            <p className="login-error-message">{error}</p>
+            <p className='text-[var(--status-error-text)] mb-4 font-ui text-sm'>
+              {error}
+            </p>
           )}
 
-          <form onSubmit={handleSubmit} aria-label="Login form" className="login-form">
-            <div className="form-group">
-              <label htmlFor="user-email">Email:</label>
+          <form onSubmit={handleSubmit} aria-label='Login form' className='flex flex-col gap-4'>
+            <div className='flex flex-col text-left'>
+              <label htmlFor='user-email' className='font-ui text-base text-[var(--text-secondary)] mb-2'>
+                Email
+              </label>
               <input
-                autoComplete="email"
-                name="user-email"
-                id="user-email"
-                type="email"
-                placeholder="Enter your email address"
+                autoComplete='email'
+                name='user-email'
+                id='user-email'
+                type='email'
+                placeholder='Enter your email address'
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className='bg-[var(--bg-input)] border border-transparent rounded-lg h-12 px-4 font-body text-base text-[var(--text-secondary)] placeholder:text-[var(--text-secondary)] placeholder:opacity-50 focus:outline-none focus:bg-[var(--bg-active)] focus:text-[var(--text-primary)] focus:border-[var(--btn-primary-bg)]'
               />
             </div>
 
-            <div className="form-group">
-              <label htmlFor="user-pass">Password:</label>
+            <div className='flex flex-col text-left'>
+              <label htmlFor='user-pass' className='font-ui text-base text-[var(--text-secondary)] mb-2'>
+                Password
+              </label>
               <input
-                autoComplete="current-password"
-                name="user-pass"
-                id="user-pass"
-                type="password"
-                placeholder="Enter your password."
+                autoComplete='current-password'
+                name='user-pass'
+                id='user-pass'
+                type='password'
+                placeholder='Enter your password'
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className='bg-[var(--bg-input)] border border-transparent rounded-lg h-12 px-4 font-body text-base text-[var(--text-secondary)] placeholder:text-[var(--text-secondary)] placeholder:opacity-50 focus:outline-none focus:bg-[var(--bg-active)] focus:text-[var(--text-primary)] focus:border-[var(--btn-primary-bg)]'
               />
             </div>
 
-            <div className="form-actions">
-              <div className="checkbox-group">
-                <input 
-                  type="checkbox" 
-                  id="remember-me" 
-                  name="remember-me" 
+            <div className='flex flex-col-reverse md:flex-row items-stretch md:items-center justify-between gap-3 md:gap-0 mt-4'>
+              <div className='flex items-center gap-2'>
+                <input
+                  type='checkbox'
+                  id='remember-me'
+                  name='remember-me'
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
+                  className='w-4 h-4 accent-[var(--text-primary)] cursor-pointer'
                 />
-                <label htmlFor="remember-me">Remember me</label>
+                <label htmlFor='remember-me' className='font-ui text-sm text-[var(--text-primary)] cursor-pointer'>
+                  Remember me
+                </label>
               </div>
 
-              <button 
-                type="submit" 
-                className="btn-secondary" 
-                aria-label="Submit button"
+              <button
+                type='submit'
+                className='btn-secondary min-w-[120px] w-full md:w-auto'
+                aria-label='Submit button'
                 disabled={loading}
               >
                 {loading ? '...' : 'Login'}
@@ -98,7 +112,7 @@ export default function Login() {
           </form>
         </div>
 
-        <p className="login-restricted-text">
+        <p className='font-body font-normal italic text-sm text-[var(--text-primary)] text-justify leading-6 mt-4'>
           Access is restricted to accounts provisioned by the administrator. Please log in using your assigned credentials, or contact the administrator to request a password reset.
         </p>
       </section>

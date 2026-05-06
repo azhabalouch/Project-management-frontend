@@ -13,7 +13,7 @@ import type { Task, Subtask } from '../components/type/typesInterface';
 import SideNavigation from '../components/SideNavigation';
 import TopNavigation from '../components/TopNavigation';
 import Dropdown from '../components/Dropdown';
-import './style/TaskDetail.css';
+import { ClockIcon, EditIcon, MoreHorizontalIcon, CloseIcon } from '../components/Icons';
 
 const getPriorityColor = (priority?: string): { bg: string; text: string } => {
   switch (priority) {
@@ -118,14 +118,14 @@ export default function TaskDetail() {
 
   if (!task) {
     return (
-      <div className='home-layout'>
+      <div className='flex bg-surface-main w-full h-screen overflow-hidden'>
         <SideNavigation />
-        <main className='home-main'>
+        <main className='flex-1 flex flex-col relative'>
           <TopNavigation />
-          <section className='home-content'>
-            <div className='task-detail-not-found'>
-              <h2>Task not found</h2>
-              <p>The task you're looking for doesn't exist or has been deleted.</p>
+          <section className='flex-1 px-4 py-6 md:px-16 md:py-8 overflow-y-auto flex flex-col gap-6'>
+            <div className='flex flex-col items-center justify-center py-16 gap-4 text-center'>
+              <h2 className='text-2xl font-semibold text-text-primary m-0'>Task not found</h2>
+              <p className='font-body text-base text-text-secondary m-0'>The task you're looking for doesn't exist or has been deleted.</p>
               <button className='btn-primary' onClick={() => navigate('/')}>Back to Tasks</button>
             </div>
           </section>
@@ -277,48 +277,48 @@ export default function TaskDetail() {
   };
 
   return (
-    <div className='home-layout'>
+    <div className='flex bg-surface-main w-full h-screen overflow-hidden'>
       <SideNavigation />
-      <main className='home-main'>
+      <main className='flex-1 flex flex-col relative'>
         <TopNavigation />
-        <section className='home-content'>
+        <section className='flex-1 px-4 py-6 md:px-16 md:py-8 overflow-y-auto flex flex-col gap-6'>
           {/* Breadcrumb */}
-          <div className='task-detail-breadcrumb'>
-            <button className='breadcrumb-link' onClick={() => navigate('/')}>Tasks</button>
-            <span className='breadcrumb-separator'>/</span>
-            <span className='breadcrumb-current'>{task.title}</span>
+          <div className='flex items-center gap-2 mb-2 font-ui text-sm'>
+            <button className='bg-none border-none text-text-secondary cursor-pointer hover:text-brand-primary transition-colors p-0 font-ui text-sm' onClick={() => navigate('/')}>Tasks</button>
+            <span className='text-text-secondary opacity-50'>/</span>
+            <span className='text-text-primary font-medium overflow-hidden text-overflow-ellipsis whitespace-nowrap max-w-[400px]'>{task.title}</span>
           </div>
 
           {(patchError || deleteError) && (
-            <div className='task-detail-error'>{patchError || deleteError}</div>
+            <div className='bg-status-error-bg text-status-error-text px-4 py-3 rounded mb-4 font-ui text-sm'>{patchError || deleteError}</div>
           )}
 
-          <div className='task-detail-layout'>
+          <div className='grid grid-cols-1 md:grid-cols-[1fr_320px] gap-6 items-start'>
             {/* Main Content */}
-            <div className='task-detail-main'>
-              <div className='task-detail-card'>
+            <div className='min-w-0'>
+              <div className='bg-surface-nav border border-border rounded-lg p-4 md:p-8 shadow-card transition-shadow'>
                 {/* Header */}
-                <div className='task-detail-header'>
-                  <div className='task-detail-header-left'>
-                    {task.project && <span className='task-detail-project'>{task.project}</span>}
-                    <div className='task-detail-meta-row'>
-                      <span className='task-detail-badge' style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
+                <div className='flex justify-between items-start mb-6 gap-4'>
+                  <div className='flex flex-col gap-3'>
+                    {task.project && <span className='font-ui text-xs font-bold text-brand-primary uppercase tracking-wider'>{task.project}</span>}
+                    <div className='flex gap-2 items-center flex-wrap'>
+                      <span className='font-ui text-xs font-semibold px-3 py-1 rounded capitalize whitespace-nowrap' style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
                         {task.status}
                       </span>
-                      <span className='task-detail-badge' style={{ backgroundColor: priorityColors.bg, color: priorityColors.text }}>
+                      <span className='font-ui text-xs font-semibold px-3 py-1 rounded capitalize whitespace-nowrap' style={{ backgroundColor: priorityColors.bg, color: priorityColors.text }}>
                         {task.priority || 'Low'}
                       </span>
-                      <span className='task-detail-date-badge'>
-                        <img src="/clock.svg" alt="" width={14} height={14} />
+                      <span className='flex items-center gap-1 font-ui text-xs font-medium text-text-secondary'>
+                        <ClockIcon size={14} />
                         {getTimeRemaining(task.dueDate)}
                       </span>
                     </div>
                   </div>
-                  <div className='task-detail-header-actions'>
+                  <div className='flex gap-2 flex-shrink-0'>
                     {!isEditing ? (
                       <>
-                        <button className='btn-primary' onClick={() => setIsEditing(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <img src="/edit.svg" alt="" width={16} height={16} style={{ filter: 'brightness(0) invert(1)' }} />
+                        <button className='btn-primary flex items-center gap-2' onClick={() => setIsEditing(true)}>
+                          <EditIcon size={16} />
                           Edit
                         </button>
                         {!task.isCompleted && (
@@ -326,23 +326,23 @@ export default function TaskDetail() {
                             Complete
                           </button>
                         )}
-                        <div className='detail-action-menu' ref={actionMenuRef}>
+                        <div className='relative' ref={actionMenuRef}>
                           <button
-                            className='detail-action-menu-trigger'
+                            className='w-9 h-9 border border-border rounded px-2 py-2 bg-surface-nav text-text-secondary flex items-center justify-center cursor-pointer transition-all hover:border-text-secondary'
                             type='button'
                             aria-label='More actions'
                             aria-haspopup='menu'
                             aria-expanded={showActionMenu}
                             onClick={() => setShowActionMenu((prev) => !prev)}
                           >
-                            <img src="/dots.svg" alt="" width={16} height={16} />
+                            <MoreHorizontalIcon size={16} />
                           </button>
                           {showActionMenu && (
-                            <div className='detail-action-menu-popover' role='menu'>
+                            <div className='absolute top-10 right-0 bg-surface-nav border border-border rounded-lg shadow-card-hover z-50 py-2 min-w-max' role='menu'>
                               <button
                                 type='button'
                                 role='menuitem'
-                                className='detail-action-menu-item detail-action-menu-item-danger'
+                                className='w-full px-4 py-2 text-left text-status-error-text hover:bg-bg-active transition-colors font-ui text-sm'
                                 onClick={() => {
                                   setShowActionMenu(false);
                                   setShowDeleteModal(true);
@@ -369,81 +369,82 @@ export default function TaskDetail() {
 
                 {/* Title */}
                 {isEditing ? (
-                  <div className='task-detail-field'>
-                    <label>Title</label>
-                    <input type='text' value={title} onChange={e => setTitle(e.target.value)} className='task-detail-input' />
+                  <div className='flex flex-col text-left mb-6'>
+                    <label className='font-ui text-sm font-semibold text-text-primary mb-1.5'>Title</label>
+                    <input type='text' value={title} onChange={e => setTitle(e.target.value)} className='bg-bg-input border border-border rounded px-3.5 py-2.5 font-body text-sm text-text-primary transition-all focus:outline-none focus:border-brand-primary focus:shadow-lg focus:shadow-brand-primary/20 focus:bg-bg-active' />
                   </div>
                 ) : (
-                  <h1 className='task-detail-title'>{task.title}</h1>
+                  <h1 className='text-3xl font-semibold text-text-primary mb-6'>{task.title}</h1>
                 )}
 
                 {/* Description */}
                 {isEditing ? (
-                  <div className='task-detail-field'>
-                    <label>Description</label>
-                    <textarea value={description} onChange={e => setDescription(e.target.value)} rows={6} className='task-detail-textarea' />
+                  <div className='flex flex-col text-left mb-6'>
+                    <label className='font-ui text-sm font-semibold text-text-primary mb-1.5'>Description</label>
+                    <textarea value={description} onChange={e => setDescription(e.target.value)} rows={6} className='bg-bg-input border border-border rounded px-3.5 py-2.5 font-body text-sm text-text-primary transition-all resize-vertical focus:outline-none focus:border-brand-primary focus:shadow-lg focus:shadow-brand-primary/20 focus:bg-bg-active' />
                   </div>
                 ) : (
-                  <div className='task-detail-description'>
-                    <p>{task.description || 'No description provided.'}</p>
+                  <div className='mb-6 text-text-secondary'>
+                    <p className='m-0 whitespace-pre-wrap'>{task.description || 'No description provided.'}</p>
                   </div>
                 )}
 
                 {/* Progress */}
-                <div className='task-detail-progress-section'>
-                  <div className='task-detail-progress-header'>
-                    <span className='task-detail-progress-label'>Progress</span>
+                <div className='mb-6'>
+                  <div className='flex justify-between items-center mb-3'>
+                    <span className='font-ui text-sm font-semibold text-text-secondary'>Progress</span>
                     {isEditing ? (
-                      <div className='task-detail-progress-edit'>
+                      <div className='flex items-center gap-2'>
                         <input
                           type='range'
                           min='0'
                           max='100'
                           value={progress}
                           onChange={e => setProgress(Number(e.target.value))}
-                          className='task-detail-progress-slider'
+                          className='w-24 cursor-pointer'
+                          style={{accentColor: 'var(--btn-primary-bg)'}}
                         />
-                        <span className='task-detail-progress-value' style={{ color: progressColor }}>{progress}%</span>
+                        <span className='font-heading text-lg font-bold' style={{ color: progressColor }}>{progress}%</span>
                       </div>
                     ) : (
-                      <span className='task-detail-progress-value' style={{ color: progressColor }}>{progress}%</span>
+                      <span className='font-heading text-lg font-bold' style={{ color: progressColor }}>{progress}%</span>
                     )}
                   </div>
-                  <div className='task-detail-progress-bar-track' style={{ backgroundColor: progressBg }}>
+                  <div className='w-full h-2 rounded overflow-hidden' style={{ backgroundColor: progressBg }}>
                     <div
-                      className='task-detail-progress-bar-fill'
+                      className='h-full rounded transition-all duration-300'
                       style={{ width: `${progress}%`, backgroundColor: progressColor }}
                     />
                   </div>
                 </div>
 
-                {/* Subtasks / Todo List */}
-                <div className='task-detail-subtasks-section'>
-                  <div className='task-detail-subtasks-header'>
-                    <span className='task-detail-subtasks-label'>
+                {/* Subtasks */}
+                <div className='mb-6'>
+                  <div className='flex items-center justify-between mb-3'>
+                    <span className='font-ui text-sm font-semibold text-text-secondary'>
                       Checklist
                       {subtasks.length > 0 && (
-                        <span className='task-detail-subtasks-count'>
+                        <span className='ml-2 text-text-secondary'>
                           {subtasks.filter(st => st.completed).length}/{subtasks.length}
                         </span>
                       )}
                     </span>
                   </div>
                   {subtasks.length > 0 && (
-                    <div className='task-detail-subtasks-progress'>
-                      <div className='task-detail-subtasks-progress-track'>
+                    <div className='mb-3'>
+                      <div className='w-full h-1.5 rounded bg-bg-input overflow-hidden'>
                         <div
-                          className='task-detail-subtasks-progress-bar'
+                          className='h-full bg-brand-primary transition-all duration-300'
                           style={{ width: `${subtasks.length > 0 ? (subtasks.filter(st => st.completed).length / subtasks.length) * 100 : 0}%` }}
                         />
                       </div>
                     </div>
                   )}
-                  <ul className='task-detail-subtasks-list'>
+                  <ul className='list-none p-0 m-0 mb-3 flex flex-col gap-1.5'>
                     {subtasks.map(st => (
-                      <li key={st.id} className={`task-detail-subtask-item ${st.completed ? 'task-detail-subtask-item--completed' : ''}`}>
+                      <li key={st.id} className={`flex items-center gap-2.5 px-3 py-2 rounded transition-colors ${st.completed ? 'bg-bg-active' : 'hover:bg-bg-active'}`}>
                         <button
-                          className={`task-detail-subtask-checkbox ${st.completed ? 'task-detail-subtask-checkbox--checked' : ''}`}
+                          className={`w-5 h-5 border-2 rounded flex items-center justify-center cursor-pointer transition-all flex-shrink-0 p-0 ${st.completed ? 'bg-brand-primary border-brand-primary' : 'border-border bg-surface-nav hover:border-brand-primary'}`}
                           onClick={() => handleToggleSubtask(st.id, st.completed)}
                           aria-label={st.completed ? 'Mark incomplete' : 'Mark complete'}
                         >
@@ -453,24 +454,24 @@ export default function TaskDetail() {
                             </svg>
                           )}
                         </button>
-                        <span className='task-detail-subtask-text'>{st.text}</span>
-                        <button className='task-detail-subtask-delete' onClick={() => handleDeleteSubtask(st.id)} aria-label='Delete subtask'>
-                          <img src="/close.svg" alt="" width={14} height={14} />
+                        <span className={`flex-1 font-body text-sm ${st.completed ? 'line-through text-text-secondary' : 'text-text-primary'}`}>{st.text}</span>
+                        <button className='w-6 h-6 border-none rounded flex items-center justify-center bg-transparent text-text-secondary cursor-pointer transition-all flex-shrink-0 p-0 opacity-0 hover:bg-status-error-bg hover:text-status-error-text group-hover:opacity-100' onClick={() => handleDeleteSubtask(st.id)} aria-label='Delete subtask'>
+                          <CloseIcon size={14} />
                         </button>
                       </li>
                     ))}
                   </ul>
-                  <div className='task-detail-subtask-add'>
+                  <div className='flex gap-2'>
                     <input
                       type='text'
                       value={newSubtaskText}
                       onChange={e => setNewSubtaskText(e.target.value)}
                       placeholder='Add a subtask...'
-                      className='task-detail-subtask-input'
+                      className='flex-1 bg-bg-input border border-border rounded px-3 py-2 font-body text-sm text-text-primary transition-all focus:outline-none focus:border-brand-primary focus:shadow-lg focus:shadow-brand-primary/20'
                       onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddSubtask(); } }}
                     />
                     <button
-                      className='btn-primary task-detail-subtask-add-btn'
+                      className='btn-primary px-4 py-2 text-sm whitespace-nowrap'
                       onClick={handleAddSubtask}
                       disabled={!newSubtaskText.trim()}
                     >
@@ -481,20 +482,20 @@ export default function TaskDetail() {
 
                 {/* Tags */}
                 {task.tags && task.tags.length > 0 && (
-                  <div className='task-detail-tags'>
+                  <div className='mb-6 flex flex-wrap gap-2'>
                     {task.tags.map((tag, i) => (
-                      <span key={i} className='task-detail-tag'>{tag}</span>
+                      <span key={i} className='font-ui text-xs font-medium px-3 py-1 bg-bg-input border border-border rounded'>{tag}</span>
                     ))}
                   </div>
                 )}
 
                 {/* Edit Form Fields */}
                 {isEditing && (
-                  <div className='task-detail-edit-fields'>
-                    <div className='task-detail-field-row'>
-                      <div className='task-detail-field'>
-                        <label>Status</label>
-                        <select value={status} onChange={e => setStatus(e.target.value)} className='task-detail-select'>
+                  <div className='mb-6 pt-6 border-t border-border'>
+                    <div className='flex gap-4 mb-4'>
+                      <div className='flex-1 flex flex-col text-left'>
+                        <label className='font-ui text-sm font-semibold text-text-primary mb-1.5'>Status</label>
+                        <select value={status} onChange={e => setStatus(e.target.value)} className='bg-bg-input border border-border rounded px-3.5 py-2.5 font-body text-sm text-text-primary transition-all cursor-pointer appearance-none focus:outline-none focus:border-brand-primary focus:shadow-lg focus:shadow-brand-primary/20 focus:bg-bg-active' style={{backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%2375736E' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', paddingRight: '36px'}}>
                           <option value='pending'>Pending</option>
                           <option value='in-progress'>In Progress</option>
                           <option value='skipped'>Skipped</option>
@@ -504,9 +505,9 @@ export default function TaskDetail() {
                           <option value='error'>Error</option>
                         </select>
                       </div>
-                      <div className='task-detail-field'>
-                        <label>Priority</label>
-                        <select value={priority} onChange={e => setPriority(e.target.value)} className='task-detail-select'>
+                      <div className='flex-1 flex flex-col text-left'>
+                        <label className='font-ui text-sm font-semibold text-text-primary mb-1.5'>Priority</label>
+                        <select value={priority} onChange={e => setPriority(e.target.value)} className='bg-bg-input border border-border rounded px-3.5 py-2.5 font-body text-sm text-text-primary transition-all cursor-pointer appearance-none focus:outline-none focus:border-brand-primary focus:shadow-lg focus:shadow-brand-primary/20 focus:bg-bg-active' style={{backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%2375736E' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', paddingRight: '36px'}}>
                           <option value=''>None</option>
                           <option value='high'>High</option>
                           <option value='medium'>Medium</option>
@@ -515,8 +516,8 @@ export default function TaskDetail() {
                         </select>
                       </div>
                     </div>
-                    <div className='task-detail-field'>
-                      <label>Project</label>
+                    <div className='flex flex-col text-left mb-4'>
+                      <label className='font-ui text-sm font-semibold text-text-primary mb-1.5'>Project</label>
                       <Dropdown
                         options={projectOptions}
                         value={project}
@@ -525,8 +526,8 @@ export default function TaskDetail() {
                         searchable
                       />
                     </div>
-                    <div className='task-detail-field'>
-                      <label>Tags</label>
+                    <div className='flex flex-col text-left mb-4'>
+                      <label className='font-ui text-sm font-semibold text-text-primary mb-1.5'>Tags</label>
                       <Dropdown
                         options={existingTags}
                         value={tags}
@@ -537,23 +538,23 @@ export default function TaskDetail() {
                         creatable
                       />
                     </div>
-                    <div className='task-detail-field'>
-                      <label>Due Date</label>
+                    <div className='flex flex-col text-left mb-4'>
+                      <label className='font-ui text-sm font-semibold text-text-primary mb-1.5'>Due Date</label>
                       <DatePicker
                         selected={dueDate}
                         onChange={(date: Date | null) => setDueDate(date)}
                         placeholderText='Select due date'
                         isClearable
-                        className='task-detail-datepicker'
+                        className='w-full bg-bg-input border border-border rounded px-3.5 py-2.5 font-body text-sm text-text-primary box-border transition-all focus:outline-none focus:border-brand-primary focus:shadow-lg focus:shadow-brand-primary/20 focus:bg-bg-active'
                       />
                     </div>
-                    <div className='task-detail-field'>
-                      <label>Completed</label>
+                    <div className='flex items-center gap-2'>
+                      <label className='font-ui text-sm font-semibold text-text-primary'>Completed</label>
                       <input
                         type='checkbox'
                         checked={isCompleted}
                         onChange={e => setIsCompleted(e.target.checked)}
-                        className='task-detail-checkbox'
+                        className='w-4 h-4 accent-brand-primary rounded cursor-pointer'
                       />
                     </div>
                   </div>
@@ -562,56 +563,55 @@ export default function TaskDetail() {
             </div>
 
             {/* Sidebar */}
-            <div className='task-detail-sidebar'>
-              <div className='task-detail-sidebar-card'>
-                <h4>Details</h4>
-                <div className='task-detail-sidebar-rows'>
-                  <div className='task-detail-sidebar-row'>
-                    <span className='task-detail-sidebar-label'>Status</span>
-                    <span className='task-detail-badge' style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
+            <div className='flex flex-col gap-4'>
+              <div className='bg-surface-nav border border-border rounded-lg p-5 shadow-card'>
+                <h4 className='text-xs font-semibold uppercase tracking-wider text-text-secondary mb-4 pb-3 border-b border-border'>Details</h4>
+                <div className='flex flex-col gap-3'>
+                  <div className='flex justify-between items-center'>
+                    <span className='font-ui text-xs text-text-secondary'>Status</span>
+                    <span className='font-ui text-xs font-semibold px-3 py-1 rounded capitalize' style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
                       {task.status}
                     </span>
                   </div>
-                  <div className='task-detail-sidebar-row'>
-                    <span className='task-detail-sidebar-label'>Priority</span>
-                    <span className='task-detail-badge' style={{ backgroundColor: priorityColors.bg, color: priorityColors.text }}>
+                  <div className='flex justify-between items-center'>
+                    <span className='font-ui text-xs text-text-secondary'>Priority</span>
+                    <span className='font-ui text-xs font-semibold px-3 py-1 rounded capitalize' style={{ backgroundColor: priorityColors.bg, color: priorityColors.text }}>
                       {task.priority || 'None'}
                     </span>
                   </div>
-                  <div className='task-detail-sidebar-row'>
-                    <span className='task-detail-sidebar-label'>Due Date</span>
-                    <span className='task-detail-sidebar-value'>{formatDate(task.dueDate)}</span>
+                  <div className='flex justify-between items-center'>
+                    <span className='font-ui text-xs text-text-secondary'>Due Date</span>
+                    <span className='font-ui text-xs text-text-primary'>{formatDate(task.dueDate)}</span>
                   </div>
-                  <div className='task-detail-sidebar-row'>
-                    <span className='task-detail-sidebar-label'>Created</span>
-                    <span className='task-detail-sidebar-value'>{formatCreatedDate(task.createdAt)}</span>
+                  <div className='flex justify-between items-center'>
+                    <span className='font-ui text-xs text-text-secondary'>Created</span>
+                    <span className='font-ui text-xs text-text-primary'>{formatCreatedDate(task.createdAt)}</span>
                   </div>
-                  <div className='task-detail-sidebar-row'>
-                    <span className='task-detail-sidebar-label'>Progress</span>
-                    <span className='task-detail-sidebar-value' style={{ color: progressColor, fontWeight: 600 }}>{progress}%</span>
+                  <div className='flex justify-between items-center'>
+                    <span className='font-ui text-xs text-text-secondary'>Progress</span>
+                    <span className='font-ui text-xs font-semibold' style={{ color: progressColor }}>{progress}%</span>
                   </div>
                   {task.project && (
-                    <div className='task-detail-sidebar-row'>
-                      <span className='task-detail-sidebar-label'>Project</span>
-                      <span className='task-detail-sidebar-value'>{task.project}</span>
+                    <div className='flex justify-between items-center'>
+                      <span className='font-ui text-xs text-text-secondary'>Project</span>
+                      <span className='font-ui text-xs text-text-primary'>{task.project}</span>
                     </div>
                   )}
                   {task.assignee && (
-                    <div className='task-detail-sidebar-row'>
-                      <span className='task-detail-sidebar-label'>Assignee</span>
-                      <div className='task-detail-assignee'>
+                    <div className='flex justify-between items-center'>
+                      <span className='font-ui text-xs text-text-secondary'>Assignee</span>
+                      <div className='flex items-center gap-2'>
                         {task.assignee.avatar ? (
-                          <img src={task.assignee.avatar} alt={task.assignee.name} className='task-detail-assignee-avatar' />
+                          <img src={task.assignee.avatar} alt={task.assignee.name} className='w-5 h-5 rounded-full' />
                         ) : (
-                          <div className='task-detail-assignee-initials'>{task.assignee.name.charAt(0).toUpperCase()}</div>
+                          <div className='w-5 h-5 rounded-full bg-brand-primary text-white flex items-center justify-center text-xs font-semibold'>{task.assignee.name.charAt(0).toUpperCase()}</div>
                         )}
-                        <span>{task.assignee.name}</span>
+                        <span className='font-ui text-xs text-text-primary'>{task.assignee.name}</span>
                       </div>
                     </div>
                   )}
                 </div>
               </div>
-
             </div>
           </div>
         </section>
@@ -619,18 +619,18 @@ export default function TaskDetail() {
 
       {showDeleteModal && (
         <div
-          className='modal-backdrop'
+          className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'
           onClick={(e) => {
             if (e.target === e.currentTarget && !deleting) {
               setShowDeleteModal(false);
             }
           }}
         >
-          <div className='modal-content project-delete-modal' role='dialog' aria-modal='true' aria-labelledby='delete-task-heading'>
-            <div className='modal-header'>
-              <h2 id='delete-task-heading'>Delete Task</h2>
+          <div className='bg-surface-main border border-border rounded-xl shadow-card-hover w-full max-w-lg mx-4' role='dialog' aria-modal='true' aria-labelledby='delete-task-heading'>
+            <div className='flex justify-between items-center px-6 py-4 border-b border-border'>
+              <h2 id='delete-task-heading' className='text-xl font-semibold text-text-primary m-0'>Delete Task</h2>
               <button
-                className='modal-close-btn'
+                className='text-2xl cursor-pointer bg-none border-none text-text-secondary hover:text-text-primary disabled:opacity-50'
                 onClick={() => setShowDeleteModal(false)}
                 aria-label='Close modal'
                 disabled={deleting}
@@ -638,14 +638,16 @@ export default function TaskDetail() {
                 &times;
               </button>
             </div>
-            {deleteError && <div className='modal-error'>{deleteError}</div>}
-            <p className='project-delete-copy'>
-              This will permanently delete <strong>{task.title}</strong>.
-            </p>
-            <p className='project-delete-subcopy'>
-              This action cannot be undone.
-            </p>
-            <div className='modal-actions'>
+            {deleteError && <div className='bg-status-error-bg text-status-error-text px-4 py-3 m-4 rounded font-ui text-sm'>{deleteError}</div>}
+            <div className='px-6 py-4'>
+              <p className='font-body text-text-primary text-base leading-relaxed m-0 mb-3'>
+                This will permanently delete <strong>{task.title}</strong>.
+              </p>
+              <p className='font-ui text-status-error-text text-sm m-0'>
+                This action cannot be undone.
+              </p>
+            </div>
+            <div className='flex gap-3 px-6 py-4 border-t border-border'>
               <button className='btn-danger' type='button' onClick={handleDelete} disabled={deleting}>
                 {deleting ? 'Deleting...' : 'Delete Task'}
               </button>

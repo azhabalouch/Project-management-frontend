@@ -7,7 +7,6 @@ import { normalizeTask, useTaskContext } from '../context/TaskContext';
 import { useToast } from '../context/ToastContext';
 import { TASK_URLS } from '../apis';
 import type { Task, HandleSubmitEvent } from './type/typesInterface';
-import './style/TaskEditModal.css';
 
 interface TaskEditModalProps {
   task: Task;
@@ -103,90 +102,89 @@ export default function TaskEditModal({ task, onClose }: TaskEditModalProps) {
     if (e.target === e.currentTarget) onClose();
   };
 
+  const fieldClassName = 'mt-1 rounded-md border border-transparent bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] transition-all placeholder:text-[var(--text-secondary)] focus:border-[var(--btn-primary-bg)] focus:outline-none focus:ring-4 focus:ring-[color:var(--glow-primary)]';
+
   return (
-    <div className='modal-backdrop' onClick={handleBackdropClick}>
-      <div className='modal-content' role='dialog' aria-modal='true' aria-labelledby='edit-task-heading'>
-        <div className='modal-header'>
-          <h2 id='edit-task-heading'>Edit Task</h2>
-          <button className='modal-close-btn' onClick={onClose} aria-label='Close modal'>&times;</button>
+    <div className='fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 px-4 py-6' onClick={handleBackdropClick}>
+      <div className='max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 shadow-premium md:p-8' role='dialog' aria-modal='true' aria-labelledby='edit-task-heading'>
+        <div className='mb-6 flex items-center justify-between gap-4'>
+          <h2 id='edit-task-heading' className='text-2xl font-semibold tracking-[-0.3px]'>Edit Task</h2>
+          <button className='flex h-9 w-9 items-center justify-center rounded-md border border-[var(--border-color)] bg-[var(--bg-surface)] text-xl text-[var(--text-primary)] transition-all hover:bg-[var(--bg-active)]' onClick={onClose} aria-label='Close modal' type='button'>
+            &times;
+          </button>
         </div>
 
         {(patchError || deleteError) && (
-          <div className='modal-error'>{patchError || deleteError}</div>
+          <div className='mb-4 rounded-md border border-[var(--status-error-text)] bg-[var(--status-error-bg)] px-4 py-3 text-sm text-[var(--status-error-text)]'>
+            {patchError || deleteError}
+          </div>
         )}
 
-        <form onSubmit={handleSubmit} className='modal-form'>
-          <div className='form-group'>
-            <label htmlFor='edit-title'>Title</label>
-            <input
-              id='edit-title'
-              type='text'
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className='form-group'>
-            <label htmlFor='edit-description'>Description</label>
-            <textarea
-              id='edit-description'
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={3}
-            />
-          </div>
-
-          <div className='form-row'>
-            <div className='form-group'>
-              <label htmlFor='edit-status'>Status</label>
-              <select id='edit-status' value={status} onChange={(e) => setStatus(e.target.value)}>
-                <option value='pending'>Pending</option>
-                <option value='in-progress'>In Progress</option>
-                <option value='skipped'>Skipped</option>
-                <option value='bug'>Bug</option>
-                <option value='not-working'>Not Working</option>
-                <option value='issue'>Issue</option>
-                <option value='error'>Error</option>
-              </select>
+        <form onSubmit={handleSubmit} className='space-y-4'>
+          <div className='grid gap-4'>
+            <div className='flex flex-col'>
+              <label htmlFor='edit-title' className='mb-1.5 text-sm font-medium text-[var(--text-secondary)]'>Title</label>
+              <input id='edit-title' type='text' value={title} onChange={(e) => setTitle(e.target.value)} required className={fieldClassName} />
             </div>
 
-            <div className='form-group'>
-              <label htmlFor='edit-priority'>Priority</label>
-              <select id='edit-priority' value={priority} onChange={(e) => setPriority(e.target.value)}>
-                <option value=''>None</option>
-                <option value='high'>High</option>
-                <option value='medium'>Medium</option>
-                <option value='low'>Low</option>
-                <option value='skippable'>Skippable</option>
-              </select>
-            </div>
-          </div>
-
-          <div className='form-row'>
-            <div className='form-group'>
-              <label htmlFor='edit-due-date'>Due Date</label>
-              <DatePicker
-                id='edit-due-date'
-                selected={dueDate}
-                onChange={(date: Date | null) => setDueDate(date)}
-                placeholderText='Select due date'
-                isClearable
-              />
+            <div className='flex flex-col'>
+              <label htmlFor='edit-description' className='mb-1.5 text-sm font-medium text-[var(--text-secondary)]'>Description</label>
+              <textarea id='edit-description' value={description} onChange={(e) => setDescription(e.target.value)} rows={3} className={`${fieldClassName} min-h-24 resize-y`} />
             </div>
 
-            <div className='form-group'>
-              <label htmlFor='edit-completed'>Completed</label>
-              <input
-                id='edit-completed'
-                type='checkbox'
-                checked={isCompleted}
-                onChange={(e) => setIsCompleted(e.target.checked)}
-              />
+            <div className='grid gap-4 md:grid-cols-2'>
+              <div className='flex flex-col'>
+                <label htmlFor='edit-status' className='mb-1.5 text-sm font-medium text-[var(--text-secondary)]'>Status</label>
+                <select id='edit-status' value={status} onChange={(e) => setStatus(e.target.value)} className={`${fieldClassName} cursor-pointer appearance-auto`}>
+                  <option value='pending'>Pending</option>
+                  <option value='in-progress'>In Progress</option>
+                  <option value='skipped'>Skipped</option>
+                  <option value='bug'>Bug</option>
+                  <option value='not-working'>Not Working</option>
+                  <option value='issue'>Issue</option>
+                  <option value='error'>Error</option>
+                </select>
+              </div>
+
+              <div className='flex flex-col'>
+                <label htmlFor='edit-priority' className='mb-1.5 text-sm font-medium text-[var(--text-secondary)]'>Priority</label>
+                <select id='edit-priority' value={priority} onChange={(e) => setPriority(e.target.value)} className={`${fieldClassName} cursor-pointer appearance-auto`}>
+                  <option value=''>None</option>
+                  <option value='high'>High</option>
+                  <option value='medium'>Medium</option>
+                  <option value='low'>Low</option>
+                  <option value='skippable'>Skippable</option>
+                </select>
+              </div>
+            </div>
+
+            <div className='grid gap-4 md:grid-cols-2'>
+              <div className='flex flex-col'>
+                <label htmlFor='edit-due-date' className='mb-1.5 text-sm font-medium text-[var(--text-secondary)]'>Due Date</label>
+                <DatePicker
+                  id='edit-due-date'
+                  selected={dueDate}
+                  onChange={(date: Date | null) => setDueDate(date)}
+                  placeholderText='Select due date'
+                  isClearable
+                  className={fieldClassName}
+                />
+              </div>
+
+              <div className='flex flex-col'>
+                <label htmlFor='edit-completed' className='mb-1.5 text-sm font-medium text-[var(--text-secondary)]'>Completed</label>
+                <input
+                  id='edit-completed'
+                  type='checkbox'
+                  checked={isCompleted}
+                  onChange={(e) => setIsCompleted(e.target.checked)}
+                  className='h-5 w-5 cursor-pointer accent-[var(--btn-primary-bg)]'
+                />
+              </div>
             </div>
           </div>
 
-          <div className='modal-actions'>
+          <div className='mt-6 flex flex-wrap gap-3 border-t border-[var(--border-color)] pt-4'>
             {!task.isCompleted && (
               <button type='button' className='btn-ghost' onClick={handleComplete} disabled={patching}>
                 Mark Complete

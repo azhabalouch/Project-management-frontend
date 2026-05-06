@@ -54,7 +54,7 @@ export const AuthGate = ({
         justifyContent: 'center',
         height: '100vh',
         width: '100vw',
-        backgroundColor: 'var(--bg-main)',
+        backgroundColor: 'transparent',
         gap: '12px',
       }}>
         <div className='loading-spinner' style={{ width: '32px', height: '32px', border: '3px solid var(--bg-input)', borderTopColor: 'var(--btn-primary-bg)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
@@ -76,7 +76,7 @@ export const AuthGate = ({
         justifyContent: 'center',
         height: '100vh',
         width: '100vw',
-        backgroundColor: 'var(--bg-main)',
+        backgroundColor: 'transparent',
         gap: '8px',
       }}>
         <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', color: 'var(--text-primary)' }}>{blockedTitle}</h1>

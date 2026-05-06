@@ -8,8 +8,8 @@ import { useDelete } from '../hooks/useDelete';
 import { TODO_URLS } from '../apis';
 import { useToast } from '../context/ToastContext';
 import type { Todo, HandleSubmitEvent } from '../components/type/typesInterface';
-import './style/Home.css';
-import './style/TodoList.css';
+import { ErrorIcon, CloseIcon, EmptyStateIcon } from '../components/Icons';
+
 
 export default function TodoList() {
   const { execute: fetchTodos, loading, error } = useGet<Todo[]>(TODO_URLS.get);
@@ -175,7 +175,7 @@ export default function TodoList() {
             </div>
           ) : error ? (
             <div className='home-error-state'>
-              <img src="/error.svg" alt="Error" width={48} height={48} />
+              <ErrorIcon size={48} />
               <p>Unable to load to-dos. Please try again.</p>
               <button className='btn-primary' onClick={fetchTodos}>Retry</button>
             </div>
@@ -205,14 +205,14 @@ export default function TodoList() {
                     aria-label='Delete todo'
                     title='Delete'
                   >
-                    <img src="/close.svg" alt="Delete" width={14} height={14} />
+                    <CloseIcon size={14} />
                   </button>
                 </li>
               ))}
             </ul>
           ) : (
             <div className='home-empty-state'>
-              <img src="/empty.svg" alt="No todos" width={64} height={64} />
+              <EmptyStateIcon size={64} />
               <h3>No to-dos found</h3>
               <p>{filter !== 'all' ? 'Try a different filter' : 'Add your first to-do above'}</p>
             </div>
