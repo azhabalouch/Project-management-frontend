@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTaskContext } from '../context/TaskContext';
 import { useDelete } from '../hooks/useDelete';
@@ -10,35 +10,27 @@ import SideNavigation from '../components/SideNavigation';
 import TopNavigation from '../components/TopNavigation';
 import { EditIcon, ErrorIcon, EmptyStateIcon } from '../components/Icons';
 
-type FilterType = 'all' | 'high' | 'medium' | 'low' | 'in-progress' | 'pending' | 'skipped' | 'bug';
-type SortType = 'newest' | 'oldest' | 'due-date' | 'priority';
+// Custom hook and constants
+import { useFilteredTasks } from '../hooks/useFilteredTasks';
+import type { FilterType, SortType } from '../utils/filterConstants';
+import { 
+  FILTERS, 
+  filterChipClassNames, 
+  activeFilterChipClassNames 
+} from '../utils/filterConstants';
 
-const filterChipClassNames: Record<FilterType, string> = {
-  all: 'border-border bg-surface-nav text-text-secondary hover:bg-bg-active',
-  high: 'border-priority-high-text/20 bg-priority-high-bg text-priority-high-text hover:bg-priority-high-bg/80',
-  medium: 'border-priority-medium-text/20 bg-priority-medium-bg text-priority-medium-text hover:bg-priority-medium-bg/80',
-  low: 'border-priority-low-text/20 bg-priority-low-bg text-priority-low-text hover:bg-priority-low-bg/80',
-  'in-progress': 'border-status-inprogress-text/20 bg-status-inprogress-bg text-status-inprogress-text hover:bg-status-inprogress-bg/80',
-  pending: 'border-status-pending-text/20 bg-status-pending-bg text-status-pending-text hover:bg-status-pending-bg/80',
-  skipped: 'border-status-skipped-text/20 bg-status-skipped-bg text-status-skipped-text hover:bg-status-skipped-bg/80',
-  bug: 'border-status-bug-text/20 bg-status-bug-bg text-status-bug-text hover:bg-status-bug-bg/80',
-};
-
-const activeFilterChipClassNames: Record<FilterType, string> = {
-  all: 'border-border bg-surface-nav text-text-primary shadow-sm shadow-black/5',
-  high: 'border-priority-high-text bg-priority-high-bg text-priority-high-text shadow-sm shadow-priority-high-text/10',
-  medium: 'border-priority-medium-text bg-priority-medium-bg text-priority-medium-text shadow-sm shadow-priority-medium-text/10',
-  low: 'border-priority-low-text bg-priority-low-bg text-priority-low-text shadow-sm shadow-priority-low-text/10',
-  'in-progress': 'border-status-inprogress-text bg-status-inprogress-bg text-status-inprogress-text shadow-sm shadow-status-inprogress-text/10',
-  pending: 'border-status-pending-text bg-status-pending-bg text-status-pending-text shadow-sm shadow-status-pending-text/10',
-  skipped: 'border-status-skipped-text bg-status-skipped-bg text-status-skipped-text shadow-sm shadow-status-skipped-text/10',
-  bug: 'border-status-bug-text bg-status-bug-bg text-status-bug-text shadow-sm shadow-status-bug-text/10',
-};
-
+/**
+ * Home Component
+ * Renders the main dashboard for task management, including filtering, sorting,
+ * and bulk actions.
+ * 
+ * @returns {JSX.Element} The rendered Home page component.
+ */
 export default function Home() {
   const { tasks, loading, error, removeTask, updateTask } = useTaskContext();
   const { addToast } = useToast();
   const navigate = useNavigate();
+  
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [sortBy, setSortBy] = useState<SortType>('newest');
   const [searchQuery, setSearchQuery] = useState('');
@@ -49,102 +41,45 @@ export default function Home() {
   const { remove: deleteTask } = useDelete(TASK_URLS.delete);
   const { execute: patchTask } = usePatch(TASK_URLS.patch);
 
-  const current = new Date();
-  const date = `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()}`;
+  // Date formatting as DD/MM/YYYY
+  const date = new Date().toLocaleDateString('en-GB');
 
-  const filteredTasks = useMemo(() => {
-    let result = [...tasks];
+  const filteredTasks = useFilteredTasks(tasks, searchQuery, activeFilter, sortBy);
 
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        (task) =>
-          task.title.toLowerCase().includes(query) ||
-          task.description.toLowerCase().includes(query) ||
-          (task.project && task.project.toLowerCase().includes(query)) ||
-          (task.tags && task.tags.some((tag) => tag.toLowerCase().includes(query)))
-      );
-    }
-
-    if (activeFilter !== 'all') {
-      result = result.filter((task) => {
-        switch (activeFilter) {
-          case 'high':
-          case 'medium':
-          case 'low':
-            return task.priority === activeFilter;
-          case 'in-progress':
-            return task.status === 'in-progress' || task.status === 'inprogress';
-          case 'pending':
-            return task.status === 'pending';
-          case 'skipped':
-            return task.status === 'skipped';
-          case 'bug':
-            return task.status === 'bug';
-          default:
-            return true;
-        }
-      });
-    }
-
-    result.sort((a, b) => {
-      switch (sortBy) {
-        case 'newest':
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        case 'oldest':
-          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-        case 'due-date': {
-          const aDate = a.dueDate ? a.dueDate.getTime() : Infinity;
-          const bDate = b.dueDate ? b.dueDate.getTime() : Infinity;
-          return aDate - bDate;
-        }
-        case 'priority': {
-          const priorityOrder: Record<string, number> = { high: 0, medium: 1, low: 2, skippable: 3 };
-          return (priorityOrder[a.priority ?? ''] ?? 4) - (priorityOrder[b.priority ?? ''] ?? 4);
-        }
-        default:
-          return 0;
-      }
-    });
-
-    return result;
-  }, [tasks, activeFilter, sortBy, searchQuery]);
-
-  const filters: { key: FilterType; label: string }[] = [
-    { key: 'all', label: 'All' },
-    { key: 'high', label: 'High' },
-    { key: 'medium', label: 'Medium' },
-    { key: 'low', label: 'Low' },
-    { key: 'in-progress', label: 'In-progress' },
-    { key: 'pending', label: 'Pending' },
-    { key: 'skipped', label: 'Skipped' },
-    { key: 'bug', label: 'Bug' },
-  ];
-
+  /**
+   * Toggles the selection state of a specific task.
+   * @param {string} taskId - The unique identifier of the task.
+   */
   const toggleSelect = useCallback((taskId: string) => {
-    setSelectedIds(prev => {
+    setSelectedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(taskId)) {
-        next.delete(taskId);
-      } else {
-        next.add(taskId);
-      }
+      next.has(taskId) ? next.delete(taskId) : next.add(taskId);
       return next;
     });
   }, []);
 
+  /**
+   * Selects all currently filtered tasks.
+   */
   const selectAll = useCallback(() => {
-    setSelectedIds(new Set(filteredTasks.map(t => t.id)));
+    setSelectedIds(new Set(filteredTasks.map((t) => t.id)));
   }, [filteredTasks]);
 
+  /**
+   * Deselects all tasks.
+   */
   const deselectAll = useCallback(() => {
     setSelectedIds(new Set());
   }, []);
 
+  /**
+   * Deletes all currently selected tasks.
+   */
   const handleBulkDelete = async () => {
     if (selectedIds.size === 0) return;
     setBulkActionLoading(true);
     let deleted = 0;
+    
     for (const id of selectedIds) {
       const result = await deleteTask({ id });
       if (result) {
@@ -152,18 +87,22 @@ export default function Home() {
         deleted++;
       }
     }
+    
     setBulkActionLoading(false);
-    setSelectedIds(new Set());
-    setEditMode(false);
+    exitEditMode();
     addToast(`${deleted} task${deleted !== 1 ? 's' : ''} deleted`, 'info');
   };
 
+  /**
+   * Marks all currently selected tasks as complete.
+   */
   const handleBulkComplete = async () => {
     if (selectedIds.size === 0) return;
     setBulkActionLoading(true);
     let completed = 0;
+    
     for (const id of selectedIds) {
-      const task = tasks.find(t => t.id === id);
+      const task = tasks.find((t) => t.id === id);
       if (task && !task.isCompleted) {
         const result = await patchTask({ taskId: id, isCompleted: true });
         if (result) {
@@ -172,15 +111,18 @@ export default function Home() {
         }
       }
     }
+    
     setBulkActionLoading(false);
-    setSelectedIds(new Set());
-    setEditMode(false);
+    exitEditMode();
     addToast(`${completed} task${completed !== 1 ? 's' : ''} completed`, 'success');
   };
 
+  /**
+   * Exits edit mode and clears any active selections.
+   */
   const exitEditMode = () => {
     setEditMode(false);
-    setSelectedIds(new Set());
+    deselectAll();
   };
 
   return (
@@ -232,7 +174,7 @@ export default function Home() {
 
           <div className='flex flex-col gap-3 rounded-lg border border-border bg-surface-nav px-4 py-3 shadow-filter transition-all duration-300 hover:shadow-card md:flex-row md:items-center md:justify-between md:py-2'>
             <div className='-mx-1 flex flex-wrap items-center gap-2 pb-1 pr-1 md:mx-0 md:gap-2 md:pb-0 md:pr-0'>
-              {filters.map((filter, index) => (
+              {FILTERS.map((filter, index) => (
                 <span key={filter.key} className='flex items-center gap-2 md:gap-2'>
                   {index > 0 && <div className='w-px h-6 bg-border hidden md:block'></div>}
                   <button
