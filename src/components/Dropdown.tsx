@@ -1,11 +1,14 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { ChevronDown, CheckIcon, CloseIcon } from '../components/Icons';
 
+// --- Types ---
 export interface DropdownOption {
   value: string;
   label: string;
 }
 
-interface DropdownProps {
+// Array of options to display in the dropdown
+export interface DropdownProps {
   options: DropdownOption[];
   value: string | string[];
   onChange: (value: string | string[]) => void;
@@ -17,6 +20,12 @@ interface DropdownProps {
   disabled?: boolean;
 }
 
+/**
+ * Dropdown Component
+ * 
+ * A highly versatile custom select component supporting single/multi-selection,
+ * searching, and dynamic option creation. Utilizes shared Lucide icons.
+ */
 export default function Dropdown({
   options,
   value,
@@ -28,20 +37,27 @@ export default function Dropdown({
   id,
   disabled = false,
 }: DropdownProps) {
+  // --- State & Refs ---
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
+  
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const selectedValues = multiple
-    ? (Array.isArray(value) ? value : value ? [value] : [])
-    : [];
+  // --- Derived State ---
+  const selectedValues = multiple ? (Array.isArray(value) ? value : value ? [value] : []) : [];
+  const selectedLabel = !multiple ? options.find(o => o.value === value)?.label ?? (typeof value === 'string' && value ? value : '') : '';
+  const hasValue = multiple ? selectedValues.length > 0 : !!value;
+  
+  const filteredOptions = options.filter(o => o.label.toLowerCase().includes(search.toLowerCase()));
+  const trimmedSearch = search.trim();
+  const canCreate = creatable && trimmedSearch && !options.some(o => o.value.toLowerCase() === trimmedSearch.toLowerCase()) && !selectedValues.includes(trimmedSearch);
 
-  const selectedLabel = !multiple
-    ? options.find(o => o.value === value)?.label ?? (typeof value === 'string' && value ? value : '')
-    : '';
+  // --- Effects ---
 
+  // Handle clicking outside the component to close it
   useEffect(() => {
+    if (!isOpen) return;
     const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsOpen(false);
@@ -50,30 +66,32 @@ export default function Dropdown({
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [isOpen]);
 
+  // Auto-focus search input when dropdown opens
   useEffect(() => {
     if (isOpen && searchable && inputRef.current) {
       inputRef.current.focus();
     }
   }, [isOpen, searchable]);
 
-  const filteredOptions = options.filter(o =>
-    o.label.toLowerCase().includes(search.toLowerCase())
-  );
+  // --- Event Handlers ---
 
-  const canCreate = creatable && search.trim() && !options.some(
-    o => o.value.toLowerCase() === search.trim().toLowerCase()
-  ) && !selectedValues.includes(search.trim());
+  const handleToggle = () => {
+    if (disabled) return;
+    setIsOpen(!isOpen);
+    if (!isOpen) setSearch('');
+  };
+
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onChange(multiple ? [] : '');
+  };
 
   const handleSelect = useCallback((optionValue: string) => {
     if (multiple) {
-      const current = selectedValues;
-      if (current.includes(optionValue)) {
-        onChange(current.filter(v => v !== optionValue));
-      } else {
-        onChange([...current, optionValue]);
-      }
+      const isCurrentlySelected = selectedValues.includes(optionValue);
+      onChange(isCurrentlySelected ? selectedValues.filter(v => v !== optionValue) : [...selectedValues, optionValue]);
     } else {
       onChange(optionValue);
       setIsOpen(false);
@@ -82,24 +100,22 @@ export default function Dropdown({
   }, [multiple, selectedValues, onChange]);
 
   const handleCreate = useCallback(() => {
-    const newTag = search.trim();
-    if (!newTag) return;
+    if (!trimmedSearch) return;
+    
     if (multiple) {
-      if (!selectedValues.includes(newTag)) {
-        onChange([...selectedValues, newTag]);
+      if (!selectedValues.includes(trimmedSearch)) {
+        onChange([...selectedValues, trimmedSearch]);
       }
     } else {
-      onChange(newTag);
+      onChange(trimmedSearch);
       setIsOpen(false);
     }
     setSearch('');
-  }, [search, multiple, selectedValues, onChange]);
+  }, [trimmedSearch, multiple, selectedValues, onChange]);
 
-  const handleRemove = useCallback((tagValue: string, e: React.MouseEvent) => {
+  const handleRemoveChip = useCallback((tagValue: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (multiple) {
-      onChange(selectedValues.filter(v => v !== tagValue));
-    }
+    if (multiple) onChange(selectedValues.filter(v => v !== tagValue));
   }, [multiple, selectedValues, onChange]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
@@ -112,30 +128,16 @@ export default function Dropdown({
     }
   }, [canCreate, handleCreate]);
 
-  const handleToggle = () => {
-    if (disabled) return;
-    setIsOpen(!isOpen);
-    if (!isOpen) setSearch('');
-  };
-
-  const handleClear = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (multiple) {
-      onChange([]);
-    } else {
-      onChange('');
-    }
-  };
-
-  const hasValue = multiple ? selectedValues.length > 0 : !!value;
-
+  // --- Render ---
   return (
     <div
       ref={containerRef}
-      className={`dropdown ${isOpen ? 'dropdown--open' : ''} ${disabled ? 'dropdown--disabled' : ''} ${multiple ? 'dropdown--multi' : ''}`}
       id={id}
+      className={`dropdown ${isOpen ? 'dropdown--open' : ''} ${disabled ? 'dropdown--disabled' : ''} ${multiple ? 'dropdown--multi' : ''}`}
     >
+      {/* Trigger / Input Area */}
       <div className='dropdown-trigger' onClick={handleToggle} role='combobox' aria-expanded={isOpen}>
+        
         {multiple ? (
           <div className='dropdown-multi-values'>
             {selectedValues.length === 0 && !search && (
@@ -144,7 +146,9 @@ export default function Dropdown({
             {selectedValues.map(v => (
               <span key={v} className='dropdown-chip'>
                 {v}
-                <button type='button' className='dropdown-chip-remove' onClick={(e) => handleRemove(v, e)}>&times;</button>
+                <button type='button' className='dropdown-chip-remove flex items-center justify-center' onClick={(e) => handleRemoveChip(v, e)} aria-label={`Remove ${v}`}>
+                  <CloseIcon size={12} />
+                </button>
               </span>
             ))}
             {isOpen && searchable && (
@@ -178,27 +182,30 @@ export default function Dropdown({
             )}
           </>
         )}
+
+        {/* Trigger Actions (Clear & Chevron) */}
         <div className='dropdown-trigger-actions'>
           {hasValue && !disabled && (
-            <button type='button' className='dropdown-clear' onClick={handleClear}>&times;</button>
+            <button type='button' className='dropdown-clear flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors' onClick={handleClear} aria-label="Clear selection">
+              <CloseIcon size={14} />
+            </button>
           )}
-          <span className='dropdown-chevron'>
-            <svg width='16' height='16' viewBox='0 0 16 16' fill='none'>
-              <path d='M4 6L8 10L12 6' stroke='currentColor' strokeWidth='1.5' strokeLinecap='round' strokeLinejoin='round'/>
-            </svg>
+          <span className='dropdown-chevron flex items-center justify-center'>
+            <ChevronDown size={16} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
           </span>
         </div>
       </div>
 
+      {/* Menu / Dropdown List */}
       {isOpen && !disabled && (
-        <div className='dropdown-menu'>
+        <div className='dropdown-menu' role="listbox">
           {filteredOptions.length === 0 && !canCreate && (
             <div className='dropdown-empty'>No options found</div>
           )}
+          
           {filteredOptions.map(option => {
-            const isSelected = multiple
-              ? selectedValues.includes(option.value)
-              : value === option.value;
+            const isSelected = multiple ? selectedValues.includes(option.value) : value === option.value;
+            
             return (
               <div
                 key={option.value}
@@ -208,29 +215,27 @@ export default function Dropdown({
                 aria-selected={isSelected}
               >
                 {multiple && (
-                  <span className={`dropdown-checkbox ${isSelected ? 'dropdown-checkbox--checked' : ''}`}>
-                    {isSelected && (
-                      <svg width='12' height='12' viewBox='0 0 12 12' fill='none'>
-                        <path d='M10 3L4.5 8.5L2 6' stroke='white' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'/>
-                      </svg>
-                    )}
+                  <span className={`dropdown-checkbox ${isSelected ? 'dropdown-checkbox--checked' : ''} flex items-center justify-center`}>
+                    {isSelected && <CheckIcon size={12} strokeWidth={3} className="text-white" />}
                   </span>
                 )}
+                
                 <span className='dropdown-option-label'>{option.label}</span>
+                
                 {!multiple && isSelected && (
-                  <span className='dropdown-option-check'>
-                    <svg width='14' height='14' viewBox='0 0 14 14' fill='none'>
-                      <path d='M11.6666 3.5L5.24992 9.91667L2.33325 7' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'/>
-                    </svg>
+                  <span className='dropdown-option-check flex items-center justify-center'>
+                    <CheckIcon size={14} />
                   </span>
                 )}
               </div>
             );
           })}
+
+          {/* Create New Option */}
           {canCreate && (
             <div className='dropdown-option dropdown-option--create' onClick={handleCreate}>
               <span className='dropdown-create-icon'>+</span>
-              <span>Create <strong>&ldquo;{search.trim()}&rdquo;</strong></span>
+              <span>Create <strong>&ldquo;{trimmedSearch}&rdquo;</strong></span>
             </div>
           )}
         </div>

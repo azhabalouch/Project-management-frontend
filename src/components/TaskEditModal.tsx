@@ -5,7 +5,9 @@ import { usePatch } from '../hooks/usePatch';
 import { useDelete } from '../hooks/useDelete';
 import { normalizeTask, useTaskContext } from '../context/TaskContext';
 import { useToast } from '../context/ToastContext';
+import { useTaskFormOptions } from '../hooks/useTaskFormOptions';
 import { TASK_URLS } from '../apis';
+import Dropdown from './Dropdown';
 import type { Task, HandleSubmitEvent } from './type/typesInterface';
 
 interface TaskEditModalProps {
@@ -22,7 +24,9 @@ export default function TaskEditModal({ task, onClose }: TaskEditModalProps) {
   const [priority, setPriority] = useState(task.priority ?? '');
   const [isCompleted, setIsCompleted] = useState(task.isCompleted);
   const [dueDate, setDueDate] = useState<Date | null>(task.dueDate);
+  const [tags, setTags] = useState<string[]>(task.tags ?? []);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const { existingTags } = useTaskFormOptions();
 
   const { execute: patchTask, loading: patching, error: patchError } = usePatch(TASK_URLS.patch);
   const { remove: deleteTask, loading: deleting, error: deleteError } = useDelete(TASK_URLS.delete);
@@ -44,6 +48,9 @@ export default function TaskEditModal({ task, onClose }: TaskEditModalProps) {
     if (status !== task.status) payload.status = status;
     if (isCompleted !== task.isCompleted) payload.isCompleted = isCompleted;
     if (priority !== (task.priority ?? '')) payload.priority = priority || null;
+    const originalTags = (task.tags ?? []).slice().sort();
+    const currentTags = tags.slice().sort();
+    if (currentTags.length !== originalTags.length || currentTags.some((t, i) => t !== originalTags[i])) payload.tags = tags;
 
     const currentDueDateTime = task.dueDate ? new Date(task.dueDate).getTime() : null;
     const nextDueDateTime = dueDate ? dueDate.getTime() : null;
@@ -66,6 +73,7 @@ export default function TaskEditModal({ task, onClose }: TaskEditModalProps) {
           isCompleted,
           dueDate,
           priority: (priority || undefined) as Task['priority'],
+          tags,
         });
       } else {
         updateTask(task.id, normalizeTask(updatedTask));
@@ -156,6 +164,19 @@ export default function TaskEditModal({ task, onClose }: TaskEditModalProps) {
                   <option value='skippable'>Skippable</option>
                 </select>
               </div>
+            </div>
+
+            <div className='flex flex-col'>
+              <label className='mb-1.5 text-sm font-medium text-[var(--text-secondary)]'>Tags</label>
+              <Dropdown
+                options={existingTags}
+                value={tags}
+                onChange={(v) => setTags(v as string[])}
+                placeholder='Select or create tags'
+                multiple
+                searchable
+                creatable
+              />
             </div>
 
             <div className='grid gap-4 md:grid-cols-2'>

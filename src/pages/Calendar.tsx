@@ -2,15 +2,30 @@ import { useState, useEffect, useMemo } from 'react';
 import SideNavigation from '../components/SideNavigation';
 import TopNavigation from '../components/TopNavigation';
 import { useTaskContext } from '../context/TaskContext';
+import { useNoteContext } from '../context/NoteContext';
 import { useGet } from '../hooks/useGet';
-import { CALENDAR_URLS } from '../apis';
-import type { CalendarEvent } from '../components/type/typesInterface';
+import { usePost } from '../hooks/usePost';
+import { useDelete } from '../hooks/useDelete';
+import { CALENDAR_URLS, NOTE_URLS } from '../apis';
+import type { CalendarEvent, DateNote } from '../components/type/typesInterface';
+import { CloseIcon, Trash2 } from '../components/Icons';
 
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
+];
+
+const NOTE_COLORS = [
+  { label: 'Amber', value: '#D27D2D' },
+  { label: 'Red', value: '#E53E3E' },
+  { label: 'Green', value: '#38A169' },
+  { label: 'Blue', value: '#3182CE' },
+  { label: 'Purple', value: '#805AD5' },
+  { label: 'Pink', value: '#D53F8C' },
+  { label: 'Teal', value: '#319795' },
+  { label: 'Gray', value: '#718096' },
 ];
 
 interface CalendarDay {
@@ -32,10 +47,19 @@ const formatDateKey = (date: Date): string => {
 
 export default function Calendar() {
   const { tasks, loading: tasksLoading } = useTaskContext();
+  const { notes, loading: notesLoading, removeNote } = useNoteContext();
   const { execute: fetchCalendarEvents, loading: eventsLoading } = useGet<CalendarEvent[]>(CALENDAR_URLS.get);
+  const { execute: createNote, loading: creatingNote } = usePost(NOTE_URLS.create);
+  const { remove: deleteNote } = useDelete(NOTE_URLS.delete);
+
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [hoveredEvent, setHoveredEvent] = useState<{ eventId: string; dayKey: string } | null>(null);
+
+  // Date detail panel state
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [newNoteText, setNewNoteText] = useState('');
+  const [newNoteColor, setNewNoteColor] = useState('#D27D2D');
 
   useEffect(() => {
     const load = async () => {
@@ -46,7 +70,6 @@ export default function Calendar() {
         }
       } catch {
         // Calendar events endpoint may not exist yet — gracefully degrade
-        // Tasks from TaskContext are still shown
       }
     };
     load();
@@ -76,6 +99,16 @@ export default function Calendar() {
     }
     return map;
   }, [allEvents]);
+
+  // Map notes by date for color markers
+  const notesMap = useMemo(() => {
+    const map = new Map<string, DateNote[]>();
+    for (const note of notes) {
+      if (!map.has(note.date)) map.set(note.date, []);
+      map.get(note.date)!.push(note);
+    }
+    return map;
+  }, [notes]);
 
   const calendarDays = useMemo((): CalendarDay[] => {
     const year = currentDate.getFullYear();
@@ -136,7 +169,36 @@ export default function Calendar() {
     setCurrentDate(new Date());
   };
 
-  const loading = tasksLoading || eventsLoading;
+  const handleDayClick = (dayKey: string) => {
+    setSelectedDate(dayKey);
+    setNewNoteText('');
+    setNewNoteColor('#D27D2D');
+  };
+
+  const handleAddNote = async () => {
+    if (!newNoteText.trim() || !selectedDate) return;
+    const result = await createNote({
+      date: selectedDate,
+      color: newNoteColor,
+      text: newNoteText.trim(),
+    });
+    if (result) {
+      setNewNoteText('');
+    }
+  };
+
+  const handleDeleteNote = async (noteId: string) => {
+    const result = await deleteNote({ noteId });
+    if (result) {
+      removeNote(noteId);
+    }
+  };
+
+  // Selected date details
+  const selectedDayEvents = selectedDate ? (eventsMap.get(selectedDate) ?? []) : [];
+  const selectedDayNotes = selectedDate ? (notesMap.get(selectedDate) ?? []) : [];
+
+  const loading = tasksLoading || eventsLoading || notesLoading;
 
   return (
     <div className='home-layout'>
@@ -164,49 +226,161 @@ export default function Calendar() {
               <p>Loading calendar...</p>
             </div>
           ) : (
-            <div className='calendar-grid'>
-              {DAYS.map((day) => (
-                <div key={day} className='calendar-day-header'>{day}</div>
-              ))}
-              {calendarDays.map((day, index) => {
-                const key = formatDateKey(day.date);
-                const dayEvents = eventsMap.get(key) ?? [];
-                return (
-                  <div
-                    key={index}
-                    className={`calendar-day${!day.isCurrentMonth ? ' other-month' : ''}${day.isToday ? ' today' : ''}`}
-                  >
-                    <div className='calendar-day-number'>{day.date.getDate()}</div>
-                    {dayEvents.slice(0, 3).map((event) => (
-                      <div
-                        key={event.id}
-                        className={getEventStyle(event)}
-                        onMouseEnter={() => setHoveredEvent({ eventId: event.id, dayKey: key })}
-                        onMouseLeave={() => setHoveredEvent(null)}
-                      >
-                        {event.title}
-                      </div>
-                    ))}
-                    {dayEvents.length > 3 && (
-                      <div style={{ fontSize: '10px', color: 'var(--text-secondary)', fontFamily: 'var(--font-ui)', padding: '0 4px' }}>
-                        +{dayEvents.length - 3} more
-                      </div>
-                    )}
-                    {hoveredEvent && hoveredEvent.dayKey === key && (() => {
-                      const evt = dayEvents.find((e) => e.id === hoveredEvent.eventId);
-                      if (!evt) return null;
-                      return (
-                        <div className='calendar-event-detail'>
-                          <div className='calendar-event-detail-title'>{evt.title}</div>
-                          <div className='calendar-event-detail-meta'>
-                            {evt.type} {evt.status ? `· ${evt.status}` : ''} {evt.priority ? `· ${evt.priority}` : ''}
+            <div className='calendar-layout'>
+              <div className='calendar-grid'>
+                {DAYS.map((day) => (
+                  <div key={day} className='calendar-day-header'>{day}</div>
+                ))}
+                {calendarDays.map((day, index) => {
+                  const key = formatDateKey(day.date);
+                  const dayEvents = eventsMap.get(key) ?? [];
+                  const dayNotes = notesMap.get(key) ?? [];
+                  const hasContent = dayEvents.length > 0 || dayNotes.length > 0;
+                  const isSelected = selectedDate === key;
+                  return (
+                    <div
+                      key={index}
+                      className={`calendar-day${!day.isCurrentMonth ? ' other-month' : ''}${day.isToday ? ' today' : ''}${hasContent ? ' has-content' : ''}${isSelected ? ' selected' : ''}`}
+                      onClick={() => handleDayClick(key)}
+                    >
+                      <div className='calendar-day-number-row'>
+                        <span className='calendar-day-number'>{day.date.getDate()}</span>
+                        {dayNotes.length > 0 && (
+                          <div className='calendar-day-markers'>
+                            {dayNotes.slice(0, 3).map((note) => (
+                              <span
+                                key={note.id}
+                                className='calendar-day-marker'
+                                style={{ backgroundColor: note.color }}
+                              />
+                            ))}
                           </div>
+                        )}
+                      </div>
+                      {dayEvents.slice(0, 3).map((event) => (
+                        <div
+                          key={event.id}
+                          className={getEventStyle(event)}
+                          onMouseEnter={() => setHoveredEvent({ eventId: event.id, dayKey: key })}
+                          onMouseLeave={() => setHoveredEvent(null)}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {event.title}
                         </div>
-                      );
-                    })()}
+                      ))}
+                      {dayEvents.length > 3 && (
+                        <div style={{ fontSize: '10px', color: 'var(--text-secondary)', fontFamily: 'var(--font-ui)', padding: '0 4px' }}>
+                          +{dayEvents.length - 3} more
+                        </div>
+                      )}
+                      {hoveredEvent && hoveredEvent.dayKey === key && (() => {
+                        const evt = dayEvents.find((e) => e.id === hoveredEvent.eventId);
+                        if (!evt) return null;
+                        return (
+                          <div className='calendar-event-detail'>
+                            <div className='calendar-event-detail-title'>{evt.title}</div>
+                            <div className='calendar-event-detail-meta'>
+                              {evt.type} {evt.status ? `· ${evt.status}` : ''} {evt.priority ? `· ${evt.priority}` : ''}
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Date Detail Panel */}
+              {selectedDate && (
+                <div className='calendar-detail-panel'>
+                  <div className='calendar-detail-header'>
+                    <h3 className='calendar-detail-title'>{selectedDate}</h3>
+                    <button className='modal-close-btn' onClick={() => setSelectedDate(null)}>
+                      <CloseIcon size={18} />
+                    </button>
                   </div>
-                );
-              })}
+
+                  {/* Tasks/Events section */}
+                  {selectedDayEvents.length > 0 && (
+                    <div className='calendar-detail-section'>
+                      <h4 className='calendar-detail-section-title'>Tasks & Events</h4>
+                      <ul className='calendar-detail-list'>
+                        {selectedDayEvents.map((evt) => (
+                          <li key={evt.id} className={`calendar-detail-item type-${evt.type}`}>
+                            <span className='calendar-detail-item-title'>{evt.title}</span>
+                            <span className='calendar-detail-item-meta'>
+                              {evt.type}{evt.status ? ` · ${evt.status}` : ''}{evt.priority ? ` · ${evt.priority}` : ''}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Notes section */}
+                  <div className='calendar-detail-section'>
+                    <h4 className='calendar-detail-section-title'>Notes</h4>
+                    {selectedDayNotes.length > 0 ? (
+                      <ul className='calendar-detail-list'>
+                        {selectedDayNotes.map((note) => (
+                          <li key={note.id} className='calendar-detail-note-item'>
+                            <span className='calendar-detail-note-dot' style={{ backgroundColor: note.color }} />
+                            <span className='calendar-detail-note-text'>{note.text}</span>
+                            <button
+                              className='note-action-btn note-action-btn--danger'
+                              onClick={() => handleDeleteNote(note.id)}
+                              title='Delete note'
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className='calendar-detail-empty'>No notes for this date</p>
+                    )}
+
+                    {/* Add note inline form */}
+                    <div className='calendar-detail-add-note'>
+                      <div className='note-color-picker note-color-picker--compact'>
+                        {NOTE_COLORS.map((opt) => (
+                          <button
+                            key={opt.value}
+                            type='button'
+                            className={`note-color-swatch${newNoteColor === opt.value ? ' selected' : ''}`}
+                            style={{ backgroundColor: opt.value }}
+                            onClick={() => setNewNoteColor(opt.value)}
+                            title={opt.label}
+                          />
+                        ))}
+                      </div>
+                      <div className='calendar-detail-add-note-row'>
+                        <input
+                          type='text'
+                          value={newNoteText}
+                          onChange={(e) => setNewNoteText(e.target.value)}
+                          placeholder='Add a note...'
+                          className='todo-input'
+                          onKeyDown={async (e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              await handleAddNote();
+                            }
+                          }}
+                          disabled={creatingNote}
+                        />
+                        <button
+                          className='btn-primary'
+                          onClick={handleAddNote}
+                          disabled={creatingNote || !newNoteText.trim()}
+                        >
+                          {creatingNote ? '...' : 'Add'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </section>

@@ -1,19 +1,39 @@
-import { useState, useMemo } from 'react'
-import { usePost } from '../hooks/usePost'
-import type { HandleSubmitEvent, Task, Subtask } from '../components/type/typesInterface';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DatePicker } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useNavigate } from 'react-router-dom';
-import { normalizeTask, useTaskContext } from '../context/TaskContext';
-import { useProjectContext } from '../context/ProjectContext';
+
+import { usePost } from '../hooks/usePost';
+import { useTaskContext } from '../context/TaskContext';
 import { useToast } from '../context/ToastContext';
+import { useTaskFormOptions } from '../hooks/useTaskFormOptions';
 import { TASK_URLS } from '../apis';
-import SideNavigation from '../components/SideNavigation';
-import TopNavigation from '../components/TopNavigation';
+
+import Layout from '../components/Layout';
 import Dropdown from '../components/Dropdown';
 import { CloseIcon } from '../components/Icons';
+import { SELECT_BG_STYLE, getProgressColor, getProgressBg } from '../utils/taskHelpers';
 
-export default function TaskCreate(){
+import type { HandleSubmitEvent, Task, Subtask } from '../components/type/typesInterface';
+
+/**
+ * TaskCreate Component
+ * 
+ * Renders a form for users to create a new task. Includes inputs for general info,
+ * classification (status, priority, project, tags), timeline, progress, and a subtask checklist.
+ * 
+ * @returns {JSX.Element} The task creation view.
+ */
+export default function TaskCreate() {
+  const navigate = useNavigate();
+  const { execute, loading, error } = usePost(TASK_URLS.create);
+  const { refreshTasks } = useTaskContext();
+  const { addToast } = useToast();
+  
+  // Custom hook to handle dropdown list generation
+  const { projectOptions, existingTags } = useTaskFormOptions();
+
+  // --- Form State ---
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState('pending');
@@ -22,119 +42,123 @@ export default function TaskCreate(){
   const [progress, setProgress] = useState(0);
   const [project, setProject] = useState('');
   const [tags, setTags] = useState<string[]>([]);
-  const [subtasks, setSubtasks] = useState<Subtask[]>([]);
-  const [newSubtaskText, setNewSubtaskText] = useState('');
-  const isCompleted = false;
-  const navigate = useNavigate();
-  const { execute, loading, error } = usePost(TASK_URLS.create);
-  const { tasks, addTask, refreshTasks } = useTaskContext();
-  const { addToast } = useToast();
-
-  const getProgressColor = (p: number): string => {
-    if (p >= 90) return 'var(--pct-90-text)';
-    if (p >= 75) return 'var(--pct-75-text)';
-    if (p >= 50) return 'var(--pct-50-text)';
-    if (p >= 35) return 'var(--pct-35-text)';
-    if (p >= 10) return 'var(--pct-10-text)';
-    return 'var(--pct-10-text)';
-  };
-
-  const getProgressBg = (p: number): string => {
-    if (p >= 90) return 'var(--pct-90-bg)';
-    if (p >= 75) return 'var(--pct-75-bg)';
-    if (p >= 50) return 'var(--pct-50-bg)';
-    if (p >= 35) return 'var(--pct-35-bg)';
-    if (p >= 10) return 'var(--pct-10-bg)';
-    return 'var(--pct-10-bg)';
-  };
-
-  const { projects } = useProjectContext();
-
-  const projectOptions = useMemo(() => [
-    { value: '', label: 'No project' },
-    ...projects.map(p => ({ value: p.name, label: p.name })),
-  ], [projects]);
-
-  const existingTags = useMemo(() => {
-    const tagSet = new Set<string>();
-    tasks.forEach(t => t.tags?.forEach(tag => tagSet.add(tag)));
-    return Array.from(tagSet).sort().map(tag => ({ value: tag, label: tag }));
-  }, [tasks]);
-
-  const handleSubmit = async (e: HandleSubmitEvent) => {
-    e.preventDefault();
-
-    if (!title.trim()) return;
-
-    const payload: Record<string, unknown> = {
-      title: title.trim(),
-      description: description.trim(),
-      status,
-      isCompleted,
-      dueDate,
-      progress,
-    };
-
-    if (priority) payload.priority = priority;
-    if (project.trim()) payload.project = project.trim();
-    if (tags.length > 0) payload.tags = tags;
-    if (subtasks.length > 0) payload.subtasks = subtasks.map(st => ({ text: st.text, completed: st.completed }));
-
-    const createdTask = await execute(payload as unknown as Task);
-
-    if (createdTask) {
-      if (createdTask === true) {
-        await refreshTasks();
-      } else if (typeof createdTask === 'object') {
-        addTask(normalizeTask(createdTask));
-      }
-      addToast('Task created successfully', 'success');
-      navigate('/');
-    }
-  }
-
   const progressColor = getProgressColor(progress);
   const progressBg = getProgressBg(progress);
 
-  return(
-    <div className='flex bg-surface-main w-full h-screen overflow-hidden'>
-      <SideNavigation />
-      <main className='flex-1 flex flex-col relative'>
-        <TopNavigation />
-        <section className='flex-1 px-4 py-6 md:px-16 md:py-8 overflow-y-auto flex flex-col gap-6'>
-          <div className='flex items-center gap-2 mb-2 font-ui text-sm'>
-            <button className='bg-none border-none text-brand-primary cursor-pointer hover:underline' onClick={() => navigate('/')}>Tasks</button>
-            <span className='text-text-secondary'>/</span>
-            <span className='text-text-secondary'>New Task</span>
-          </div>
+  // --- Subtask State ---
+  const [subtasks, setSubtasks] = useState<Subtask[]>([]);
+  const [newSubtaskText, setNewSubtaskText] = useState('');
 
-          <div className='grid grid-cols-1 md:grid-cols-[1fr_280px] gap-6 items-start'>
-            <div className='min-w-0'>
-              <div className='bg-surface-nav border border-border rounded-lg p-4 md:p-8 shadow-card transition-shadow'>
-                <div className='mb-7 pb-5 border-b border-border'>
-                  <h2 className='text-2xl font-semibold mb-1 text-text-primary'>Create New Task</h2>
-                  <p className='font-body text-sm text-text-secondary m-0'>Fill in the details to create a new task</p>
-                </div>
+  // --- Handlers ---
 
-                {error && <div className='bg-status-error-bg text-status-error-text px-4 py-3 rounded mb-4 font-ui text-sm'>{error}</div>}
+  /**
+   * Submits the form data to the API to create a new task.
+   * Redirects to the dashboard on success.
+   * 
+   * @param {HandleSubmitEvent} e - The form submission event.
+   */
+  const handleSubmit = async (e: HandleSubmitEvent) => {
+    e.preventDefault();
+    if (!title.trim()) return;
 
-                <form onSubmit={handleSubmit} aria-label='Create task form' className='flex flex-col gap-0'>
-                  <div className='mb-7 pb-6 border-b border-border'>
-                    <h4 className='font-ui text-xs font-bold uppercase tracking-wider text-text-secondary mb-4 opacity-80'>General</h4>
+    const payload: Partial<Task> = {
+      title: title.trim(),
+      description: description.trim(),
+      status,
+      isCompleted: false,
+      dueDate: dueDate || undefined,
+      progress,
+    };
 
-                    <div className='flex flex-col text-left mb-4'>
-                      <label htmlFor='task-title' className='font-ui text-sm font-semibold text-text-primary mb-1.5 opacity-85'>Title <span className='text-accent-magenta'>*</span></label>
-                      <input
-                        name='task-title'
-                        id='task-title'
-                        type='text'
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        placeholder='Name your task'
-                        required
-                        className='bg-bg-input border border-border rounded px-3.5 py-2.5 font-body text-sm text-text-primary transition-all focus:outline-none focus:border-brand-primary focus:shadow-lg focus:shadow-brand-primary/20 focus:bg-bg-active'
-                      />
-                    </div>
+    if (priority) payload.priority = priority as 'high' | 'medium' | 'low' | 'skippable';
+    if (project.trim()) payload.project = project.trim();
+    if (tags.length > 0) payload.tags = tags;
+    if (subtasks.length > 0) {
+      payload.subtasks = subtasks.map(st => ({
+        id: st.id,
+        text: st.text, 
+        completed: st.completed 
+      }));
+    }
+
+    const createdTask = await execute(payload as Task);
+
+    if (createdTask) {
+      await refreshTasks();
+      addToast('Task created successfully', 'success');
+      navigate('/');
+    }
+  };
+
+  /**
+   * Adds a new subtask to the checklist if the input is not empty.
+   */
+  const handleAddSubtask = () => {
+    if (newSubtaskText.trim()) {
+      setSubtasks(prev => [...prev, { id: Date.now().toString(), text: newSubtaskText.trim(), completed: false }]);
+      setNewSubtaskText('');
+    }
+  };
+
+  /**
+   * Toggles the completion status of a specific subtask.
+   * 
+   * @param {string} id - The ID of the subtask to toggle.
+   */
+  const handleToggleSubtask = (id: string) => {
+    setSubtasks(prev => prev.map(s => s.id === id ? { ...s, completed: !s.completed } : s));
+  };
+
+  /**
+   * Removes a subtask from the checklist.
+   * 
+   * @param {string} id - The ID of the subtask to remove.
+   */
+  const handleRemoveSubtask = (id: string) => {
+    setSubtasks(prev => prev.filter(s => s.id !== id));
+  };
+
+  return (
+    <Layout>
+      <section className='flex-1 px-4 py-6 md:px-16 md:py-8 overflow-y-auto flex flex-col gap-6'>
+          
+        {/* Breadcrumb Navigation */}
+        <div className='flex items-center gap-2 mb-2 font-ui text-sm'>
+          <button className='bg-none border-none text-brand-primary cursor-pointer hover:underline' onClick={() => navigate('/')}>Tasks</button>
+          <span className='text-text-secondary'>/</span>
+          <span className='text-text-secondary'>New Task</span>
+        </div>
+
+        <div className='grid grid-cols-1 md:grid-cols-[1fr_280px] gap-6 items-start'>
+          {/* Main Form Section */}
+          <div className='min-w-0'>
+            <div className='bg-surface-nav border border-border rounded-lg p-4 md:p-8 shadow-card transition-shadow'>
+              <div className='mb-7 pb-5 border-b border-border'>
+                <h2 className='text-2xl font-semibold mb-1 text-text-primary'>Create New Task</h2>
+                <p className='font-body text-sm text-text-secondary m-0'>Fill in the details to create a new task</p>
+              </div>
+
+              {error && <div className='bg-status-error-bg text-status-error-text px-4 py-3 rounded mb-4 font-ui text-sm' role='alert'>{error}</div>}
+
+              <form onSubmit={handleSubmit} aria-label='Create task form' className='flex flex-col gap-0'>
+                
+                {/* General Block */}
+                <div className='mb-7 pb-6 border-b border-border'>
+                  <h4 className='font-ui text-xs font-bold uppercase tracking-wider text-text-secondary mb-4 opacity-80'>General</h4>
+
+                  <div className='flex flex-col text-left mb-4'>
+                    <label htmlFor='task-title' className='font-ui text-sm font-semibold text-text-primary mb-1.5 opacity-85'>Title <span className='text-accent-magenta'>*</span></label>
+                    <input
+                      name='task-title'
+                      id='task-title'
+                      type='text'
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder='Name your task'
+                      required
+                      className='bg-bg-input border border-border rounded px-3.5 py-2.5 font-body text-sm text-text-primary transition-all focus:outline-none focus:border-brand-primary focus:shadow-lg focus:shadow-brand-primary/20 focus:bg-bg-active'
+                    />
+                  </div>
 
                     <div className='flex flex-col text-left mb-0'>
                       <label htmlFor='task-description' className='font-ui text-sm font-semibold text-text-primary mb-1.5 opacity-85'>Description</label>
@@ -150,13 +174,20 @@ export default function TaskCreate(){
                     </div>
                   </div>
 
+                  {/* Classification Block */}
                   <div className='mb-7 pb-6 border-b border-border'>
                     <h4 className='font-ui text-xs font-bold uppercase tracking-wider text-text-secondary mb-4 opacity-80'>Classification</h4>
 
                     <div className='flex gap-4'>
                       <div className='flex-1 flex flex-col text-left mb-4'>
                         <label htmlFor='task-status' className='font-ui text-sm font-semibold text-text-primary mb-1.5 opacity-85'>Status</label>
-                        <select id='task-status' value={status} onChange={(e) => setStatus(e.target.value)} className='bg-bg-input border border-border rounded px-3.5 py-2.5 font-body text-sm text-text-primary transition-all cursor-pointer appearance-none focus:outline-none focus:border-brand-primary focus:shadow-lg focus:shadow-brand-primary/20 focus:bg-bg-active' style={{backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%2375736E' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', paddingRight: '36px'}}>
+                        <select 
+                          id='task-status' 
+                          value={status} 
+                          onChange={(e) => setStatus(e.target.value)} 
+                          className='bg-bg-input border border-border rounded px-3.5 py-2.5 font-body text-sm text-text-primary transition-all cursor-pointer appearance-none focus:outline-none focus:border-brand-primary focus:shadow-lg focus:shadow-brand-primary/20 focus:bg-bg-active' 
+                          style={SELECT_BG_STYLE}
+                        >
                           <option value='pending'>Pending</option>
                           <option value='in-progress'>In Progress</option>
                           <option value='bug'>Bug</option>
@@ -166,7 +197,13 @@ export default function TaskCreate(){
 
                       <div className='flex-1 flex flex-col text-left mb-4'>
                         <label htmlFor='task-priority' className='font-ui text-sm font-semibold text-text-primary mb-1.5 opacity-85'>Priority</label>
-                        <select id='task-priority' value={priority} onChange={(e) => setPriority(e.target.value)} className='bg-bg-input border border-border rounded px-3.5 py-2.5 font-body text-sm text-text-primary transition-all cursor-pointer appearance-none focus:outline-none focus:border-brand-primary focus:shadow-lg focus:shadow-brand-primary/20 focus:bg-bg-active' style={{backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%2375736E' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', paddingRight: '36px'}}>
+                        <select 
+                          id='task-priority' 
+                          value={priority} 
+                          onChange={(e) => setPriority(e.target.value)} 
+                          className='bg-bg-input border border-border rounded px-3.5 py-2.5 font-body text-sm text-text-primary transition-all cursor-pointer appearance-none focus:outline-none focus:border-brand-primary focus:shadow-lg focus:shadow-brand-primary/20 focus:bg-bg-active' 
+                          style={SELECT_BG_STYLE}
+                        >
                           <option value=''>None</option>
                           <option value='high'>High</option>
                           <option value='medium'>Medium</option>
@@ -202,9 +239,9 @@ export default function TaskCreate(){
                     </div>
                   </div>
 
+                  {/* Timeline Block */}
                   <div className='mb-7 pb-6 border-b border-border'>
                     <h4 className='font-ui text-xs font-bold uppercase tracking-wider text-text-secondary mb-4 opacity-80'>Timeline</h4>
-
                     <div className='flex flex-col text-left mb-0'>
                       <label htmlFor='task-due-date' className='font-ui text-sm font-semibold text-text-primary mb-1.5 opacity-85'>Due Date</label>
                       <DatePicker
@@ -219,9 +256,9 @@ export default function TaskCreate(){
                     </div>
                   </div>
 
+                  {/* Progress Block */}
                   <div className='mb-7 pb-6 border-b border-border'>
                     <h4 className='font-ui text-xs font-bold uppercase tracking-wider text-text-secondary mb-4 opacity-80'>Progress</h4>
-
                     <div className='p-4 bg-bg-main-content border border-border rounded-lg'>
                       <div className='flex justify-between items-center mb-3'>
                         <span className='font-ui text-sm font-semibold text-text-secondary'>Completion</span>
@@ -234,7 +271,7 @@ export default function TaskCreate(){
                         value={progress}
                         onChange={(e) => setProgress(Number(e.target.value))}
                         className='w-full cursor-pointer mb-3'
-                        style={{accentColor: 'var(--btn-primary-bg)'}}
+                        style={{ accentColor: 'var(--btn-primary-bg)' }}
                       />
                       <div className='w-full h-2 rounded overflow-hidden' style={{ backgroundColor: progressBg }}>
                         <div className='h-full rounded transition-all duration-300' style={{ width: `${progress}%`, backgroundColor: progressColor }} />
@@ -242,16 +279,20 @@ export default function TaskCreate(){
                     </div>
                   </div>
 
+                  {/* Checklist Block */}
                   <div className='mb-7 pb-6 border-b border-border'>
                     <h4 className='font-ui text-xs font-bold uppercase tracking-wider text-text-secondary mb-4 opacity-80'>Checklist</h4>
+                    
                     {subtasks.length > 0 && (
                       <ul className='list-none p-0 m-0 mb-3 flex flex-col gap-1.5'>
                         {subtasks.map(st => (
                           <li key={st.id} className={`flex items-center gap-2.5 px-3 py-2 rounded transition-colors ${st.completed ? 'bg-bg-active' : 'hover:bg-bg-active'}`}>
+                            
                             <button
                               type='button'
                               className={`w-5 h-5 border-2 rounded flex items-center justify-center cursor-pointer transition-all flex-shrink-0 p-0 ${st.completed ? 'bg-brand-primary border-brand-primary' : 'border-border bg-surface-nav hover:border-brand-primary'}`}
-                              onClick={() => setSubtasks(prev => prev.map(s => s.id === st.id ? { ...s, completed: !s.completed } : s))}
+                              onClick={() => handleToggleSubtask(st.id)}
+                              aria-label={st.completed ? "Mark subtask incomplete" : "Mark subtask complete"}
                             >
                               {st.completed && (
                                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -259,14 +300,24 @@ export default function TaskCreate(){
                                 </svg>
                               )}
                             </button>
-                            <span className={`flex-1 font-body text-sm ${st.completed ? 'line-through text-text-secondary opacity-70' : 'text-text-primary'}`}>{st.text}</span>
-                            <button type='button' className='w-6 h-6 border-none rounded flex items-center justify-center bg-transparent text-text-secondary cursor-pointer transition-all flex-shrink-0 p-0 opacity-0 hover:bg-status-error-bg hover:text-status-error-text group-hover:opacity-100' onClick={() => setSubtasks(prev => prev.filter(s => s.id !== st.id))}>
+                            
+                            <span className={`flex-1 font-body text-sm ${st.completed ? 'line-through text-text-secondary opacity-70' : 'text-text-primary'}`}>
+                              {st.text}
+                            </span>
+                            
+                            <button 
+                              type='button' 
+                              className='w-6 h-6 border-none rounded flex items-center justify-center bg-transparent text-text-secondary cursor-pointer transition-all flex-shrink-0 p-0 opacity-0 hover:bg-status-error-bg hover:text-status-error-text group-hover:opacity-100' 
+                              onClick={() => handleRemoveSubtask(st.id)}
+                              aria-label="Remove subtask"
+                            >
                               <CloseIcon size={14} />
                             </button>
                           </li>
                         ))}
                       </ul>
                     )}
+                    
                     <div className='flex gap-2'>
                       <input
                         type='text'
@@ -277,10 +328,7 @@ export default function TaskCreate(){
                         onKeyDown={e => {
                           if (e.key === 'Enter') {
                             e.preventDefault();
-                            if (newSubtaskText.trim()) {
-                              setSubtasks(prev => [...prev, { id: Date.now().toString(), text: newSubtaskText.trim(), completed: false }]);
-                              setNewSubtaskText('');
-                            }
+                            handleAddSubtask();
                           }
                         }}
                       />
@@ -288,18 +336,14 @@ export default function TaskCreate(){
                         type='button'
                         className='btn-primary px-4 py-2 text-sm whitespace-nowrap'
                         disabled={!newSubtaskText.trim()}
-                        onClick={() => {
-                          if (newSubtaskText.trim()) {
-                            setSubtasks(prev => [...prev, { id: Date.now().toString(), text: newSubtaskText.trim(), completed: false }]);
-                            setNewSubtaskText('');
-                          }
-                        }}
+                        onClick={handleAddSubtask}
                       >
                         Add
                       </button>
                     </div>
                   </div>
 
+                  {/* Form Actions */}
                   <div className='flex gap-3 mt-6 pt-6 border-t border-border'>
                     <button type='submit' className='btn-primary min-w-[140px]' disabled={loading || !title.trim()}>
                       {loading ? 'Creating...' : 'Create Task'}
@@ -312,6 +356,7 @@ export default function TaskCreate(){
               </div>
             </div>
 
+            {/* Quick Tips Sidebar */}
             <div className='flex flex-col gap-4'>
               <div className='bg-surface-nav border border-border rounded-lg p-5 shadow-card'>
                 <h4 className='text-xs font-semibold uppercase tracking-wider text-text-secondary mb-4 pb-3 border-b border-border'>Quick Tips</h4>
@@ -324,9 +369,9 @@ export default function TaskCreate(){
                 </ul>
               </div>
             </div>
+
           </div>
         </section>
-      </main>
-    </div>
-  )
+    </Layout>
+  );
 }

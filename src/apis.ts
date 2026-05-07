@@ -1,4 +1,5 @@
 const API_BASE_URL = "https://api.azhabalouch.dev";
+// const API_BASE_URL = "http://localhost:3000";
 
 export const AUTH_URLS = {
 	login: `${API_BASE_URL}/auth/login`,
@@ -13,6 +14,7 @@ export const TASK_URLS = {
 	patch: `${API_BASE_URL}/user/task/patch`,
 	delete: `${API_BASE_URL}/user/task/delete`,
 	history: `${API_BASE_URL}/user/task/history`,
+	historyDelete: `${API_BASE_URL}/user/task/history`,
 	subtaskAdd: `${API_BASE_URL}/user/task/subtask/add`,
 	subtaskUpdate: `${API_BASE_URL}/user/task/subtask/update`,
 	subtaskDelete: `${API_BASE_URL}/user/task/subtask/delete`,
@@ -34,4 +36,11 @@ export const TODO_URLS = {
 	create: `${API_BASE_URL}/user/todo/create`,
 	patch: `${API_BASE_URL}/user/todo/patch`,
 	delete: `${API_BASE_URL}/user/todo/delete`,
+} as const;
+
+export const NOTE_URLS = {
+	get: `${API_BASE_URL}/user/note/get`,
+	create: `${API_BASE_URL}/user/note/create`,
+	patch: `${API_BASE_URL}/user/note/patch`,
+	delete: `${API_BASE_URL}/user/note/delete`,
 } as const;

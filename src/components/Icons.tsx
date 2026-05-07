@@ -14,6 +14,7 @@ export {
   Folder as ProjectIcon,
   Calendar as CalendarIcon,
   History as HistoryIcon,
+  StickyNote as NoteIcon,
   AlertCircle as ErrorIcon,
   Inbox as EmptyStateIcon,
   Check as CheckIcon,

@@ -3,7 +3,7 @@ import { useNavigate, NavLink } from 'react-router-dom';
 import { useTaskContext } from '../context/TaskContext';
 import { useToast } from '../context/ToastContext';
 import { useUIContext } from '../context/UIContext';
-import { CalendarIcon, HistoryIcon, LogoutIcon, ProjectIcon, TaskIcon, TodoIcon } from './Icons';
+import { CalendarIcon, HistoryIcon, LogoutIcon, NoteIcon, ProjectIcon, TaskIcon, TodoIcon } from './Icons';
 
 const iconS = 24;
 
@@ -12,6 +12,7 @@ const navItems = [
   { path: '/todo', label: 'To-Do', icon: TodoIcon, showBadge: false },
   { path: '/projects', label: 'Projects', icon: ProjectIcon, showBadge: false },
   { path: '/calendar', label: 'Calendar', icon: CalendarIcon, showBadge: false },
+  { path: '/notes', label: 'Notes', icon: NoteIcon, showBadge: false },
   { path: '/history', label: 'History', icon: HistoryIcon, showBadge: false },
 ] as const;
 
