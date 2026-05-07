@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { useGet } from '../hooks/useGet';
 import { usePost } from '../hooks/usePost';
@@ -10,22 +9,10 @@ import { normalizeProject } from '../context/ProjectContext';
 
 import type { Project, HandleSubmitEvent } from '../components/type/typesInterface';
 import Layout from '../components/Layout';
-import { PlusIcon, ErrorIcon, EditIcon, MoreHorizontalIcon, TaskIcon, EmptyStateIcon } from '../components/Icons';
+import ProjectCard from '../components/ProjectCard'; // <--- Import the new component
+import { PlusIcon, ErrorIcon, EmptyStateIcon } from '../components/Icons';
 
-// --- Constants & Helpers ---
 const ICON_SIZE = 16;
-
-/**
- * Formats an ISO date string into a user-friendly format (e.g., "Oct 12, 2023").
- * Extracted to prevent recreation on every render.
- * 
- * @param {string} dateStr - The raw date string to format.
- * @returns {string} The formatted date string.
- */
-const formatDate = (dateStr: string): string => {
-  if (!dateStr) return '';
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-};
 
 /**
  * Projects Component
@@ -36,8 +23,6 @@ const formatDate = (dateStr: string): string => {
  * @returns {JSX.Element} The rendered Projects dashboard.
  */
 export default function Projects() {
-  const navigate = useNavigate();
-  
   // --- API Hooks ---
   const { execute: fetchProjects, loading, error } = useGet<Project[]>(PROJECT_URLS.get);
   const { execute: createProject, loading: creating, error: createError } = usePost(PROJECT_URLS.create);
@@ -63,9 +48,7 @@ export default function Projects() {
     const load = async () => {
       try {
         const data = await fetchProjects();
-        if (Array.isArray(data)) {
-          setProjects(data.map(normalizeProject));
-        }
+        if (Array.isArray(data)) setProjects(data.map(normalizeProject));
       } catch {
         // Error handled internally by useGet
       }
@@ -99,22 +82,12 @@ export default function Projects() {
     }
   };
 
-  /**
-   * Pre-fills and opens the edit modal for a specific project.
-   * 
-   * @param {Project} project - The project to be edited.
-   */
   const openEdit = (project: Project) => {
     setEditingProject(project);
     setEditName(project.name);
     setEditDescription(project.description);
   };
 
-  /**
-   * Submits the edited project details to the API and updates local state.
-   * 
-   * @param {HandleSubmitEvent} e - The form submission event.
-   */
   const handleEdit = async (e: HandleSubmitEvent) => {
     e.preventDefault();
     if (!editingProject || !editName.trim()) return;
@@ -124,7 +97,7 @@ export default function Projects() {
     if (editDescription !== editingProject.description) payload.description = editDescription.trim();
 
     if (Object.keys(payload).length === 1) {
-      setEditingProject(null); // No changes made
+      setEditingProject(null);
       return;
     }
 
@@ -133,11 +106,7 @@ export default function Projects() {
     if (result) {
       if (result === true) {
         setProjects((prev) =>
-          prev.map((p) =>
-            p.id === editingProject.id
-              ? { ...p, name: editName.trim(), description: editDescription.trim() }
-              : p
-          )
+          prev.map((p) => p.id === editingProject.id ? { ...p, name: editName.trim(), description: editDescription.trim() } : p)
         );
       } else if (typeof result === 'object') {
         setProjects((prev) => prev.map((p) => (p.id === editingProject.id ? normalizeProject(result as Project) : p)));
@@ -146,9 +115,6 @@ export default function Projects() {
     }
   };
 
-  /**
-   * Deletes the currently targeted project.
-   */
   const handleDelete = async () => {
     if (!deletingProject) return;
 
@@ -219,7 +185,7 @@ export default function Projects() {
           <div className='bg-status-error-bg text-status-error-text px-4 py-3 rounded mb-4 font-ui text-sm' role="alert">{deleteError}</div>
         )}
 
-        {/* Grid Status Handling */}
+        {/* Main Content Grid */}
         {loading ? (
           <div className='flex flex-col items-center justify-center py-16 gap-4'>
             <div className='w-10 h-10 border-[3px] border-bg-input border-t-brand-primary rounded-full animate-spin'></div>
@@ -233,48 +199,15 @@ export default function Projects() {
           </div>
         ) : projects.length > 0 ? (
           <div className='grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5'>
+            {/* DRY: Replaced massive nested div logic with ProjectCard */}
             {projects.map((project) => (
-              <div key={project.id} className='bg-surface-nav border border-border rounded-lg p-6 shadow-card transition-all hover:shadow-card-hover hover:-translate-y-0.5 relative overflow-hidden cursor-pointer group' onClick={() => navigate(`/project/${project.id}`)}>
-                <div className='absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-brand-primary to-accent-orange opacity-0 group-hover:opacity-100 transition-opacity'></div>
-                <div className='flex justify-between items-start mb-3'>
-                  <h3 className='font-heading text-lg font-semibold text-text-primary m-0 line-clamp-2'>{project.name}</h3>
-                  <div className='flex gap-1'>
-                    <button
-                      className='w-8 h-8 border-none rounded flex items-center justify-center bg-transparent text-text-secondary hover:bg-bg-active hover:text-text-primary cursor-pointer transition-all'
-                      onClick={(e) => { e.stopPropagation(); openEdit(project); }}
-                      title='Edit project'
-                      aria-label='Edit project'
-                    >
-                      <EditIcon size={ICON_SIZE} />
-                    </button>
-                    <button
-                      className='w-8 h-8 border-none rounded flex items-center justify-center bg-transparent text-text-secondary hover:bg-bg-active hover:text-text-primary cursor-pointer transition-all'
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setDeletingProject(project);
-                      }}
-                      title='Delete project'
-                      aria-label='Delete project'
-                    >
-                      <MoreHorizontalIcon size={ICON_SIZE} />
-                    </button>
-                  </div>
-                </div>
-                <p className='font-body text-sm text-text-secondary m-0 mb-4 line-clamp-2'>
-                  {project.description || 'No description provided'}
-                </p>
-                <div className='flex justify-between items-center'>
-                  <div className='flex gap-3 items-center'>
-                    {project.taskCount != null && (
-                      <span className='flex items-center gap-1 font-ui text-xs text-text-secondary'>
-                        <TaskIcon size={12} />
-                        {project.taskCount} task{project.taskCount !== 1 ? 's' : ''}
-                      </span>
-                    )}
-                  </div>
-                  <span className='font-ui text-xs text-text-secondary'>{formatDate(project.createdAt)}</span>
-                </div>
-              </div>
+              <ProjectCard 
+                key={project.id} 
+                project={project} 
+                onEdit={openEdit} 
+                onDelete={setDeletingProject} 
+                iconSize={ICON_SIZE}
+              />
             ))}
           </div>
         ) : (
@@ -336,9 +269,7 @@ export default function Projects() {
           <div
             className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'
             onClick={(e) => {
-              if (e.target === e.currentTarget && !deleting) {
-                setDeletingProject(null);
-              }
+              if (e.target === e.currentTarget && !deleting) setDeletingProject(null);
             }}
           >
             <div className='bg-surface-main border border-border rounded-xl shadow-card-hover w-full max-w-lg mx-4' role='dialog' aria-modal='true' aria-labelledby='delete-project-heading'>
