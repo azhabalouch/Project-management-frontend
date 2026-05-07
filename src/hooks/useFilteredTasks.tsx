@@ -7,31 +7,17 @@ import { PRIORITY_ORDER } from '../utils/filterConstants';
  * Custom hook to encapsulate the logic for searching, filtering, and sorting tasks.
  * 
  * @param tasks - The raw array of tasks from context.
- * @param searchQuery - The user's current search input.
  * @param activeFilter - The currently selected status/priority filter.
  * @param sortBy - The currently selected sorting method.
  * @returns The processed array of tasks ready for rendering.
  */
 export function useFilteredTasks(
   tasks: Task[],
-  searchQuery: string,
   activeFilter: FilterType,
   sortBy: SortType
 ) {
   return useMemo(() => {
     let result = [...tasks];
-
-    // 1. Handle Search
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        (task) =>
-          task.title.toLowerCase().includes(query) ||
-          task.description.toLowerCase().includes(query) ||
-          task.project?.toLowerCase().includes(query) ||
-          task.tags?.some((tag) => tag.toLowerCase().includes(query))
-      );
-    }
 
     // 2. Handle Filters
     if (activeFilter !== 'all') {
@@ -52,5 +38,5 @@ export function useFilteredTasks(
     });
 
     return result;
-  }, [tasks, activeFilter, sortBy, searchQuery]);
+  }, [tasks, activeFilter, sortBy ]);
 }

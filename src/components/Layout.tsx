@@ -4,20 +4,18 @@ import TopNavigation from '../components/TopNavigation';
 
 interface LayoutProps {
   children: ReactNode;
-  /** Optional search handler passed down to TopNavigation (used in Home) */
-  onSearch?: (query: string) => void;
 }
 
 /**
  * Shared Page Layout
  * Wraps page content with the Side and Top navigation bars.
  */
-export default function Layout({ children, onSearch }: LayoutProps) {
+export default function Layout({ children }: LayoutProps) {
   return (
     <div className='flex bg-surface-main w-full h-screen overflow-hidden'>
       <SideNavigation />
       <main className='flex-1 flex flex-col relative min-w-0'>
-        <TopNavigation onSearch={onSearch} />
+        <TopNavigation />
         {children}
       </main>
     </div>

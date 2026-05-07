@@ -9,7 +9,7 @@ import { useToast } from '../context/ToastContext';
 import { useTaskFormOptions } from '../hooks/useTaskFormOptions';
 import { TASK_URLS } from '../apis';
 
-import Layout from './Layout';
+import Layout from '../components/Layout';
 import Dropdown from '../components/Dropdown';
 import { CloseIcon } from '../components/Icons';
 import { SELECT_BG_STYLE, getProgressColor, getProgressBg } from '../utils/taskHelpers';
