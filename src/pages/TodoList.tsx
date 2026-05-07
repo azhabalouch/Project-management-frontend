@@ -91,21 +91,8 @@ export default function TodoList() {
     });
     
     if (result) {
-      if (result === true) {
-        // Fallback: refetch all if API just returns boolean success
-        const data = await fetchTodos();
-        if (Array.isArray(data)) setTodos(data.map(normalizeTodo));
-      } else if (typeof result === 'object') {
-        // Optimistic/direct update using returned data
-        const normalized = normalizeTodo(result);
-        setTodos((prev) => [
-          ...prev,
-          {
-            ...normalized,
-            text: normalized.text || trimmedText,
-          },
-        ]);
-      }
+      const data = await fetchTodos();
+      if (Array.isArray(data)) setTodos(data.map(normalizeTodo));
       setNewText('');
       addToast('Todo added', 'success');
     }
@@ -118,16 +105,30 @@ export default function TodoList() {
    */
   const handleToggle = async (todo: Todo) => {
     const nextCompleted = !todo.isCompleted;
-    const result = await patchTodo({
-      id: todo.id,
-      todoId: todo.id,
-      isCompleted: nextCompleted,
-      completed: nextCompleted,
-    });
-    
-    if (result) {
+
+    // Optimistic update: update UI immediately
+    setTodos((prev) =>
+      prev.map((t) => (t.id === todo.id ? { ...t, isCompleted: nextCompleted } : t))
+    );
+
+    try {
+      const result = await patchTodo({
+        id: todo.id,
+        todoId: todo.id,
+        isCompleted: nextCompleted,
+        completed: nextCompleted,
+      });
+
+      if (!result) {
+        // Revert on failure
+        setTodos((prev) =>
+          prev.map((t) => (t.id === todo.id ? { ...t, isCompleted: todo.isCompleted } : t))
+        );
+      }
+    } catch {
+      // Revert on error
       setTodos((prev) =>
-        prev.map((t) => (t.id === todo.id ? { ...t, isCompleted: !t.isCompleted } : t))
+        prev.map((t) => (t.id === todo.id ? { ...t, isCompleted: todo.isCompleted } : t))
       );
     }
   };

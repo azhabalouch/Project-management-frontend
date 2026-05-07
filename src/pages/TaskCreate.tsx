@@ -4,7 +4,7 @@ import { DatePicker } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { usePost } from '../hooks/usePost';
-import { normalizeTask, useTaskContext } from '../context/TaskContext';
+import { useTaskContext } from '../context/TaskContext';
 import { useToast } from '../context/ToastContext';
 import { useTaskFormOptions } from '../hooks/useTaskFormOptions';
 import { TASK_URLS } from '../apis';
@@ -27,7 +27,7 @@ import type { HandleSubmitEvent, Task, Subtask } from '../components/type/typesI
 export default function TaskCreate() {
   const navigate = useNavigate();
   const { execute, loading, error } = usePost(TASK_URLS.create);
-  const { addTask, refreshTasks } = useTaskContext();
+  const { refreshTasks } = useTaskContext();
   const { addToast } = useToast();
   
   // Custom hook to handle dropdown list generation
@@ -84,7 +84,7 @@ export default function TaskCreate() {
     const createdTask = await execute(payload as Task);
 
     if (createdTask) {
-      createdTask === true ? await refreshTasks() : addTask(normalizeTask(createdTask as Task));
+      await refreshTasks();
       addToast('Task created successfully', 'success');
       navigate('/');
     }

@@ -9,6 +9,7 @@ import { PublicRoute } from './PublicRoute';
 // Context Providers
 import { TaskProvider } from '../context/TaskContext';
 import { ProjectProvider } from '../context/ProjectContext';
+import { NoteProvider } from '../context/NoteContext';
 import { UIProvider } from '../context/UIContext';
 
 // Lazy-loaded Pages
@@ -19,6 +20,7 @@ const History = lazy(() => import('../pages/History'));
 const Projects = lazy(() => import('../pages/Projects'));
 const ProjectDetail = lazy(() => import('../pages/ProjectDetail'));
 const Calendar = lazy(() => import('../pages/Calendar'));
+const Notes = lazy(() => import('../pages/Notes'));
 const TodoList = lazy(() => import('../pages/TodoList'));
 const PageNotFound = lazy(() => import('../pages/PageNotFound'));
 
@@ -44,7 +46,9 @@ const AppProviders = () => (
   <UIProvider>
     <TaskProvider>
       <ProjectProvider>
-        <Outlet />
+        <NoteProvider>
+          <Outlet />
+        </NoteProvider>
       </ProjectProvider>
     </TaskProvider>
   </UIProvider>
@@ -77,6 +81,7 @@ export default function App() {
             <Route path='/projects' element={<Projects />} />
             <Route path='/project/:id' element={<ProjectDetail />} />
             <Route path='/calendar' element={<Calendar />} />
+            <Route path='/notes' element={<Notes />} />
             <Route path='/todo' element={<TodoList />} />
           </Route>
         </Route>

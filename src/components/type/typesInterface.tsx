@@ -88,4 +88,23 @@ export interface Todo {
   createdAt: string;
 }
 
+export interface DateNote {
+  id: string;
+  date: string;
+  color: string;
+  text: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NoteContextValue {
+  notes: DateNote[];
+  loading: boolean;
+  error: string;
+  refreshNotes: () => Promise<void>;
+  addNote: (note: DateNote) => void;
+  updateNote: (noteId: string, updatedNote: DateNote) => void;
+  removeNote: (noteId: string) => void;
+}
+
 export interface HandleSubmitEvent extends React.SyntheticEvent<HTMLFormElement> {};

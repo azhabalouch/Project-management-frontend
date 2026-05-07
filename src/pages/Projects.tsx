@@ -5,7 +5,7 @@ import { usePost } from '../hooks/usePost';
 import { usePatch } from '../hooks/usePatch';
 import { useDelete } from '../hooks/useDelete';
 import { PROJECT_URLS } from '../apis';
-import { normalizeProject } from '../context/ProjectContext';
+import { normalizeProject, useProjectContext } from '../context/ProjectContext';
 
 import type { Project, HandleSubmitEvent } from '../components/type/typesInterface';
 import Layout from '../components/Layout';
@@ -23,6 +23,9 @@ const ICON_SIZE = 16;
  * @returns {JSX.Element} The rendered Projects dashboard.
  */
 export default function Projects() {
+  // --- Context ---
+  const { refreshProjects: refreshContext } = useProjectContext();
+
   // --- API Hooks ---
   const { execute: fetchProjects, loading, error } = useGet<Project[]>(PROJECT_URLS.get);
   const { execute: createProject, loading: creating, error: createError } = usePost(PROJECT_URLS.create);
@@ -70,12 +73,9 @@ export default function Projects() {
     const result = await createProject({ name: newName.trim(), description: newDescription.trim() });
     
     if (result) {
-      if (result === true) {
-        const data = await fetchProjects();
-        if (Array.isArray(data)) setProjects(data.map(normalizeProject));
-      } else if (typeof result === 'object') {
-        setProjects((prev) => [...prev, normalizeProject(result as Project)]);
-      }
+      const data = await fetchProjects();
+      if (Array.isArray(data)) setProjects(data.map(normalizeProject));
+      await refreshContext();
       setNewName('');
       setNewDescription('');
       setShowCreateForm(false);
@@ -111,6 +111,7 @@ export default function Projects() {
       } else if (typeof result === 'object') {
         setProjects((prev) => prev.map((p) => (p.id === editingProject.id ? normalizeProject(result as Project) : p)));
       }
+      await refreshContext();
       setEditingProject(null);
     }
   };
@@ -121,6 +122,7 @@ export default function Projects() {
     const result = await deleteProject({ projectId: deletingProject.id });
     if (result) {
       setProjects((prev) => prev.filter((p) => p.id !== deletingProject.id));
+      await refreshContext();
       setDeletingProject(null);
     }
   };
