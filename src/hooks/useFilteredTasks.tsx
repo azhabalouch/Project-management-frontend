@@ -14,10 +14,24 @@ import { PRIORITY_ORDER } from '../utils/filterConstants';
 export function useFilteredTasks(
   tasks: Task[],
   activeFilter: FilterType,
-  sortBy: SortType
+  sortBy: SortType,
+  searchQuery = ''
 ) {
   return useMemo(() => {
     let result = [...tasks];
+    const normalizedQuery = searchQuery.trim().toLowerCase();
+
+    if (normalizedQuery) {
+      result = result.filter((task) => {
+        const tagsText = task.tags?.join(' ').toLowerCase() ?? '';
+        return (
+          task.title.toLowerCase().includes(normalizedQuery) ||
+          task.description.toLowerCase().includes(normalizedQuery) ||
+          (task.project ?? '').toLowerCase().includes(normalizedQuery) ||
+          tagsText.includes(normalizedQuery)
+        );
+      });
+    }
 
     // 2. Handle Filters
     if (activeFilter !== 'all') {
@@ -38,5 +52,5 @@ export function useFilteredTasks(
     });
 
     return result;
-  }, [tasks, activeFilter, sortBy ]);
+  }, [tasks, activeFilter, sortBy, searchQuery]);
 }
