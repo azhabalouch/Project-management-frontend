@@ -9,6 +9,8 @@ interface ProjectCardProps {
   iconSize?: number;
 }
 
+const DESCRIPTION_WORD_LIMIT = 100;
+
 /**
  * Formats an ISO date string into a user-friendly format.
  */
@@ -23,6 +25,10 @@ const formatDate = (dateStr: string): string => {
  */
 export default function ProjectCard({ project, onEdit, onDelete, iconSize = 16 }: ProjectCardProps) {
   const navigate = useNavigate();
+  const descriptionWords = project.description.trim().split(/\s+/).filter(Boolean);
+  const shortDescription = descriptionWords.length > DESCRIPTION_WORD_LIMIT
+    ? `${descriptionWords.slice(0, DESCRIPTION_WORD_LIMIT).join(' ')}...`
+    : project.description;
 
   return (
     <div 
@@ -61,8 +67,8 @@ export default function ProjectCard({ project, onEdit, onDelete, iconSize = 16 }
         </div>
       </div>
       
-      <p className='font-body text-sm text-text-secondary m-0 mb-4 line-clamp-2'>
-        {project.description || 'No description provided'}
+      <p className='font-body text-sm text-text-secondary m-0 mb-4'>
+        {shortDescription || 'No description provided'}
       </p>
       
       {/* Footer Info */}

@@ -32,6 +32,7 @@ export default function Home() {
   
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [sortBy, setSortBy] = useState<SortType>('newest');
+  const [searchQuery, setSearchQuery] = useState('');
   const [editMode, setEditMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkActionLoading, setBulkActionLoading] = useState(false);
@@ -42,7 +43,7 @@ export default function Home() {
   // Date formatting as DD/MM/YYYY
   const date = new Date().toLocaleDateString('en-GB');
 
-  const filteredTasks = useFilteredTasks(tasks, activeFilter, sortBy);
+  const filteredTasks = useFilteredTasks(tasks, activeFilter, sortBy, searchQuery);
 
   /**
    * Toggles the selection state of a specific task.
@@ -124,7 +125,7 @@ export default function Home() {
   };
 
   return (
-    <Layout>
+    <Layout onSearch={setSearchQuery}>
       <section className='flex-1 overflow-y-auto flex flex-col gap-6 px-4 py-5 pb-24 md:px-16 md:py-8 md:pb-8 min-w-0'>
         <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
           <div className='flex flex-wrap items-center gap-3 min-w-0'>
